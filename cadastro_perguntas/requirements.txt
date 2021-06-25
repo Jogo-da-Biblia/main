@@ -1,0 +1,16 @@
+Django==3.1.*
+djangorestframework
+markdown
+django-filter
+django-guardian
+Pygments
+python-dotenv
+gunicorn
+autopep8
+django-sass
+Pillow
+django-cors-headers
+pyyaml
+uritemplate
+xhtml2pdf
+pymysql
