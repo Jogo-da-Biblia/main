@@ -24,7 +24,14 @@ docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && 
 ### Backup and Restore some table
 ```sh
 # Backup
-docker exec CONTAINER /usr/bin/mysqldump -u root --password=${DB_PASSWORD} django_cadastro_perguntas biblia_livro > biblia_livro.sql
+DB_TABLE=biblia_livro sh dump_table.sh
 # Restore
 cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root DATABASE
+```
+
+## To watch/compile sass
+
+```sh
+python manage.py sass app/perguntas/static/scss/ app/perguntas/static/css/ --watch
+python manage.py sass app/perguntas/static/scss/ app/perguntas/static/css/ -t compressed
 ```

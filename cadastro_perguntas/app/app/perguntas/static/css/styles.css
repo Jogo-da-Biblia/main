@@ -1,0 +1,41 @@
+body, html {
+  background-color: #537A95;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+main {
+  background-color: #537A95;
+  max-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  color: #ccc;
+  font-size: 15px;
+}
+
+main img {
+  width: 60%;
+  margin-top: 10vh;
+  min-width: 300px;
+}
+
+main p {
+  padding: 0 30vw;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 730px) {
+  main p {
+    padding: 0 120px;
+  }
+}
+
+@media (max-width: 612px) {
+  main p {
+    padding: 0 20px;
+  }
+}
