@@ -15,6 +15,16 @@ docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && 
 docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
 ```
 
+### Acessando banco de dados
+
+```sh
+docker exec -it jogodabiblia_db bash -c "mysql -u root -p"
+```
+
+```sql
+CREATE DATABASE django_cadastro_perguntas;
+```
+
 ### Criando superusuário
 
 ```sh
