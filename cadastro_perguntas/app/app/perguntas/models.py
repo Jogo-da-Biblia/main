@@ -10,13 +10,10 @@ class Grupo(models.Model):
     class Meta:
         db_table = 'grupo'
 
-    class Meta:
-        db_table = 'tipo_resposta'
-
 
 class Referencia(models.Model):
-    livro = models.ForeignKey(Livro)
-    versiculo = models.ForeignKey(Versiculo)
+    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    versiculo = models.ForeignKey(Versiculo, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'referencia'
@@ -54,20 +51,20 @@ class Pergunta(models.Model):
         ('RLC', 'ReferenciaLivroCapitulo'),
         ('RES', 'RespostaSimples')
     ]
-    grupo = models.ForeignKey(Grupo)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
     enunciado = models.TextField()
     tipo_resposta = models.CharField(
         max_length=3, choices=TIPO_RESPOSTA)
-    referencia_resposta = models.ForeignKey(Referencia)
-    outras_referencias = models.ForeignKey(Referencia)
-    alternativas = models.ForeignKey(Alternativa)
-    alternativas_corretas = models.ForeignKey(Alternativa)
+    referencia_resposta = models.ForeignKey(Referencia, on_delete=models.CASCADE)
+    outras_referencias = models.ForeignKey(Referencia, on_delete=models.CASCADE)
+    alternativas = models.ForeignKey(Alternativa, on_delete=models.CASCADE)
+    alternativas_corretas = models.ForeignKey(Alternativa, on_delete=models.CASCADE)
     # status = PerguntaStatus (?)
-    criado_por = models.ForeignKey(DjangoUser)
+    criado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
-    revisado_por = models.ForeignKey(DjangoUser)
+    revisado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
     revisado_em = models.DateTimeField(auto_now_add=True)
-    publicado_por = models.ForeignKey(DjangoUser)
+    publicado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
     publicado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
@@ -76,7 +73,7 @@ class Pergunta(models.Model):
 
 
 class Comentario(models.Model):
-    pergunta = models.ForeignKey(Pergunta)
+    pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     email = models.CharField()
     whatsapp = models.CharField()
     mensagem = models.TextField()
