@@ -1,10 +1,11 @@
 from app.biblia.models import Livro, Versiculo
+from app.core.models import DjangoUser
 from django.db import models
 from django.db.models import ForeignKey
 
 
 class Grupo(models.Model):
-    nome = models.CharField()
+    nome = models.CharField(max_length=50)
     cor = models.CharField(max_length=6)
 
     class Meta:
@@ -17,24 +18,6 @@ class Referencia(models.Model):
 
     class Meta:
         db_table = 'referencia'
-
-
-class DjangoUser(models.Model):
-    DJANGO_USER_ROLE = [
-        ('COL', 'Colaborador'),
-        ('REV', 'Revisor'),
-        ('SUP', 'Supervisor'),
-        ('ADM', 'Administrador')
-    ]
-    nome = models.CharField()
-    email = models.CharField()
-    whatsapp = models.CharField()
-    senha = models.CharField()
-    role = models.CharField(
-        max_length=3, choices=DJANGO_USER_ROLE)
-
-    class Meta:
-        db_table = 'django_user'
 
 
 class Alternativa(models.Model):
@@ -59,7 +42,6 @@ class Pergunta(models.Model):
     outras_referencias = models.ForeignKey(Referencia, on_delete=models.CASCADE)
     alternativas = models.ForeignKey(Alternativa, on_delete=models.CASCADE)
     alternativas_corretas = models.ForeignKey(Alternativa, on_delete=models.CASCADE)
-    # status = PerguntaStatus (?)
     criado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
     revisado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
@@ -74,8 +56,8 @@ class Pergunta(models.Model):
 
 class Comentario(models.Model):
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
-    email = models.CharField()
-    whatsapp = models.CharField()
+    email = models.CharField(max_length=126)
+    whatsapp = models.CharField(max_length=11)
     mensagem = models.TextField()
     criado_em = models.DateTimeField(auto_now_add=True)
 
