@@ -38,15 +38,22 @@ class Pergunta(models.Model):
     enunciado = models.TextField()
     tipo_resposta = models.CharField(
         max_length=3, choices=TIPO_RESPOSTA)
-    referencia_resposta = models.ForeignKey(Referencia, on_delete=models.CASCADE)
-    outras_referencias = models.ForeignKey(Referencia, on_delete=models.CASCADE)
-    alternativas = models.ForeignKey(Alternativa, on_delete=models.CASCADE)
-    alternativas_corretas = models.ForeignKey(Alternativa, on_delete=models.CASCADE)
-    criado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
+    referencia_resposta = models.ForeignKey(Referencia, related_name='referencia_resposta',
+     on_delete=models.CASCADE)
+    outras_referencias = models.ForeignKey(Referencia, related_name='outras_referencias',
+     on_delete=models.CASCADE)
+    alternativas = models.ForeignKey(Alternativa, related_name='alternativas',
+     on_delete=models.CASCADE)
+    alternativas_corretas = models.ForeignKey(Alternativa, related_name='alternativas_corretas',
+     on_delete=models.CASCADE)
+    criado_por = models.ForeignKey(DjangoUser, related_name='criado_por',
+     on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
-    revisado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
+    revisado_por = models.ForeignKey(DjangoUser,related_name='revisado_por',
+     on_delete=models.CASCADE)
     revisado_em = models.DateTimeField(auto_now_add=True)
-    publicado_por = models.ForeignKey(DjangoUser, on_delete=models.CASCADE)
+    publicado_por = models.ForeignKey(DjangoUser, related_name='publicado_por',
+     on_delete=models.CASCADE)
     publicado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
