@@ -1,3 +1,5 @@
+from tabnanny import verbose
+
 from app.biblia.models import Livro, Versiculo
 from app.core.models import DjangoUser
 from django.db import models
@@ -29,23 +31,23 @@ class Alternativa(models.Model):
 
 class Pergunta(models.Model):
     TIPO_RESPOSTA = [
-        ('MES', 'MultiplaEscolha'),
-        ('RCO', 'ReferenciaCompleta'),
-        ('RLC', 'ReferenciaLivroCapitulo'),
-        ('RES', 'RespostaSimples')
+        ('MES', 'Múltipla Escolha'),
+        ('RCO', 'Referência Completa'),
+        ('RLC', 'Referência Livro-Capítulo'),
+        ('RES', 'Resposta Simples')
     ]
     grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
     enunciado = models.TextField()
     tipo_resposta = models.CharField(
-        max_length=3, choices=TIPO_RESPOSTA)
+        max_length=3, choices=TIPO_RESPOSTA, verbose_name='Tipo de Resposta')
     referencia_resposta = models.ForeignKey(Referencia, related_name='referencia_resposta',
-     on_delete=models.CASCADE)
+     on_delete=models.CASCADE, verbose_name='Referência Resposta')
     outras_referencias = models.ForeignKey(Referencia, related_name='outras_referencias',
-     on_delete=models.CASCADE)
+     on_delete=models.CASCADE, verbose_name='Outras Referências')
     alternativas = models.ForeignKey(Alternativa, related_name='alternativas',
      on_delete=models.CASCADE)
     alternativas_corretas = models.ForeignKey(Alternativa, related_name='alternativas_corretas',
-     on_delete=models.CASCADE)
+     on_delete=models.CASCADE, verbose_name='Alternativas Corretas')
     criado_por = models.ForeignKey(DjangoUser, related_name='criado_por',
      on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -59,6 +61,7 @@ class Pergunta(models.Model):
 
     class Meta:
         db_table = 'pergunta'
+        verbose_name = 'Pergunta'
 
 
 class Comentario(models.Model):
