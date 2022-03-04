@@ -6,6 +6,10 @@ class PerguntaAdmin(admin.ModelAdmin):
     fields = ['grupo', 'enunciado', 'tipo_resposta',
     'referencia_resposta', 'outras_referencias',
     'alternativas', 'alternativas_corretas',
-    'criado_por', 'revisado_por', 'publicado_por']
+    'criado_por']
+
+     #def change_view(self, request, object_id, extra_context=None):
+      #   if request.user.role in 'REV':
+       #      self.fields.append('revisado_por')
 
 admin.site.register(Pergunta, PerguntaAdmin)
