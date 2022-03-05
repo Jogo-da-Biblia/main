@@ -138,4 +138,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # User Model
 
-AUTH_USER_MODEL = "core.DjangoUser"
+AUTH_USER_MODEL = "core.User"

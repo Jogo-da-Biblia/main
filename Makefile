@@ -1,6 +1,7 @@
 reset:
 	docker-compose down --volumes --remove-orphans
 	sudo rm -rf data
+	docker-compose build
 run: 
 	docker-compose down
 	docker-compose up -d 

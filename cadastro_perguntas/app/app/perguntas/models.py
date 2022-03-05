@@ -1,7 +1,7 @@
 from tabnanny import verbose
 
 from app.biblia.models import Livro, Versiculo
-from app.core.models import DjangoUser
+from app.core.models import User
 from django.db import models
 from django.db.models import ForeignKey
 
@@ -30,12 +30,14 @@ class Alternativa(models.Model):
 
 
 class Pergunta(models.Model):
+
     TIPO_RESPOSTA = [
         ('MES', 'Múltipla Escolha'),
         ('RCO', 'Referência Completa'),
         ('RLC', 'Referência Livro-Capítulo'),
         ('RES', 'Resposta Simples')
     ]
+
     grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE)
     enunciado = models.TextField()
     tipo_resposta = models.CharField(
@@ -48,13 +50,13 @@ class Pergunta(models.Model):
      on_delete=models.CASCADE)
     alternativas_corretas = models.ForeignKey(Alternativa, related_name='alternativas_corretas',
      on_delete=models.CASCADE, verbose_name='Alternativas Corretas')
-    criado_por = models.ForeignKey(DjangoUser, related_name='criado_por',
+    criado_por = models.ForeignKey(User, related_name='criado_por',
      on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
-    revisado_por = models.ForeignKey(DjangoUser,related_name='revisado_por',
+    revisado_por = models.ForeignKey(User,related_name='revisado_por',
      on_delete=models.CASCADE)
     revisado_em = models.DateTimeField(auto_now_add=True)
-    publicado_por = models.ForeignKey(DjangoUser, related_name='publicado_por',
+    publicado_por = models.ForeignKey(User, related_name='publicado_por',
      on_delete=models.CASCADE)
     publicado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
