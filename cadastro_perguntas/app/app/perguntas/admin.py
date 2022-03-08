@@ -1,6 +1,12 @@
 from app.perguntas.models import Pergunta, Alternativa
 from django.contrib import admin
 
+'''
+Permissões:
+COLABORADOR: quem manda comentários, criticas e perguntas
+REVISOR
+PUBLICADOR
+'''
 
 class PerguntaAdmin(admin.ModelAdmin):
     fields = ('grupo', 'enunciado', 'tipo_resposta',

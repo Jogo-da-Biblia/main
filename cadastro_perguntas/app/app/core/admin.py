@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import User
 
+
 class UserAdmin(UserAdmin):
     model = User
     list_display = ('username', 'email',)
@@ -21,6 +22,5 @@ class UserAdmin(UserAdmin):
     search_fields = ('email',)
     ordering = ('email',)
 
+
 admin.site.register(User, UserAdmin)
-
-
