@@ -28,5 +28,4 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f'{self.name} - {self.email}'
 
     class Meta:
-        db_table = 'auth_user'
         verbose_name = 'Usuário'
