@@ -19,8 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField('Data de Cadastro', auto_now_add=True)
 
     EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
-    REQUERID_FIELDS = ['username']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 
     objects = UserManager()
 
