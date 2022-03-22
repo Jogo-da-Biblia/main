@@ -14,3 +14,4 @@ pyyaml
 uritemplate
 xhtml2pdf
 pymysql
+python-gettext

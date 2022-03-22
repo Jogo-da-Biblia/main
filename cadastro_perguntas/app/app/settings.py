@@ -113,6 +113,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Email configurations
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.jogodabiblia.com'
+EMAIL_PORT = 465  # 465 # 25 # 587
+EMAIL_HOST_USER = 'contato@jogodabiblia.com'
+DEFAULT_FROM_EMAIL = 'contato@jogodabiblia.com'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_SUBJECT_PREFIX = '[Jogo da Bíblia]'
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
