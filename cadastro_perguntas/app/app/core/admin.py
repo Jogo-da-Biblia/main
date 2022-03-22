@@ -10,13 +10,13 @@ class UserAdmin(UserAdmin):
     list_filter = ('email', 'is_staff', 'is_active',)
     # Campos que aparecem na edição do usuário
     fieldsets = (
-        (None, {'fields': ('email', 'cpf', 'cnpj', 'password')}),
+        (None, {'fields': ('email', 'name', 'phone', 'groups', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     # Campos que aparecem na adição de um usuário
     add_fieldsets = (
         (None, {
-            'fields': ('username', 'name', 'email', 'password1', 'password2', 'is_staff', 'is_active')}
+            'fields': ('username', 'name', 'email', 'phone', 'password1', 'password2', 'is_staff', 'is_active')}
          ),
     )
     search_fields = ('email',)

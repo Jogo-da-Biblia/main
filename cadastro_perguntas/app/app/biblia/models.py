@@ -22,13 +22,20 @@ class Versiculo(models.Model):
     versiculo = models.IntegerField()
     texto = models.TextField()
 
+    def __str__(self):
+        return f"{self.livro} {self.versao} {self.capitulo}:{self.versiculo}"
+
     class Meta:
         verbose_name = 'Versículo'
 
 
 class Versao(models.Model):
     nome = models.CharField(max_length=33)
+    sigla = models.CharField(max_length=5)
 
     class Meta:
         verbose_name = 'Versão'
         verbose_name_plural = "Versões"
+
+    def __str__(self):
+        return self.sigla
