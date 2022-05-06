@@ -12,7 +12,10 @@ reset:
 	docker-compose build
 run: 
 	docker-compose down
-	docker-compose up -d 
+	docker-compose up -d
+build:
+	docker-compose build --no-cache
+	make run
 migrate:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"		
 makemigrations:

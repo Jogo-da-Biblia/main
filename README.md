@@ -1,6 +1,58 @@
-### Rodando a aplicação pela primeira vez
+# Sistema de Cadastro de Perguntas - Jogo da Bíblia
+
+Jogo da Bíblia é um jogo híbrido, ou seja, é um jogo físico de tabuleiro de perguntas e respostas onde o usuário anda certo número de casas de acordo com o acerto da resposta obtida de cada, porém as cartas do jogo são digitais, então funciona assim:
+
+1. Tem um tabuleiro com casas coloridas e um QR code
+2. Ao scanear o QR code o usuário tem acesso à tela do sistema onde é possível selecionar uma cor de cartas que apresentará a carta da pergunta a ser respondida
+
+O cadastro de perguntas será colaborativo e pessoas interessadas em produzir perguntas poderão fazê-lo e serão avaliadas pela equipe revisora, por isso os colaboradores só poderão ter acesso à página estilizada de cadastro de perguntas enquanto os revisores poderão fazer alteração nas perguntas e os publicadores, tanto editar quanto publicar as perguntas, tornando-as públicas para uso final dos jogadores.
+
+## Inicializando
+
+Você precisa ter o `docker` e o `docker-compose` instalado em sua máquina. para isso verifique os links de documentação prorietária: [Docker](https://docs.docker.com/engine/install/) e [Docker-compose](https://docs.docker.com/compose/install/), nessa ordem.
+
+Primeiramente leia a [seção de arquivos .env](env) para setar as variáveis de ambiente como senhas de banco de dados. Para instalar todos os pacotes e dependências rode:
+
+```
+make build
+```
+
+Ou, se estiver usando o windows abra o arquivo `Makefile` e execute linha por linha do bloco `build`. Para saber mais [leia](makefile).
+
+Acesse http://localhost:A_PORTA_QUE_VOCE_COLOCOU_EM_ENV e verá seu serviço rodando. Mágica? Não. Docker. 😉
+
+**Atenção** Se não aparecer o site pode ser porque, a primeira vez que é gerado o banco de dados ele demora para inicializar, dessa forma o django tenta conectar com o banco e não consegue, gerando erro. Verifique o `log` no terminal para ter certeza, mas se for esse o caso, execute:
+
+```bash
+make run
+```
+
+## Arquivos
+
+<a id="env"></a>
+
+### .env e .env.example
+
+São arquivos que guardam variáveis de ambiente, são geralmente dados que precisam de uma segurança maior e não podem ficar expostos no github, por isso sempre o `.env` fica no `.gitignore` e uma versão sem os dados fica disponível em `.env.example`. Você deve então copiar os dados de `.env.example` para `.env` e colocar os dados. Para isso use o comando abaixo:
+
+```bash
+cp .env.example .env
+```
+
+<a id="makefile"></a>
+
+### Makefile
+
+Só funciona em linux, é útil para executar blocos de códigos juntos, sem precisar digitar um por um na linhas de comandos, então colocamos grupos de comandos que são utilizados comumente juntos, para usar digite `make` e o nome do bloco, por exemplo:
+
+```bash
+make init
+```
+
+### Alguns comando úteis
 
 Execute:
+
 ```sh
 # Se você quiser restaurar as configurações iniciais do projeto para rodar novamente como se fosse a primeira vez
 make reset
@@ -13,8 +65,6 @@ docker exec -it jogodabiblia_db bash
 cat /initial_data/*.sql | mysql -u root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE}
 # Crie um superusuário
 make superuser
-# Crie um superusuário
-make seed
 # Depois de popular o banco ele pode cair
 make run
 ```
@@ -25,6 +75,7 @@ make run
 docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations"
 docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
 ```
+
 ### Criando superusuário
 
 ```sh
@@ -32,6 +83,7 @@ docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && 
 ```
 
 ### Backup and Restore some table
+
 ```sh
 # Backup
 DB_TABLE=biblia_livro sh dump_table.sh
@@ -50,52 +102,9 @@ python manage.py sass app/perguntas/static/scss/ app/perguntas/static/css/ --wat
 python manage.py sass app/perguntas/static/scss/ app/perguntas/static/css/ -t compressed
 ```
 
-## Códigos temporários para criação de usuários com permissões predefinidas de exemplo
+## Automatizando criação de perfis/grupos e permissões
 
-```bash
-docker exec -it jogodabiblia_cadastro_perguntas bash
-cd app && python manage.py shell
-```
-
-```python
-# Adicionando usuários de teste
-from django.contrib.auth import get_user_model
-User = get_user_model()
-User(username="colaborador", name="Colaborador de Teste", email="colaborador@jogodabiblia.com.br", phone="71992540736", is_whatsapp=True, is_staff=True).save()
-colaborador = User.objects.get(username="colaborador")
-colaborador.set_password("passw@rd")
-# Criando grupos e permissões
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from app.perguntas.models import Pergunta, Alternativa, Referencia
-# Criando os grupos
-g_colaboradores, created = Group.objects.get_or_create(name='colaboradores')
-g_revisores, created = Group.objects.get_or_create(name='revisores')
-g_publicadores, created = Group.objects.get_or_create(name='publicadores')
-# Capturando o conteúdo dos models para associar às permissões
-ct_pergunta = ContentType.objects.get_for_model(Pergunta)
-ct_alternativa = ContentType.objects.get_for_model(Alternativa)
-ct_referencia = ContentType.objects.get_for_model(Referencia)
-# Criando as permissões
-p_can_create_pergunta = Permission.objects.create(codename='can_create_pergunta', name='Pode criar uma pergunta', content_type=ct_pergunta)
-p_can_create_alternativa = Permission.objects.create(codename='can_create_alternativa', name='Pode criar uma alternativa',content_type=ct_alternativa)
-p_can_create_referencia = Permission.objects.create(codename='can_create_referencia', name='Pode criar uma referência', content_type=ct_referencia)
-# Associando grupos às permissões
-g_colaboradores.permissions.add(p_can_create_pergunta)
-g_colaboradores.permissions.add(Permission.objects.get(codename='add_pergunta'))
-g_colaboradores.permissions.add(p_can_create_alternativa)
-g_colaboradores.permissions.add(p_can_create_referencia)
-# Associando usuários aos grupos
-g_colaboradores.user_set.add(colaborador)
-# ... agora em seed.py
-```
-
-```python
-# Checando permissões
-all_permissions = Permission.objects.all()
-for permission in all_permissions:
-    print(permission.__dict__)
-```
+Os comando automatizados estão listados em `app/seed.py` e são executados junto com o bloco de comandos `make seed`
 
 ## Criando tradução para português do painel administrativo
 
