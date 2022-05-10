@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'app.biblia',
     'app.perguntas',
     'app.core',
+    'app.users',
 ]
 
 MIDDLEWARE = [
