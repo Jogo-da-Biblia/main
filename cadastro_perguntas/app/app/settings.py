@@ -85,12 +85,12 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_cadastro_perguntas',
-        'USER': 'root',
-        'PASSWORD': 'ghPrAz37',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': 'db',
-        'PORT': '3306',
+        'PORT': '5432',
     }
 }
 
