@@ -22,10 +22,14 @@ class Pergunta(models.Model):
         ('RES', 'Resposta Simples')
     ]
 
+    id = models.AutoField(primary_key=True)
+    grupo = models.ForeignKey(Grupo, related_name='grupo', on_delete=models.CASCADE)
     tema = models.ForeignKey(Tema, on_delete=models.CASCADE)
     enunciado = models.TextField()
     tipo_resposta = models.CharField(
         max_length=3, choices=TIPO_RESPOSTA, verbose_name='Tipo de Resposta')
+    refencia_resposta = models.ForeignKey(Referencia, related_name='refencia_resposta', on_delete=models.CASCADE)
+    outras_referencias = models.ForeignKey(Referencia, related_name='outras_referencias', on_delete=models.CASCADE)
     criado_por = models.ForeignKey(User, related_name='criado_por',
                                    on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -46,9 +50,10 @@ class Pergunta(models.Model):
 
 
 class Referencia(models.Model):
-    versiculo = models.ForeignKey(Versiculo, on_delete=models.CASCADE)
-    pergunta = models.ForeignKey(Pergunta, related_name='referencias',
-                                 on_delete=models.CASCADE, verbose_name='Referências')
+    id = models.AutoField(primary_key=True)
+    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    versiculo = models.ForeignKey(Versiculo, on_delete=models.CASCADE,
+        verbose_name='Versículo')
 
     def __str__(self):
         return f"{self.livro} {self.versiculo}"
@@ -83,3 +88,16 @@ class Comentario(models.Model):
 
     class Meta:
         db_table = 'comentario'
+
+
+class Grupo(models.Model):
+    id = models.AutoField(primary_key=True)
+    nome = models.CharField(max_length=50)
+    cor = models.CharField(max_length=6)
+
+    def __str__(self):
+        return self.nome
+    
+    class Meta:
+        db_table = 'grupo'
+        verbose_name = 'Grupo'
