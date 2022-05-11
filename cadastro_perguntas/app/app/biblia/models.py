@@ -26,7 +26,9 @@ class Versiculo(models.Model):
     texto = models.TextField()
 
     def __str__(self):
-        return f"{self.livro} {self.versao} {self.capitulo}:{self.versiculo}"
+        return (
+            f"{self.livro.nome}, {self.versao.nome}, {self.capitulo}:{self.versiculo}"
+        )
 
     class Meta:
         verbose_name = 'Versículo'
