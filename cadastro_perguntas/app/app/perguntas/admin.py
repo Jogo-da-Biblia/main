@@ -1,4 +1,4 @@
-from app.perguntas.models import Pergunta, Alternativa, Referencia, Grupo
+from app.perguntas.models import Pergunta, Alternativa, Referencia
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 '''
@@ -21,7 +21,7 @@ class ReferenciaInline(admin.TabularInline):
 
 class PerguntaAdmin(admin.ModelAdmin):
     fields = ('tema', 'enunciado', 'tipo_resposta',
-              'criado_por', 'grupo', 'status')
+              'criado_por', 'status')
     inlines = [AlternativaInline]
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -76,4 +76,3 @@ class AlternativaAdmin(admin.ModelAdmin):
 
 admin.site.register(Pergunta, PerguntaAdmin)
 admin.site.register(Alternativa, AlternativaAdmin)
-admin.site.register(Grupo)

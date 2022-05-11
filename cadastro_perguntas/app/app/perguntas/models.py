@@ -24,8 +24,6 @@ class Pergunta(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-    grupo = models.ForeignKey(
-        'Grupo', related_name='grupo', on_delete=models.CASCADE)
     tema = models.ForeignKey(Tema, on_delete=models.CASCADE)
     enunciado = models.TextField()
     tipo_resposta = models.CharField(
@@ -69,11 +67,12 @@ class Referencia(models.Model):
 
 
 class Alternativa(models.Model):
+    id = models.AutoField(primary_key=True)
     texto = models.TextField()
-    pergunta = models.ForeignKey(Pergunta, related_name='alternativas',
-                                 on_delete=models.CASCADE)
+    alternativas = models.ForeignKey(Pergunta, related_name='alternativas',
+                                     on_delete=models.CASCADE)
     # Marca se essa é uma das respostas corretas ou é uma falsa
-    resposta_certa = models.BooleanField(default=False)
+    alternativas_corretas = models.BooleanField(default=False)
 
     def __str__(self):
         return self.texto
@@ -83,6 +82,7 @@ class Alternativa(models.Model):
 
 
 class Comentario(models.Model):
+    id = models.AutoField(primary_key=True)
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     email = models.CharField(max_length=126)
     phone = models.CharField(max_length=11)
@@ -95,16 +95,3 @@ class Comentario(models.Model):
 
     class Meta:
         db_table = 'comentario'
-
-
-class Grupo(models.Model):
-    id = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=50)
-    cor = models.CharField(max_length=6)
-
-    def __str__(self):
-        return self.nome
-
-    class Meta:
-        db_table = 'grupo'
-        verbose_name = 'Grupo'
