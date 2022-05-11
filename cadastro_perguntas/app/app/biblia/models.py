@@ -8,6 +8,9 @@ class Livro(models.Model):
     # capitulos = models.IntegerField(default=1)
     nome = models.CharField(max_length=20)
 
+    def __str__(self):
+        self.nome
+
 
 class Testamento(models.Model):
     nome = models.CharField(max_length=17)
@@ -31,11 +34,10 @@ class Versiculo(models.Model):
 
 class Versao(models.Model):
     nome = models.CharField(max_length=33)
-    sigla = models.CharField(max_length=5)
 
     class Meta:
         verbose_name = 'Versão'
         verbose_name_plural = "Versões"
 
     def __str__(self):
-        return self.sigla
+        return self.nome
