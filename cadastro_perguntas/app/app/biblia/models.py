@@ -30,7 +30,9 @@ class Versiculo(models.Model):
 
     def __str__(self):
         return (
-            f"{self.livro.nome}, {self.versao.nome}, {self.capitulo}:{self.versiculo}"
+            f"""{self.livro.nome},
+            {self.versao.nome},
+            {self.capitulo}:{self.versiculo}"""
         )
 
     class Meta:
