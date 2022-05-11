@@ -9,11 +9,14 @@ class Livro(models.Model):
     nome = models.CharField(max_length=20)
 
     def __str__(self):
-        self.nome
+        return self.nome
 
 
 class Testamento(models.Model):
     nome = models.CharField(max_length=17)
+
+    def __str__(self):
+        return self.nome
 
 
 class Versiculo(models.Model):
