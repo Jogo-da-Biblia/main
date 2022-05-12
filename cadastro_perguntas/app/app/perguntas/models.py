@@ -14,6 +14,19 @@ class Tema(models.Model):
         db_table = 'tema'
 
 
+class Referencia(models.Model):
+    id = models.AutoField(primary_key=True)
+    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    versiculo = models.ForeignKey(Versiculo, on_delete=models.CASCADE,
+                                  verbose_name='Versículo')
+
+    def __str__(self):
+        return f"{self.livro} {self.versiculo}"
+
+    class Meta:
+        db_table = 'referencia'
+
+
 class Pergunta(models.Model):
 
     TIPO_RESPOSTA = [
@@ -29,10 +42,11 @@ class Pergunta(models.Model):
     tipo_resposta = models.CharField(
         max_length=3, choices=TIPO_RESPOSTA, verbose_name='Tipo de Resposta')
     refencia_resposta = models.ForeignKey(
-        'Referencia', on_delete=models.CASCADE,
-        related_name='referencia_resposta')
+        Referencia, on_delete=models.CASCADE, null=True, blank=True
+    )
     outras_referencias = models.ForeignKey(
-        'Referencia', on_delete=models.CASCADE)
+        Referencia, on_delete=models.CASCADE, null=True, blank=True, related_name='outras_referencias'
+    )
     status = models.BooleanField(default=True, verbose_name='Pergunta Status')
     criado_por = models.ForeignKey(
         User, related_name='criado_por', on_delete=models.CASCADE)
@@ -51,19 +65,6 @@ class Pergunta(models.Model):
     class Meta:
         db_table = 'pergunta'
         verbose_name = 'Pergunta'
-
-
-class Referencia(models.Model):
-    id = models.AutoField(primary_key=True)
-    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
-    versiculo = models.ForeignKey(Versiculo, on_delete=models.CASCADE,
-                                  verbose_name='Versículo')
-
-    def __str__(self):
-        return f"{self.livro} {self.versiculo}"
-
-    class Meta:
-        db_table = 'referencia'
 
 
 class Alternativa(models.Model):

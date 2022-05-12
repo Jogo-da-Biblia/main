@@ -76,3 +76,4 @@ class AlternativaAdmin(admin.ModelAdmin):
 
 admin.site.register(Pergunta, PerguntaAdmin)
 admin.site.register(Alternativa, AlternativaAdmin)
+admin.site.register(Referencia)
