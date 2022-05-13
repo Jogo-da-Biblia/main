@@ -52,10 +52,12 @@ class Pergunta(models.Model):
         User, related_name='criado_por', on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)
     revisado_por = models.ForeignKey(
-        User, related_name='revisado_por', on_delete=models.CASCADE)
+        User, related_name='revisado_por', on_delete=models.CASCADE, null=True, blank=True
+    )
     revisado_em = models.DateTimeField(auto_now_add=True)
     publicado_por = models.ForeignKey(
-        User, related_name='publicado_por', on_delete=models.CASCADE)
+        User, related_name='publicado_por', on_delete=models.CASCADE, null=True, blank=True
+    )
     publicado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
