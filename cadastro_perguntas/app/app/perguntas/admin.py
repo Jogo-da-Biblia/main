@@ -11,17 +11,12 @@ PUBLICADOR
 
 class AlternativaInline(admin.TabularInline):
     model = Alternativa
-    extra = 1
-
-
-class ReferenciaInline(admin.TabularInline):
-    model = Referencia
-    extra = 1
+    extra = 0
 
 
 class PerguntaAdmin(admin.ModelAdmin):
-    fields = ('tema', 'enunciado', 'tipo_resposta',
-              'criado_por', 'status')
+    fields = ['tema', 'enunciado', 'tipo_resposta', 'refencia_resposta',
+              'outras_referencias', 'status', 'criado_por']
     inlines = [AlternativaInline]
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -52,14 +47,13 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, extra_context=None):
         if request.user.has_perm('review_question'):
-            self.fields.append('revisado_por')
-            self.fields.append('revisado_em')
-            self.readonly_fields.append('revisado_por')
-            self.readonly_fields.append('revisado_em')
+            self.fields.append(['revisado_por', 'revisado_em'])
+            self.readonly_fields += ('revisado_por','revisado_em')
+
         if request.user.has_perm('publish_question'):
-            self.fields.append('publicado_por')
-            self.fields.append('publicado_em')
-            # self.readonly_fields = ('revisado_por','revisado_em')
+            self.fields.append(['publicado_por', 'publicado_em'])
+            self.readonly_fields += ('publicado_por','publicado_em')
+        return super().change_view(request, object_id, extra_context)
 
     def save_model(self, request, obj, form, change):
         # Se quem salvou é PUBLICADOR, então ele ganha o publicado_em e publicado_por
