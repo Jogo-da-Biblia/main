@@ -3,9 +3,10 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 '''
 Permissões:
-COLABORADOR: quem manda comentários, criticas e perguntas
-REVISOR: quem revisa as perguntas e 
-PUBLICADOR
+COLABORADOR: Add, View Perguntas template externo
+REVISOR: View, Change Pergunas admin
+PUBLICADOR View, Change, Publish Perguntas admin
+ADMINISTRADOR View, Change, Publish Perguntas admin
 '''
 
 
