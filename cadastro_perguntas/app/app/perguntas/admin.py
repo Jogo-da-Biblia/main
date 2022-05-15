@@ -65,8 +65,8 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         # Se quem salvou é PUBLICADOR, então ele ganha o publicado_em e publicado_por
-        obj.user = request.user
-        super().save_model(request, obj, form, change)
+        obj.publicado_por = request.user
+        super(PerguntaAdmin, self).save_model(request, obj, form, change)
 
 # Desabilitando a tela de Adicionar principalmente para o colaborador não se confundir
 
