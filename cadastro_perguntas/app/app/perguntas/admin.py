@@ -16,8 +16,11 @@ class AlternativaInline(admin.TabularInline):
 
 
 class PerguntaAdmin(admin.ModelAdmin):
-    fields = ['tema', 'enunciado', 'tipo_resposta', 'refencia_resposta',
-              'outras_referencias', 'status', 'criado_por']
+    fields = [
+        'tema', 'enunciado', 'tipo_resposta', 'refencia_resposta',
+        'outras_referencias', 'status', 'criado_por',
+        ('revisado_por', 'revisado_em'), ('publicado_por', 'publicado_em')
+    ]
     inlines = [AlternativaInline]
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -47,13 +50,9 @@ class PerguntaAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def change_view(self, request, object_id, extra_context=None):
-        if request.user.has_perm('review_question'):
-            self.fields.append(['revisado_por', 'revisado_em'])
-            self.readonly_fields += ('revisado_por','revisado_em')
-
-        if request.user.has_perm('publish_question'):
-            self.fields.append(['publicado_por', 'publicado_em'])
-            self.readonly_fields += ('publicado_por','publicado_em')
+        self.readonly_fields = (
+            'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em'
+        )
         return super().change_view(request, object_id, extra_context)
 
     def save_model(self, request, obj, form, change):
