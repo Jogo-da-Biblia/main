@@ -13,23 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from argparse import Namespace
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 from app.perguntas.views import tmp_home
-from app.core.views import register_user
 
 urlpatterns = [
-    path('', tmp_home),
     path('admin/', admin.site.urls),
-    path("register/", register_user, name="register"),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('', include('app.pages.urls'), name='pages'),
 ]
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT, show_indexes=True) 
+urlpatterns += static(
+    settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True
+)
+urlpatterns += static(
+    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT, show_indexes=True
+)
 
 '''
 accounts/logout/ [name='logout']

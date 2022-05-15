@@ -15,4 +15,6 @@ uritemplate
 xhtml2pdf
 pymysql
 python-gettext
-psycopg2
+psycopg2==2.9.3
+django-allauth==0.50.0
+django-crispy-forms==1.14.0
