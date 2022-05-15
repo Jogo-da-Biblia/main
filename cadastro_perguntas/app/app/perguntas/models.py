@@ -47,7 +47,7 @@ class Pergunta(models.Model):
     outras_referencias = models.ForeignKey(
         Referencia, on_delete=models.CASCADE, null=True, blank=True, related_name='outras_referencias'
     )
-    status = models.BooleanField(default=True, verbose_name='Pergunta Status')
+    status = models.BooleanField(default=True, verbose_name='Publicado')
     criado_por = models.ForeignKey(
         User, related_name='criado_por', on_delete=models.CASCADE)
     criado_em = models.DateTimeField(auto_now_add=True)

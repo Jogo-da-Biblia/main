@@ -17,3 +17,5 @@ class Comentario(models.Model):
 
     class Meta:
         db_table = 'comentario'
+        verbose_name = 'Comentário'
+        verbose_name_plural = 'Comentários'

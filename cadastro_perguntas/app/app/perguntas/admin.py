@@ -1,6 +1,8 @@
 from app.perguntas.models import Pergunta, Alternativa, Referencia
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+
+
 '''
 Permissões:
 COLABORADOR: Add, View Perguntas template externo
@@ -16,6 +18,11 @@ class AlternativaInline(admin.TabularInline):
 
 
 class PerguntaAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'tema', 'tipo_resposta', 'criado_em', 'publicado_em', 'status'
+    )
+    list_filter = ('tema', 'tipo_resposta', 'status')
+    search_fields = ('tema', 'descricao')
     fields = [
         'tema', 'enunciado', 'tipo_resposta', 'refencia_resposta',
         'outras_referencias', 'status', 'criado_por',
@@ -38,7 +45,8 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser or request.user.has_perm('review_question'):
+        if request.user.is_superuser or request.user.has_perm(
+                'review_question'):
             return qs
         # Filtrar apenas que ainda não tenham sido revisadas
         return qs.filter(criado_por=request.user)
