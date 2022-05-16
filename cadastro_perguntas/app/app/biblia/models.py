@@ -3,7 +3,11 @@ from django.db import models
 
 class Livro(models.Model):
     testamento = models.ForeignKey(
-        'Testamento', related_name='livros', on_delete=models.CASCADE)
+        'Testamento',
+        related_name='livros',
+        on_delete=models.CASCADE
+    )
+
     posicao = models.IntegerField()
     # capitulos = models.IntegerField(default=1)
     nome = models.CharField(max_length=20)
@@ -21,9 +25,17 @@ class Testamento(models.Model):
 
 class Versiculo(models.Model):
     versao = models.ForeignKey(
-        'Versao', related_name='versiculos', on_delete=models.CASCADE)
+        'Versao',
+        related_name='versiculos',
+        on_delete=models.CASCADE
+    )
+
     livro = models.ForeignKey(
-        'Livro', related_name='versiculos', on_delete=models.CASCADE)
+        'Livro',
+        related_name='versiculos',
+        on_delete=models.CASCADE
+    )
+    
     capitulo = models.IntegerField()
     versiculo = models.IntegerField()
     texto = models.TextField()
