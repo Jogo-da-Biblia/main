@@ -84,7 +84,15 @@ class Pergunta(models.Model):
         blank=True
     )
 
-    revisado_em = models.DateTimeField(auto_now_add=True)
+    revisado_status = models.BooleanField(
+        default=False, verbose_name='Revisado'
+    )
+
+    revisado_em = models.DateTimeField(
+        auto_now_add=True,
+        null=True,
+        blank=True
+    )
 
     publicado_por = models.ForeignKey(
         User,
@@ -94,7 +102,12 @@ class Pergunta(models.Model):
         blank=True
     )
 
-    publicado_em = models.DateTimeField(auto_now_add=True)
+    publicado_em = models.DateTimeField(
+        auto_now_add=True,
+        null=True,
+        blank=True
+    )
+
     atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -108,7 +121,7 @@ class Pergunta(models.Model):
 class Alternativa(models.Model):
     id = models.AutoField(primary_key=True)
     texto = models.TextField()
-    
+
     alternativas = models.ForeignKey(
         Pergunta,
         related_name='alternativas',

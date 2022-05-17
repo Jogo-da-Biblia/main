@@ -1,3 +1,4 @@
+from datetime import datetime
 from app.perguntas.models import Pergunta, Alternativa, Referencia
 from django.contrib import admin
 from django.core.exceptions import ValidationError
@@ -19,15 +20,26 @@ class AlternativaInline(admin.TabularInline):
 
 class PerguntaAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'tema', 'tipo_resposta', 'criado_em', 'publicado_em', 'status'
+        'id',
+        'tema',
+        'tipo_resposta',
+        'criado_em',
+        'publicado_em',
+        'status',
+        'revisado_status'
     )
     list_filter = ('tema', 'tipo_resposta', 'status')
     search_fields = ('tema', 'descricao')
     fields = [
         'tema', 'enunciado', 'tipo_resposta', 'refencia_resposta',
-        'outras_referencias', 'status', 'criado_por',
+        'outras_referencias', 'criado_por',
+        ('revisado_status', 'status'),
         ('revisado_por', 'revisado_em'), ('publicado_por', 'publicado_em')
     ]
+    readonly_fields = (
+        'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em'
+    )
+
     inlines = [AlternativaInline]
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -43,13 +55,13 @@ class PerguntaAdmin(admin.ModelAdmin):
     #     get_data['criado_por'] = request.user.id
     #     return get_data
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser or request.user.has_perm(
-                'review_question'):
-            return qs
-        # Filtrar apenas que ainda não tenham sido revisadas
-        return qs.filter(criado_por=request.user)
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     if request.user.is_superuser or request.user.has_perm(
+    #             'review_question'):
+    #         return qs
+    #     # Filtrar apenas que ainda não tenham sido revisadas
+    #     return qs.filter(criado_por=request.user)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "criado_por":
@@ -58,14 +70,28 @@ class PerguntaAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def change_view(self, request, object_id, extra_context=None):
-        self.readonly_fields = (
-            'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em'
-        )
         return super().change_view(request, object_id, extra_context)
 
     def save_model(self, request, obj, form, change):
-        # Se quem salvou é PUBLICADOR, então ele ganha o publicado_em e publicado_por
-        obj.publicado_por = request.user
+        if not obj.revisado_status:
+            obj.status = False
+
+        if obj.revisado_status:
+            if obj.revisado_por is None:
+                obj.revisado_por = request.user
+                obj.revisado_em = datetime.now()
+        else:
+            obj.revisado_por = None
+            obj.revisado_em = None
+
+        if obj.status:
+            if obj.publicado_por is None:
+                obj.publicado_por = request.user
+                obj.publicado_em = datetime.now()
+        else:
+            obj.publicado_por = None
+            obj.publicado_em = None
+
         super(PerguntaAdmin, self).save_model(request, obj, form, change)
 
 # Desabilitando a tela de Adicionar principalmente para o colaborador não se confundir
