@@ -15,7 +15,7 @@ class UserAdmin(UserAdmin):
     # Campos que aparecem na edição do usuário
     fieldsets = (
         (None, {'fields': ('email', 'name', 'phone', 'groups', 'password')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_superuser', 'is_staff', 'is_active')}),
     )
     # Campos que aparecem na adição de um usuário
     add_fieldsets = (
