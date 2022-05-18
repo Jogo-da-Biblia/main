@@ -1,7 +1,10 @@
 from datetime import datetime
-from app.perguntas.models import Pergunta, Alternativa, Referencia
+
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from django.contrib.auth.decorators import user_passes_test
+
+from app.perguntas.models import Pergunta, Alternativa, Referencia
 
 
 '''
@@ -9,7 +12,7 @@ Permissões:
 COLABORADOR: Add, View Perguntas template externo
 REVISOR: View, Change Pergunas admin
 PUBLICADOR View, Change, Publish Perguntas admin
-ADMINISTRADOR View, Change, Publish Perguntas admin
+SUPERUSER ADMINISTRADOR View, Change, Publish Perguntas admin
 '''
 
 
@@ -50,19 +53,6 @@ class PerguntaAdmin(admin.ModelAdmin):
         except ValidationError as e:
             print(e)
 
-    # def get_changeform_initial_data(self, request):
-    #     get_data = super(PerguntaAdmin, self).get_changeform_initial_data(request)
-    #     get_data['criado_por'] = request.user.id
-    #     return get_data
-
-    # def get_queryset(self, request):
-    #     qs = super().get_queryset(request)
-    #     if request.user.is_superuser or request.user.has_perm(
-    #             'review_question'):
-    #         return qs
-    #     # Filtrar apenas que ainda não tenham sido revisadas
-    #     return qs.filter(criado_por=request.user)
-
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "criado_por":
             kwargs["initial"] = request.user.id
@@ -70,6 +60,13 @@ class PerguntaAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def change_view(self, request, object_id, extra_context=None):
+        if request.user.groups.filter(name='revisores').exists():
+            self.fields[6] = ('revisado_status',)
+        if request.user.groups.filter(name='publicadores').exists():
+            self.fields[6] = ('status',)
+        if request.user.groups.filter(name='administradores').exists():
+            self.fields[6] = ('revisado_status', 'status')
+
         return super().change_view(request, object_id, extra_context)
 
     def save_model(self, request, obj, form, change):
@@ -93,8 +90,6 @@ class PerguntaAdmin(admin.ModelAdmin):
             obj.publicado_em = None
 
         super(PerguntaAdmin, self).save_model(request, obj, form, change)
-
-# Desabilitando a tela de Adicionar principalmente para o colaborador não se confundir
 
 
 class AlternativaAdmin(admin.ModelAdmin):
