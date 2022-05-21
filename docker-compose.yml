@@ -6,6 +6,12 @@ services:
     build:
       context: cadastro_perguntas
       dockerfile: Dockerfile
+    environment:
+      - DB_NAME=${POSTGRES_NAME}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
     ports:
       - "${CADASTRO_PERGUNTAS_PORT}:8000"
     volumes:
