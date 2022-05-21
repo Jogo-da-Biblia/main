@@ -1,38 +1,148 @@
 # Adicionando usuários de teste
-from django.contrib.auth import get_user_model
-User = get_user_model()
-User(username="colaborador", name="Colaborador de Teste", email="colaborador@jogodabiblia.com.br", phone="71992540736", is_whatsapp=True, is_staff=True).save()
-colaborador = User.objects.get(username="colaborador")
-colaborador.set_password("passw@rd")
-# Criando grupos e permissões
+from app.perguntas.models import Tema
 from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from app.perguntas.models import Pergunta, Alternativa, Referencia
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+# Creater users
+# Colaborador
+colaborador = User.objects.create(
+    username="colaborador",
+    name="Colaborador de Teste",
+    email="colaborador@jogodabiblia.com.br",
+    phone="71992540736",
+    is_whatsapp=True,
+    is_staff=False
+)
+colaborador.set_password("passw@rd")
+colaborador.save()
+
+# Revisor
+revisor = User.objects.create(
+    username="revisor",
+    name="Revisor de Teste",
+    email="revisor@teste.com",
+    phone="71992540737",
+    is_whatsapp=True,
+    is_staff=True,
+)
+revisor.set_password('passw@rd')
+revisor.save()
+
+# Publicador
+publicador = User.objects.create(
+    username="publicador",
+    name="Publicador de Teste",
+    email="publicador@teste.com",
+    phone="71992540738",
+    is_whatsapp=True,
+    is_staff=True
+)
+publicador.set_password("passw@rd")
+publicador.save()
+
+# Supervisor
+supervisor = User.objects.create(
+    username="supervisor",
+    name="Supervisor de Teste",
+    email="supervisor@teste.com",
+    phone="71992540739",
+    is_whatsapp=True,
+    is_staff=True
+)
+supervisor.set_password("passw@rd")
+supervisor.save()
+
+# Administrador
+administrador = User.objects.create(
+    username="administrador",
+    name="Administrador de Teste",
+    email="administrador@teste.com",
+    phone="71992540740",
+    is_whatsapp=True,
+    is_staff=True
+)
+administrador.set_password("passw@rd")
+administrador.save()
+
 # Criando os grupos
 g_colaboradores, created = Group.objects.get_or_create(name='colaboradores')
 g_revisores, created = Group.objects.get_or_create(name='revisores')
 g_publicadores, created = Group.objects.get_or_create(name='publicadores')
-# Capturando o conteúdo dos models para associar às permissões
-ct_pergunta = ContentType.objects.get_for_model(Pergunta)
-ct_alternativa = ContentType.objects.get_for_model(Alternativa)
-ct_referencia = ContentType.objects.get_for_model(Referencia)
-# Criando as permissões
-p_can_create_pergunta = Permission.objects.create(codename='can_create_pergunta', name='Pode criar uma pergunta', content_type=ct_pergunta)
-p_can_create_alternativa = Permission.objects.create(codename='can_create_alternativa', name='Pode criar uma alternativa',content_type=ct_alternativa)
-p_can_create_referencia = Permission.objects.create(codename='can_create_referencia', name='Pode criar uma referência', content_type=ct_referencia)
+g_supervisores, created = Group.objects.get_or_create(name='supervisores')
+g_administradores, created = Group.objects.get_or_create(name='administradores')
+
+# Permissions lists
+perguntas_perms = [
+    Permission.objects.get(codename='add_pergunta'),
+    Permission.objects.get(codename='view_pergunta'),
+    Permission.objects.get(codename='change_pergunta'),
+    Permission.objects.get(codename='delete_pergunta'),
+]
+
+comentarios_perms = [
+    Permission.objects.get(codename='add_comentario'),
+    Permission.objects.get(codename='view_comentario'),
+    Permission.objects.get(codename='change_comentario'),
+    Permission.objects.get(codename='delete_comentario')
+]
+
+alternativas_perms = [
+    Permission.objects.get(codename='add_alternativa'),
+    Permission.objects.get(codename='view_alternativa'),
+    Permission.objects.get(codename='change_alternativa'),
+    Permission.objects.get(codename='delete_alternativa')
+]
+
+referencias_perms = [
+    Permission.objects.get(codename='add_referencia'),
+    Permission.objects.get(codename='view_referencia'),
+    Permission.objects.get(codename='change_referencia'),
+    Permission.objects.get(codename='delete_referencia')
+]
+
+all_perms = Permission.objects.all()
+
 # Associando grupos às permissões
-g_colaboradores.permissions.add(p_can_create_pergunta)
-g_colaboradores.permissions.add(Permission.objects.get(codename='add_pergunta'))
-g_colaboradores.permissions.add(Permission.objects.get(codename='add_alternativa'))
-g_colaboradores.permissions.add(Permission.objects.get(codename='add_referencia'))
-g_colaboradores.permissions.add(Permission.objects.get(codename='view_pergunta'))
-g_colaboradores.permissions.add(p_can_create_alternativa)
-g_colaboradores.permissions.add(p_can_create_referencia)
+# Colaboradores
+g_colaboradores.permissions.add(
+    *comentarios_perms,
+    *perguntas_perms,
+    *alternativas_perms,
+    *referencias_perms
+)
+
+# Revisores
+g_revisores.permissions.add(
+    *comentarios_perms,
+    *perguntas_perms,
+    *alternativas_perms,
+    *referencias_perms
+)
+
+# Publicadores
+g_publicadores.permissions.add(
+    *comentarios_perms,
+    *perguntas_perms,
+    *alternativas_perms,
+    *referencias_perms
+)
+
+# Supervisores
+g_supervisores.permissions.add(*all_perms)
+
+# Administradores
+g_administradores.permissions.add(*all_perms)
+
 # Associando usuários aos grupos
 g_colaboradores.user_set.add(colaborador)
+g_revisores.user_set.add(revisor)
+g_publicadores.user_set.add(publicador)
+g_supervisores.user_set.add(supervisor)
+g_administradores.user_set.add(administrador)
 
 # Criando temas/grupos de perguntas
-from app.perguntas.models import Tema
 Tema(nome="Doutrina", cor="a163e8").save()
 Tema(nome="Referencia", cor="f99e00").save()
 Tema(nome="Personagens do Antigo Testamento", cor="5ade3c").save()
