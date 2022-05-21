@@ -9,10 +9,11 @@ from app.perguntas.models import Pergunta, Alternativa, Referencia
 
 '''
 Permissões:
-COLABORADOR: Add, View Perguntas template externo
-REVISOR: View, Change Pergunas admin
+COLABORADOR: Add, View Perguntas template frontend
+REVISOR: View, Change, Review Pergunas admin
 PUBLICADOR View, Change, Publish Perguntas admin
-SUPERUSER ADMINISTRADOR View, Change, Publish Perguntas admin
+SUPERVISOR all permissions (Review only or Publish only) admin
+ADMINISTRADOR all permissions admin
 '''
 
 
