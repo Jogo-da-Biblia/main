@@ -1,16 +1,19 @@
 from datetime import datetime
+from multiprocessing import Value
 
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import user_passes_test
 
+from app.core.models import User
 from app.perguntas.models import Pergunta, Alternativa, Referencia
+from app.comentarios.models import Comentario
 
 
 '''
 Permissões:
 COLABORADOR: Add, View Perguntas template frontend
-REVISOR: View, Change, Review Pergunas admin
+REVISOR: View, Change, Review Perguntas admin
 PUBLICADOR View, Change, Publish Perguntas admin
 SUPERVISOR all permissions (Review only or Publish only) admin
 ADMINISTRADOR all permissions admin
@@ -20,6 +23,28 @@ ADMINISTRADOR all permissions admin
 class AlternativaInline(admin.TabularInline):
     model = Alternativa
     extra = 0
+
+
+class ComentarioInline(admin.TabularInline):
+    model = Comentario
+    raw_id_fields = ('email', 'phone')
+    fields = ('mensagem',)
+    extra = 0
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "email":
+            kwargs["initial"] = request.user.email
+            kwargs["disabled"] = True
+
+        if db_field.name == "phone":
+            kwargs["initial"] = request.user.phone
+            kwargs["disabled"] = True
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def has_add_permission(self, request, obj):
+        if request.method == 'POST':
+            self.fields = ('mensagem', 'email', 'phone')
+        return super().has_add_permission(request, obj)
 
 
 class PerguntaAdmin(admin.ModelAdmin):
@@ -44,7 +69,7 @@ class PerguntaAdmin(admin.ModelAdmin):
         'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em'
     )
 
-    inlines = [AlternativaInline]
+    inlines = [AlternativaInline, ComentarioInline]
 
     def add_view(self, request, form_url='', extra_context=None):
         try:
