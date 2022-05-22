@@ -1,9 +1,12 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 
-from . import views
+from .views import HomePageView, PerguntasPageView#, PerguntaCreateView, PerguntaUpdateView
+
 
 app_name = 'pages'
 
 urlpatterns = [
-    path('', views.HomePageView.as_view(), name='home'),
+    path('', HomePageView.as_view(), name='home'),
+    path('perguntas', login_required(PerguntasPageView.as_view()), name='minhas_perguntas'),
 ]

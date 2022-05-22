@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %} Minhas Perguntas {% endblock %}
+
+{% block content %}
+    <header class="cabecalho">
+        <button class="cabecalho__menu" aria-label="Menu"><i><img src="../../media/Sandubar.png" alt=""></i></button>
+        <img src="../../media/main_logo.png" alt="Logotipo" class="cabecalho__logo">
+    </header>
+
+    <nav class="menu-lateral">
+        <a href="#" class="menu-lateral__link menu-lateral__link--inicio menu-lateral__link--ativo"></a>
+        <a href="adicionar-pergunta.html" class="menu-lateral__link menu-lateral__link--videos">Adicionar Perguntas</a>
+        <a href="minhas-perguntas.html" class="menu-lateral__link menu-lateral__link--picos">Minhas Perguntas</a>
+        <a href="ranking.html" class="menu-lateral__link menu-lateral__link--integrantes">Ranking</a>
+        <a href="redefinir.html" class="menu-lateral__link menu-lateral__link--camisas">Redefinir Senha</a>
+        <a href="{% url 'account_logout' %}" class="menu-lateral__link menu-lateral__link--pinturas">Sair</a>
+    </nav>
+
+    <article class="pergunta__texto">   
+        <h1 class="titulo__padrao">Minhas Perguntas</h1>
+
+        {% for pergunta in object_list %}
+            <div class="pergunta__texto">
+                <div class="caixa__texto">
+                    <div class="txt__pergunta">
+                        <div cols="230" rows="5" id="mensagem" class="caixa-pergunta__resposta">
+                            <div class="enunciado">{{ pergunta.enunciado }}</div>
+
+                            {% for alternativa in alternativas %}
+                                {% if alternativa.alternativas_id == pergunta.id %}
+                                    {% if alternativa.alternativas_corretas %}
+                                        <div class="alternativas">{{ alternativa }}</div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for sigla, label in pergunta.TIPO_RESPOSTA %}
+                                {% if sigla == pergunta.tipo_resposta %}
+                                    <div class="tipo_resposta">Tipo: {{ label }}</div>
+                                {% endif %}	
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if pergunta.revisado_status %}
+                        <label class="btn__conf"><p class="btn__revisado">Revisado</p></label>
+                    {% else %}
+                        <label class="btn__conf"><p class="btn__enviado">Enviado</p></label>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </article>
+
+    <script>
+        const botaoMenu = document.querySelector('.cabecalho__menu')
+        const menu = document.querySelector('.menu-lateral')
+
+        botaoMenu.addEventListener('click', () => {
+            menu.classList.toggle('menu-lateral--ativo')
+        })
+    </script>
+{% endblock %}

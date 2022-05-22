@@ -169,7 +169,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
 ACCOUNT_FORMS = {
     "login": "app.core.forms.MyCustomLoginForm",
     "signup": "app.core.forms.MyCustomSignupForm",
@@ -178,7 +177,7 @@ ACCOUNT_FORMS = {
 ACCOUNT_ADAPTER = 'app.core.forms.CustomAccountAdapter'
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = '/perguntas'
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_USERNAME_REQUIRED = True
