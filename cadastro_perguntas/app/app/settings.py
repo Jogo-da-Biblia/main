@@ -170,8 +170,12 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
-ACCOUNT_FORMS = {"signup": "app.core.forms.MyCustomSignupForm"}
-ACCOUNT_FORMS = {"login": "app.core.forms.MyCustomLoginForm"}
+ACCOUNT_FORMS = {
+    "login": "app.core.forms.MyCustomLoginForm",
+    "signup": "app.core.forms.MyCustomSignupForm",
+}
+
+ACCOUNT_ADAPTER = 'app.core.forms.CustomAccountAdapter'
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 LOGIN_REDIRECT_URL = "/"

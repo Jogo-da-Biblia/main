@@ -5,10 +5,35 @@
 {% block title %}Cadastro{% endblock %}
 
 {% block content %}
-    <h2>Cadastro</h2>
+    <header class="logo__principal">
+        <img src="../../media/main_logo.png" alt="Jogo da Biblia" class="logo__pequeno">
+    </header>
     <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button class="btn btn-success" type="submit">Cadastrar</button>
+        <article class="pagina__login">
+
+            <h1 class="titulo__padrao">Cadastro</h1>
+            <p class="username__senha">Para começar a coleborar cadastre-se com seus dados abaixo e comece a enviar perguntas. </p>
+            
+            {% csrf_token %}
+            {{ form|crispy }}
+
+            <fieldset>                   
+                <label for="radio-aceito" class="termo__uso">
+                    <input type="checkbox" name="aceito" value="aceito" id="radio-aceito" class="termo__aceitar" required>
+                        Li e concordo com o &nbsp<a href="#">Termos de Uso</a>
+                    
+                </label> 
+            </fieldset>
+
+            <div class="botao--entrar">
+                <button class="botao__entrar" type="submit" onclick="check_agreements()">Cadastrar</button>
+            </div>
+        </article>
     </form>
+
+    <script>
+        function check_agreements() {
+          document.getElementById("botao__entrar").required = true;
+        }
+    </script>
 {% endblock %}
