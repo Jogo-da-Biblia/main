@@ -1,0 +1,13 @@
+@media screen and (min-width: 320px) {
+    .copyright {
+        display: flex;
+        justify-content: center;
+        font-family: 'Lato';
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 14px;
+        text-align: center;
+        color: #D2D2D2;
+        margin-top: 50px;
+    }
+}
