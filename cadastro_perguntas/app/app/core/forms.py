@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 
-from allauth.account.forms import SignupForm
+from allauth.account.forms import SignupForm, LoginForm
 
 
 # Create your forms here.
@@ -46,3 +46,13 @@ class MyCustomSignupForm(SignupForm):
 		self.fields['phone'].widget.attrs['placeholder'] = 'Whatsapp'
 
 		self.fields['phone'].widget.attrs.update({'class': 'form-control-lg'})
+
+
+class MyCustomLoginForm(LoginForm):
+	def __init__(self, *args, **kwargs):
+		super(MyCustomLoginForm, self).__init__(*args, **kwargs)
+		self.fields['login'].widget.attrs['placeholder'] = 'username ou email'
+		self.fields['login'].widget.attrs.update({'class': 'input__padrao input__email'})
+
+		self.fields['password'].widget.attrs['placeholder'] = 'senha'
+		self.fields['password'].widget.attrs.update({'class': 'input__padrao input__senha'})
