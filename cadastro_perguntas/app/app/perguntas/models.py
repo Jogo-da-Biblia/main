@@ -66,7 +66,7 @@ class Pergunta(models.Model):
         related_name='outras_referencias'
     )
 
-    status = models.BooleanField(default=True, verbose_name='Publicado')
+    status = models.BooleanField(default=False, verbose_name='Publicado')
 
     criado_por = models.ForeignKey(
         User,
