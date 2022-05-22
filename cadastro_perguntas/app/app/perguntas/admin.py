@@ -1,11 +1,8 @@
 from datetime import datetime
-from multiprocessing import Value
 
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from django.contrib.auth.decorators import user_passes_test
 
-from app.core.models import User
 from app.perguntas.models import Pergunta, Alternativa, Referencia
 from app.comentarios.models import Comentario
 
@@ -27,10 +24,10 @@ class AlternativaInline(admin.TabularInline):
 
 class ComentarioInline(admin.TabularInline):
     model = Comentario
-    raw_id_fields = ('email', 'phone')
     fields = ('mensagem',)
     extra = 0
 
+    # Garannte que os campos email e phone serão automaticamente preenchidos
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "email":
             kwargs["initial"] = request.user.email
@@ -41,6 +38,7 @@ class ComentarioInline(admin.TabularInline):
             kwargs["disabled"] = True
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    # Garante que os campos email e phone estarão na requisição POST
     def has_add_permission(self, request, obj):
         if request.method == 'POST':
             self.fields = ('mensagem', 'email', 'phone')
@@ -85,20 +83,32 @@ class PerguntaAdmin(admin.ModelAdmin):
             kwargs["disabled"] = True
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    # Garante que publicadores e revisores alterem apenas seus status
     def change_view(self, request, object_id, extra_context=None):
         if request.user.groups.filter(name='revisores').exists():
             self.fields[6] = ('revisado_status',)
         if request.user.groups.filter(name='publicadores').exists():
             self.fields[6] = ('status',)
+        if request.user.groups.filter(name='supervisores').exists():
+            self.fields[6] = ('revisado_status', 'status')
         if request.user.groups.filter(name='administradores').exists():
             self.fields[6] = ('revisado_status', 'status')
 
         return super().change_view(request, object_id, extra_context)
 
+    def double_check(self, request, obj):
+        if request.user.groups.filter(name='administradores').exists() \
+                or request.user.is_superuser:
+            return True
+        if obj.publicado_por == obj.revisado_por:
+            obj.status = False
+
     def save_model(self, request, obj, form, change):
+        # Perguntas não revisadas não podem ser publicadas
         if not obj.revisado_status:
             obj.status = False
 
+        # Altera o nome do revisor se o status for alterado
         if obj.revisado_status:
             if obj.revisado_por is None:
                 obj.revisado_por = request.user
@@ -107,6 +117,9 @@ class PerguntaAdmin(admin.ModelAdmin):
             obj.revisado_por = None
             obj.revisado_em = None
 
+        self.double_check(request, obj)
+
+        # Altera o nome do publicador se o status for alterado
         if obj.status:
             if obj.publicado_por is None:
                 obj.publicado_por = request.user
