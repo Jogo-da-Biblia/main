@@ -11,9 +11,9 @@
     <nav class="menu-lateral">
         <a href="#" class="menu-lateral__link menu-lateral__link--inicio menu-lateral__link--ativo"></a>
         <a href="adicionar-pergunta.html" class="menu-lateral__link menu-lateral__link--videos">Adicionar Perguntas</a>
-        <a href="minhas-perguntas.html" class="menu-lateral__link menu-lateral__link--picos">Minhas Perguntas</a>
+        <a href="{{ perguntas }}" class="menu-lateral__link menu-lateral__link--picos">Minhas Perguntas</a>
         <a href="ranking.html" class="menu-lateral__link menu-lateral__link--integrantes">Ranking</a>
-        <a href="redefinir.html" class="menu-lateral__link menu-lateral__link--camisas">Redefinir Senha</a>
+        <a href="{% url 'account_change_password' %}" class="menu-lateral__link menu-lateral__link--camisas">Redefinir Senha</a>
         <a href="{% url 'account_logout' %}" class="menu-lateral__link menu-lateral__link--pinturas">Sair</a>
     </nav>
 
@@ -21,6 +21,7 @@
         <h1 class="titulo__padrao">Minhas Perguntas</h1>
 
         {% for pergunta in object_list %}
+        <a href="{{ pergunta.get_absolute_url }}">
             <div class="pergunta__texto">
                 <div class="caixa__texto">
                     <div class="txt__pergunta">
@@ -50,6 +51,7 @@
                     {% endif %}
                 </div>
             </div>
+        </a>
         {% endfor %}
     </article>
 

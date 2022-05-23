@@ -1,6 +1,8 @@
-from app.biblia.models import Livro, Versiculo
-from app.core.models import User
 from django.db import models
+from django.urls import reverse
+
+from app.core.models import User
+from app.biblia.models import Livro, Versiculo
 
 
 class Tema(models.Model):
@@ -116,6 +118,9 @@ class Pergunta(models.Model):
     class Meta:
         db_table = 'pergunta'
         verbose_name = 'Pergunta'
+    
+    def get_absolute_url(self):
+        return reverse('pages:pergunta_update', kwargs={'pk': self.id})
 
 
 class Alternativa(models.Model):
@@ -130,8 +135,8 @@ class Alternativa(models.Model):
 
     alternativas_corretas = models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.texto
-
     class Meta:
         db_table = 'alternativa'
+
+    def __str__(self):
+        return self.texto

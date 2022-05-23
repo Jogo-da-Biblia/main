@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from app.perguntas.models import Pergunta, Alternativa
 
@@ -17,3 +17,9 @@ class PerguntasPageView(ListView):
         context = super().get_context_data(**kwargs)
         context["alternativas"] = Alternativa.objects.all()
         return context
+
+
+class PerguntaUpdateView(UpdateView):
+    model = Pergunta
+    fields = '__all__'
+    
