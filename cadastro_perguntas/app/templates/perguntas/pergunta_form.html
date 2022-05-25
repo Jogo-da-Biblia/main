@@ -5,6 +5,7 @@
 {% block title %} Atualizar Pergunta {% endblock %}
 
 {% block content %}
+    <h1 class="titulo__padrao">Atualizar Pergunta</h1>
 
     <form method="post">{% csrf_token %}
         {{ form|crispy }}
@@ -12,8 +13,24 @@
 
         {{ formset.management_form }}
         {% for alternativa in formset %}
+        <div class="inlineform">
+            <hr>
             {{ alternativa|crispy }}
+        </div>
         {% endfor %}
+
     </form>
 
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(function() {
+        $('.inlineform').formset({
+            prefix: '{{ formset.prefix }}',
+            addText: 'Adicionar nova alternativa',
+            deleteText: 'Remover',
+        });
+    })
+</script>
+{% endblock scripts %}
