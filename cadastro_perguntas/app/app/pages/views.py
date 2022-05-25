@@ -1,4 +1,5 @@
 from django.forms import BaseInlineFormSet, inlineformset_factory
+from django.http import JsonResponse
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from app.perguntas.models import Pergunta, Alternativa
@@ -42,7 +43,7 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["versiculos"] = Versiculo.objects.all()
+        # context["versiculos"] = Versiculo.objects.all()
         context["livros"] = Livro.objects.all()
 
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=1, can_delete=True)
@@ -69,3 +70,10 @@ class PerguntaUpdateView(UpdateView):
                 formset.save()
 
         return super().form_valid(form)
+
+
+def get_versiculos(request):
+    print(request.POST['livro'])
+    if request.method == 'POST':
+        versiculos = Versiculo.objects.filter(livro_id=request.POST['livro'])
+        return JsonResponse(list(versiculos.values()), safe=False)

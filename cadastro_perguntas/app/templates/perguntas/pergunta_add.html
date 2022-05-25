@@ -5,50 +5,80 @@
 {% block title %} Minhas Perguntas {% endblock %}
 
 {% block content %}
-    <h1 class="titulo__padrao">Adicionar Pergunta</h1>
+<h1 class="titulo__padrao">Adicionar Pergunta</h1>
 
-    <form method="post">{% csrf_token %}
-        {{ form.tema }}
-        {{ form.enunciado }}
-        {{ form.tipo_resposta }}
+<form method="post">{% csrf_token %}
+    {{ form.tema }}
+    {{ form.enunciado }}
+    {{ form.tipo_resposta }}
 
-        {{ formset.management_form }}
+    {{ formset.management_form }}
 
-        <h1 class="titulo__padrao">Adicionar alternativas</h1>
-        {% for alternativa in formset %}
-        <div class="inlineform">
-            <hr>
-            {{ alternativa|crispy }}
-        </div>
+    <h1 class="titulo__padrao">Adicionar alternativas</h1>
+    {% for alternativa in formset %}
+    <div class="inlineform">
+        <hr>
+        {{ alternativa|crispy }}
+    </div>
+    {% endfor %}
+
+    <h1 class="titulo__padrao">Referência</h1>
+    <select name="livro" class="input__padrao" id="livros">
+        <option value="" label="Livros"></option>
+        {% for livro in livros %}
+        <option value="{{ livro.id }}">{{ livro.nome }}</option>
         {% endfor %}
+    </select>
 
-        <h1 class="titulo__padrao">Referência</h1>
-        <select name="livro" class="input__padrao">
-            {% for livro in livros %}
-            <option value="{{ livro.id }}">{{ livro.nome }}</option>
-            {% endfor %}
-        </select>
-        <select name="livro" class="input__padrao">
-            {% for versiculo in versiculos %}
-            <option value="{{ versiculo.capitulo }}">{{ versiculo.capitulo }}</option>
-            {% endfor %}
-        </select>
+    <select name="capitulos" class="input__padrao" id="capitulos"></select>
 
-        <!-- <a class="btn btn-info" id="add-item"><i class="fa fa-plus"></i> Add Item</a> -->
+    <select name="versiculos" class="input__padrao" id="versiculos"></select>
 
-        <input type="submit" value="Salvar">
-    </form>
+    <!-- <a class="btn btn-info" id="add-item"><i class="fa fa-plus"></i> Add Item</a> -->
+
+    <input type="submit" value="Salvar">
+</form>
 
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript">
-    $(function() {
+    $(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": $('[name=csrfmiddlewaretoken]').val()
+            }
+        })
+    });
+
+    $(function () {
         $('.inlineform').formset({
             prefix: '{{ formset.prefix }}',
             addText: 'Adicionar nova alternativa',
             deleteText: 'Remover',
         });
     })
+
+    $("#livros").change(function () {
+        data = $.post(
+            "{% url 'pages:get_versiculos' %}",
+            {'livro': $("#livros").val(),},
+        );
+
+        data.done(function (data) {
+            $("#capitulos").children().remove();
+            $("#versiculos").children().remove();
+            data.forEach(function (item) {
+                $("#capitulos").append(
+                    $("<option></option>").attr("value", item.id).text(item.capitulo)
+                );
+
+                $("#versiculos").append(
+                    $("<option></option>").attr("value", item.id).text(item.versiculo)
+                );
+            });
+        });
+    });
+
 </script>
 {% endblock scripts %}
