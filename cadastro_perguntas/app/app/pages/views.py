@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from app.perguntas.models import Pergunta, Alternativa
 from app.perguntas.forms import AlternativaForm
-from app.biblia.models import Versiculo
+from app.biblia.models import Versiculo, Livro
 
 
 class HomePageView(TemplateView):
@@ -42,8 +42,8 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["alternativas"] = Alternativa.objects.all()
         context["versiculos"] = Versiculo.objects.all()
+        context["livros"] = Livro.objects.all()
 
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=1, can_delete=True)
         context["formset"] = AlternativasFormSet()
@@ -57,7 +57,7 @@ class PerguntaUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=1)
+        AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=0, can_delete=True)
         context["formset"] = AlternativasFormSet(instance=self.object)
         return context
 
