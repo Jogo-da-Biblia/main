@@ -2,13 +2,18 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %} Minhas Perguntas {% endblock %}
+{% block title %} Atualizar Pergunta {% endblock %}
 
 {% block content %}
 
     <form method="post">{% csrf_token %}
         {{ form|crispy }}
         <input type="submit" value="Update">
+
+        {{ formset.management_form }}
+        {% for alternativa in formset %}
+            {{ alternativa|crispy }}
+        {% endfor %}
     </form>
 
 {% endblock %}
