@@ -35,7 +35,7 @@ class Versiculo(models.Model):
         related_name='versiculos',
         on_delete=models.CASCADE
     )
-    
+
     capitulo = models.IntegerField()
     versiculo = models.IntegerField()
     texto = models.TextField()

@@ -118,7 +118,7 @@ class Pergunta(models.Model):
     class Meta:
         db_table = 'pergunta'
         verbose_name = 'Pergunta'
-    
+
     def get_absolute_url(self):
         return reverse('pages:pergunta_update', kwargs={'pk': self.id})
 

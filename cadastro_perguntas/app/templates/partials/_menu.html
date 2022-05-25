@@ -1,0 +1,22 @@
+<header class="cabecalho">
+    <button class="cabecalho__menu" aria-label="Menu"><i><img src="../../../media/Sandubar.png" alt=""></i></button>
+    <img src="..\..\..\media\main_logo.png" alt="Logotipo" class="cabecalho__logo">
+</header>
+
+<nav class="menu-lateral">
+    <a href="#" class="menu-lateral__link menu-lateral__link--inicio menu-lateral__link--ativo"></a>
+    <a href="{% url 'pages:pergunta_add' %}" class="menu-lateral__link menu-lateral__link--videos">Adicionar Perguntas</a>
+    <a href="{{ '/' }}" class="menu-lateral__link menu-lateral__link--picos">Minhas Perguntas</a>
+    <a href="ranking.html" class="menu-lateral__link menu-lateral__link--integrantes">Ranking</a>
+    <a href="{% url 'account_change_password' %}" class="menu-lateral__link menu-lateral__link--camisas">Redefinir Senha</a>
+    <a href="{% url 'account_logout' %}" class="menu-lateral__link menu-lateral__link--pinturas">Sair</a>
+</nav>
+
+<script>
+    const botaoMenu = document.querySelector('.cabecalho__menu')
+    const menu = document.querySelector('.menu-lateral')
+
+    botaoMenu.addEventListener('click', () => {
+        menu.classList.toggle('menu-lateral--ativo')
+    })
+</script>
