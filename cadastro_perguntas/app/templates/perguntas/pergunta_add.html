@@ -34,6 +34,8 @@
 
     <select name="versiculos" class="input__padrao" id="versiculos"></select>
 
+    <span name="texto_biblico" id="texto_biblico"></span>
+
     <!-- <a class="btn btn-info" id="add-item"><i class="fa fa-plus"></i> Add Item</a> -->
 
     <input type="submit" value="Salvar">
@@ -41,6 +43,7 @@
 
 {% endblock %}
 
+    
 {% block scripts %}
 <script type="text/javascript">
     $(function () {
@@ -50,7 +53,7 @@
             }
         })
     });
-
+    
     $(function () {
         $('.inlineform').formset({
             prefix: '{{ formset.prefix }}',
@@ -58,27 +61,54 @@
             deleteText: 'Remover',
         });
     })
-
+    
     $("#livros").change(function () {
         data = $.post(
-            "{% url 'pages:get_versiculos' %}",
+            "{% url 'pages:get_capitulos' %}",
             {'livro': $("#livros").val(),},
         );
-
+    
         data.done(function (data) {
             $("#capitulos").children().remove();
-            $("#versiculos").children().remove();
             data.forEach(function (item) {
                 $("#capitulos").append(
                     $("<option></option>").attr("value", item.id).text(item.capitulo)
                 );
-
+            });
+        });
+    });
+    
+    $("#capitulos").change(function () {
+        data = $.post(
+            "{% url 'pages:get_versiculos' %}",
+            {'livro': $("#livros").val(),
+            'capitulo': $("#capitulos :selected").text(),
+            },
+        );
+    
+        data.done(function (data) {
+            $("#versiculos").children().remove();
+            data.forEach(function (item) {
                 $("#versiculos").append(
                     $("<option></option>").attr("value", item.id).text(item.versiculo)
                 );
             });
         });
     });
-
+    
+    $("#versiculos").change(function () {
+        data = $.post(
+            "{% url 'pages:get_texto_biblico' %}",
+            {'livro': $("#livros").val(),
+            'capitulo': $("#capitulos :selected").text(),
+            'versiculo': $("#versiculos :selected").text(),
+            },
+        );
+    
+        data.done(function (data) {
+            var data_texto = JSON.stringify(data);
+            $("#texto_biblico").text(data_texto);
+        });
+    });
 </script>
-{% endblock scripts %}
+{% endblock %}

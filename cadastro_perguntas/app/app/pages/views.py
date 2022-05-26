@@ -72,8 +72,22 @@ class PerguntaUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-def get_versiculos(request):
-    print(request.POST['livro'])
+def get_capitulos(request):
     if request.method == 'POST':
-        versiculos = Versiculo.objects.filter(livro_id=request.POST['livro'])
+        capitulos = Versiculo.objects.filter(livro_id=request.POST['livro'])
+        return JsonResponse(list(capitulos.values()), safe=False)
+
+
+def get_versiculos(request):
+    if request.method == 'POST':
+        capitulos = Versiculo.objects.filter(livro_id=request.POST['livro'])
+        versiculos = capitulos.filter(capitulo=request.POST['capitulo'])
         return JsonResponse(list(versiculos.values()), safe=False)
+
+
+def get_texto_biblico(request):
+    if request.method == 'POST':
+        capitulos = Versiculo.objects.filter(livro_id=request.POST['livro'])
+        versiculos = capitulos.filter(capitulo=request.POST['capitulo'])
+        texto_biblico = versiculos.filter(versiculo=request.POST['versiculo'])
+        return JsonResponse(texto_biblico.last().texto, safe=False)
