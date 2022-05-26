@@ -1,10 +1,11 @@
-from django.forms import BaseInlineFormSet, inlineformset_factory
+from django.forms import BaseInlineFormSet, inlineformset_factory, formset_factory
 from django.http import JsonResponse
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from app.perguntas.models import Pergunta, Alternativa
 from app.perguntas.forms import AlternativaForm
 from app.biblia.models import Versiculo, Livro
+from app.biblia.forms import ReferenciaForm
 
 
 class HomePageView(TemplateView):
@@ -38,6 +39,14 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
             if formset.is_valid() and form.is_valid():
                 form.save()
                 formset.save()
+
+        # ReferenciaFormSet = formset_factory(Pergunta, Versiculo, form=ReferenciaForm)
+        # if self.request.method == 'POST':
+        #     formset = ReferenciaFormSet(self.request.POST, instance=form.instance)
+        #     print(formset)
+        #     if formset.is_valid() and form.is_valid():
+        #         form.save()
+        #         formset.save()
 
         return super().form_valid(form)
 
