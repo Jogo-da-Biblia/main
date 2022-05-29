@@ -56,7 +56,7 @@
                 var delCssSelector = $.trim(options.deleteCssClass).replace(/\s+/g, '.'),
                     addCssSelector = $.trim(options.addCssClass).replace(/\s+/g, '.');
 
-                var delButtonHTML = '<a class="' + options.deleteCssClass + '" href="javascript:void(0)">' + options.deleteText +'</a>';
+                var delButtonHTML = '<a class="' + options.deleteCssClass + '" href="javascript:void(0)">' + '<img src="../../media/Vector-lixeira.png">' +'</a>';
                 if (options.deleteContainerClass) {
                     // If we have a specific container for the remove button,
                     // place it as the last child of that container:
@@ -183,12 +183,14 @@
 
             var addButtonHTML = '<a class="' + options.addCssClass + '" href="javascript:void(0)">' + options.addText + '</a>';
             if (options.addContainerClass) {
+                console.log('primeiro')
                 // If we have a specific container for the "add" button,
                 // place it as the last child of that container:
                 var addContainer = $('[class*="' + options.addContainerClass + '"');
                 addContainer.append(addButtonHTML);
                 addButton = addContainer.find('[class="' + options.addCssClass + '"]');
             } else if ($$.is('TR')) {
+                console.log('segundo')
                 // If forms are laid out as table rows, insert the
                 // "add" button in a new table row:
                 var numCols = $$.eq(0).children().length,   // This is a bit of an assumption :|
@@ -197,6 +199,7 @@
                 addButton = buttonRow.find('a');
             } else {
                 // Otherwise, insert it immediately after the last form:
+                console.log('terceiro')
                 $$.filter(':last').after(addButtonHTML);
                 addButton = $$.filter(':last').next();
             }
@@ -233,17 +236,17 @@
     $.fn.formset.defaults = {
         prefix: 'form',                  // The form prefix for your django formset
         formTemplate: null,              // The jQuery selection cloned to generate new form instances
-        addText: 'add another',          // Text for the add link
+        addText: 'Adicionar Alternativa',          // Text for the add link
         deleteText: 'remove',            // Text for the delete link
-        addContainerClass: null,         // Container CSS class for the add link
+        addContainerClass: 'fixedAddContainer',         // Container CSS class for the add link
         deleteContainerClass: null,      // Container CSS class for the delete link
-        addCssClass: 'add-row',          // CSS class applied to the add link
+        addCssClass: 'adicionar__alternativa',          // CSS class applied to the add link
         deleteCssClass: 'delete-row',    // CSS class applied to the delete link
         formCssClass: 'dynamic-form',    // CSS class applied to each form in a formset
         extraClasses: [],                // Additional CSS classes, which will be applied to each form in turn
         keepFieldValues: '',             // jQuery selector for fields whose values should be kept when the form is cloned
         added: null,                     // Function called each time a new form is added
         removed: null,                   // Function called each time a form is deleted
-        hideLastAddForm: false           // When set to true, hide last empty add form (becomes visible when clicking on add button)
+        hideLastAddForm: true           // When set to true, hide last empty add form (becomes visible when clicking on add button)
     };
 })(jQuery);

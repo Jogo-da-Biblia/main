@@ -2,13 +2,14 @@
 
 <!-- ALTERNATIVA -->
 <section id="section_alternativa">
-    {{ formset.management_form }}
-
+    
     <h1 class="titulo__padrao">Adicionar alternativas</h1>
+    <div class="fixedAddContainer"></div>
+    {{ formset.management_form }}
     {% for alternativa in formset %}
     <div class="inlineform">
-        <hr>
         {{ alternativa|crispy }}
+        <hr>
     </div>
     {% endfor %}
 </section>
