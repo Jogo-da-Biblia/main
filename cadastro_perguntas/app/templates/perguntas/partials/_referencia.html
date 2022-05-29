@@ -23,13 +23,11 @@
     </div>
 </section>
 
-{% if referencia_form %}
-    {{ referencia_form.livro|as_crispy_field }}
-    {{ referencia_form.versiculo.versao }}
-    {{ referencia_form.versiculo.capitulo }}
-    {{ referencia_form.versiculo.versiculo }}
-{% else %}
 <section class="parte__referencia" id="section_referencia">
+    {% if referencia_form %}
+        {{ versiculo_form|crispy}}
+    {% else %}
+
     <div class="selecionar__opcoes">
         <div class="selecionar__referencia">
             <select name="livro" class="input__padrao" id="livros">
@@ -65,5 +63,5 @@
 {% endif %}
 
 <section class="" id="section_textual">
-    {{ form.outras_referencias|as_crispy_field  }}
+    {{ form.outras_referencias|as_crispy_field }}
 </section>

@@ -5,6 +5,7 @@ from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 from app.perguntas.models import Pergunta, Alternativa
 from app.perguntas.forms import AlternativaForm, ReferenciaForm
 from app.biblia.models import Versiculo, Livro, Versao
+from app.biblia.forms import VersiculoForm
 
 
 class HomePageView(TemplateView):
@@ -68,6 +69,8 @@ class PerguntaUpdateView(UpdateView):
         context["formset"] = AlternativasFormSet(instance=self.object)
 
         context["referencia_form"] = ReferenciaForm(instance=self.object.refencia_resposta)
+        context["versiculo_form"] = VersiculoForm(instance=self.object.refencia_resposta.versiculo)
+
         return context
 
     def form_valid(self, form):
