@@ -26,7 +26,7 @@ class PerguntasPageView(ListView):
 class PerguntaCreateView(CreateView, BaseInlineFormSet):
     model = Pergunta
     template_name = 'perguntas/pergunta_add.html'
-    fields = ['tema', 'enunciado', 'tipo_resposta']
+    fields = ['tema', 'enunciado', 'tipo_resposta', 'outras_referencias']
     success_url = '/'
 
     def form_valid(self, form):
@@ -59,13 +59,15 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
 
 class PerguntaUpdateView(UpdateView):
     model = Pergunta
-    fields = ['tema', 'enunciado', 'tipo_resposta']
+    fields = ['tema', 'enunciado', 'tipo_resposta', 'refencia_resposta', 'outras_referencias']
     success_url = '/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=0, can_delete=True)
         context["formset"] = AlternativasFormSet(instance=self.object)
+
+        context["referencia_form"] = ReferenciaForm(instance=self.object.refencia_resposta)
         return context
 
     def form_valid(self, form):

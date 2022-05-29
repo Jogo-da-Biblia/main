@@ -8,17 +8,20 @@
     <h1 class="titulo__padrao">Atualizar Pergunta</h1>
 
     <form method="post">{% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" value="Update">
+        {{ form.tema|as_crispy_field  }}
+        {{ form.enunciado|as_crispy_field  }}
+    
+        {% include 'perguntas/partials/_tipo_resposta.html' %}
+    
+        {% include 'perguntas/partials/_alternativa.html' %}
+    
+        {% include 'perguntas/partials/_referencia.html' %}
 
-        {{ formset.management_form }}
-        {% for alternativa in formset %}
-        <div class="inlineform">
-            <hr>
-            {{ alternativa|crispy }}
+        <div class="btn__pg">
+            <div class="botao__adicionar">
+                <button type="submit" class="link__entrar btn__pg--adicionar" id="btn_salvar"><a>Update</a></button>
+            </div>
         </div>
-        {% endfor %}
-
     </form>
 
 {% endblock %}
@@ -32,5 +35,23 @@
             deleteText: 'Remover',
         });
     })
+
+    $(function() {
+        const selected_tipo_resposta = "{{ form.tipo_resposta.value }}"
+        if (selected_tipo_resposta == 'MES') {
+            $('#radio-escolha').attr('checked', 'checked');
+        }
+        if (selected_tipo_resposta == 'RCO') {
+            console.log('deu certo')
+            $('#radio-completa').attr('checked', 'checked');
+        }
+        if (selected_tipo_resposta == 'RLC') {
+            $('#radio-livro-capitulo').attr('checked', 'checked');
+        }
+        if (selected_tipo_resposta == 'RES') {
+            $('#radio-simples').attr('checked', 'checked');
+        }
+    })
+
 </script>
-{% endblock scripts %}
+{% endblock %}

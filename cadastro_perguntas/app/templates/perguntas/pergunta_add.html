@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %} Minhas Perguntas {% endblock %}
@@ -10,115 +10,33 @@
 <form method="post">{% csrf_token %}
     {{ form.tema|as_crispy_field  }}
     {{ form.enunciado|as_crispy_field  }}
-    {{ form.tipo_resposta|as_crispy_field  }}
 
-    {{ formset.management_form }}
+    {% include 'perguntas/partials/_tipo_resposta.html' %}
 
-    <h1 class="titulo__padrao">Adicionar alternativas</h1>
-    {% for alternativa in formset %}
-    <div class="inlineform">
-        <hr>
-        {{ alternativa|crispy }}
-    </div>
-    {% endfor %}
+    {% include 'perguntas/partials/_alternativa.html' %}
 
-    <h1 class="titulo__padrao">Referência</h1>
-    <select name="livro" class="input__padrao" id="livros">
-        <option hidden>Livros</option>
-        {% for livro in livros %}
-        <option value="{{ livro.id }}">{{ livro.nome }}</option>
-        {% endfor %}
-    </select>
-
-    <select name="versao" class="input__padrao" id="versao" required>
-        <option hidden>Versão</option>
-        {% for versao in versoes %}
-        <option value="{{ versao.id }}">{{ versao.nome }}</option>
-        {% endfor %}
-    </select>
-
-    <select name="capitulo" class="input__padrao" id="capitulos"><option hidden>Capítulos</option></select>
-
-    <select name="versiculo" class="input__padrao" id="versiculos"><option hidden>Versículos</option></select>
-
-    <input type="text" name="texto" id="texto_biblico" readonly>
+    {% include 'perguntas/partials/_referencia.html' %}
 
     <!-- <a class="btn btn-info" id="add-item"><i class="fa fa-plus"></i> Add Item</a> -->
 
-    <input type="submit" value="Salvar">
+    <div class="btn__pg">
+        <div class="botao__adicionar">
+            <button type="submit" class="link__entrar btn__pg--adicionar" id="btn_salvar"><a>Salvar</a></button>
+        </div>
+    </div>
 </form>
+
 
 {% endblock %}
 
-    
 {% block scripts %}
 <script type="text/javascript">
-    $(function () {
-        $.ajaxSetup({
-            headers: {
-                "X-CSRFToken": $('[name=csrfmiddlewaretoken]').val()
-            }
-        })
-    });
-    
-    $(function () {
+    $(function() {
         $('.inlineform').formset({
             prefix: '{{ formset.prefix }}',
             addText: 'Adicionar nova alternativa',
             deleteText: 'Remover',
         });
     })
-    
-    $("#versao").change(function () {
-        data = $.post(
-            "{% url 'pages:get_capitulos' %}",
-            {'livro': $("#livros :selected").val(),
-            'versao': $("#versao :selected").val()},
-        );
-    
-        data.done(function (data) {
-            $("#capitulos").children().remove();
-            data.forEach(function (item) {
-                $("#capitulos").append(
-                    $("<option></option>").attr("value", item.id).text(item.capitulo, item.versao_id)
-                );
-            });
-        });
-    });
-    
-    $("#capitulos").change(function () {
-        data = $.post(
-            "{% url 'pages:get_versiculos' %}",
-            {'livro': $("#livros :selected").val(),
-            'versao': $("#versao :selected").val(),
-            'capitulo': $("#capitulos :selected").text(),
-            },
-        );
-    
-        data.done(function (data) {
-            $("#versiculos").children().remove();
-            data.forEach(function (item) {
-                $("#versiculos").append(
-                    $("<option></option>").attr("value", item.id).text(item.versiculo)
-                );
-            });
-        });
-    });
-    
-    $("#versiculos").change(function () {
-        data = $.post(
-            "{% url 'pages:get_texto_biblico' %}",
-            {'livro': $("#livros :selected").val(),
-            'versao': $("#versao :selected").val(),
-            'capitulo': $("#capitulos :selected").text(),
-            'versiculo': $("#versiculos :selected").text(),
-            },
-        );
-    
-        data.done(function (data) {
-            var data_texto = JSON.stringify(data);
-            $("#texto_biblico").val(data_texto);
-        });
-    });
 </script>
-{% endblock %}
+{% endblock scripts %}

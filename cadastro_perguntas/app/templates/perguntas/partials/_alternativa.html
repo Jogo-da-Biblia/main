@@ -1,0 +1,14 @@
+{% load crispy_forms_tags %}
+
+<!-- ALTERNATIVA -->
+<section id="section_alternativa">
+    {{ formset.management_form }}
+
+    <h1 class="titulo__padrao">Adicionar alternativas</h1>
+    {% for alternativa in formset %}
+    <div class="inlineform">
+        <hr>
+        {{ alternativa|crispy }}
+    </div>
+    {% endfor %}
+</section>

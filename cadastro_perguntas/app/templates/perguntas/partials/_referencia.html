@@ -1,0 +1,69 @@
+{% load crispy_forms_tags %}
+
+<!-- REFERÊNCIA -->
+<h1 class="titulo__padrao">Referência</h1>
+
+<section id="section_selecao_referencia">
+    <div class="cartao__referencia">
+        <legend class="card__referencia">
+            <input type="radio" name="escolha" value="#" id="radio_biblia" checked="checked">Biblía
+        </legend>
+    </div>
+
+    <div class="cartao__referencia">
+        <legend class="card__referencia">
+            <input type="radio" name="escolha" value="#" id="radio_textual">Textual (livros históricos)
+        </legend>
+    </div>
+    <div class="card--referencia">
+        <div class="artigo--referencia">
+            <p class="art__referencia"> Penguntas sobre a história da Igreja ou da Biblía devem ter referência de
+                onde foi extraído segundo o método de referência de Vancouver.</p>
+        </div>
+    </div>
+</section>
+
+{% if referencia_form %}
+    {{ referencia_form.livro|as_crispy_field }}
+    {{ referencia_form.versiculo.versao }}
+    {{ referencia_form.versiculo.capitulo }}
+    {{ referencia_form.versiculo.versiculo }}
+{% else %}
+<section class="parte__referencia" id="section_referencia">
+    <div class="selecionar__opcoes">
+        <div class="selecionar__referencia">
+            <select name="livro" class="input__padrao" id="livros">
+                <option hidden>Livros</option>
+                {% for livro in livros %}
+                <option value="{{ livro.id }}">{{ livro.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="selecionar__referencia">
+            <select name="versao" class="input__padrao" id="versao">
+                <option hidden>Versão</option>
+                {% for versao in versoes %}
+                <option value="{{ versao.id }}">{{ versao.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="opcoes--referencia">
+            <select name="capitulo" class="selecionar__referencia" id="capitulos"><option hidden>Capítulos</option></select>
+        </div>
+
+        <div class="opcoes--referencia">
+            <select name="versiculo" class="selecionar__referencia" id="versiculos"><option hidden>Versículos</option></select>
+        </div>
+    </div>
+    
+    <div class="dsc__livre">
+        <p class="descricao__livre"><spam name="texto" id="texto_biblico" class="dsc__livre"></spam></p>
+    </div>
+</section>
+{% endif %}
+
+<section class="" id="section_textual">
+    {{ form.outras_referencias|as_crispy_field  }}
+</section>
