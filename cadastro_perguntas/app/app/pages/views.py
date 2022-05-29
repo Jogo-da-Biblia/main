@@ -3,9 +3,8 @@ from django.http import JsonResponse
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from app.perguntas.models import Pergunta, Alternativa
-from app.perguntas.forms import AlternativaForm
-from app.biblia.models import Versiculo, Livro
-from app.biblia.forms import ReferenciaForm
+from app.perguntas.forms import AlternativaForm, ReferenciaForm
+from app.biblia.models import Versiculo, Livro, Versao
 
 
 class HomePageView(TemplateView):
@@ -40,20 +39,18 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
                 form.save()
                 formset.save()
 
-        # ReferenciaFormSet = formset_factory(Pergunta, Versiculo, form=ReferenciaForm)
-        # if self.request.method == 'POST':
-        #     formset = ReferenciaFormSet(self.request.POST, instance=form.instance)
-        #     print(formset)
-        #     if formset.is_valid() and form.is_valid():
-        #         form.save()
-        #         formset.save()
+            referencia_form = ReferenciaForm(self.request.POST)
+            if referencia_form.is_valid():
+                referencia_form.save()
+                form.instance.refencia_resposta = referencia_form.instance
+                form.save()
 
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context["versiculos"] = Versiculo.objects.all()
         context["livros"] = Livro.objects.all()
+        context['versoes'] = Versao.objects.all()
 
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=1, can_delete=True)
         context["formset"] = AlternativasFormSet()
@@ -83,20 +80,23 @@ class PerguntaUpdateView(UpdateView):
 
 def get_capitulos(request):
     if request.method == 'POST':
-        capitulos = Versiculo.objects.filter(livro_id=request.POST['livro'])
-        return JsonResponse(list(capitulos.values()), safe=False)
+        versao = Versiculo.objects.filter(versao_id=request.POST['versao'])
+        capitulos = versao.filter(livro_id=request.POST['livro']).distinct('capitulo')
+        return JsonResponse(list(capitulos.values("capitulo")), safe=False)
 
 
 def get_versiculos(request):
     if request.method == 'POST':
-        capitulos = Versiculo.objects.filter(livro_id=request.POST['livro'])
-        versiculos = capitulos.filter(capitulo=request.POST['capitulo'])
-        return JsonResponse(list(versiculos.values()), safe=False)
+        versao = Versiculo.objects.filter(versao_id=request.POST['versao'])
+        capitulos = versao.filter(livro_id=request.POST['livro'])
+        versiculos = capitulos.filter(capitulo=request.POST['capitulo']).distinct('versiculo')
+        return JsonResponse(list(versiculos.values('versiculo')), safe=False)
 
 
 def get_texto_biblico(request):
     if request.method == 'POST':
-        capitulos = Versiculo.objects.filter(livro_id=request.POST['livro'])
+        versao = Versiculo.objects.filter(versao_id=request.POST['versao'])
+        capitulos = versao.filter(livro_id=request.POST['livro'])
         versiculos = capitulos.filter(capitulo=request.POST['capitulo'])
         texto_biblico = versiculos.filter(versiculo=request.POST['versiculo'])
         return JsonResponse(texto_biblico.last().texto, safe=False)

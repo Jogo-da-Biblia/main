@@ -8,5 +8,3 @@ class ReferenciaForm(forms.ModelForm):
     class Meta:
         model = Versiculo
         fields = '__all__'
-
-

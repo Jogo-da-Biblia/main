@@ -8,9 +8,9 @@
 <h1 class="titulo__padrao">Adicionar Pergunta</h1>
 
 <form method="post">{% csrf_token %}
-    {{ form.tema }}
-    {{ form.enunciado }}
-    {{ form.tipo_resposta }}
+    {{ form.tema|as_crispy_field  }}
+    {{ form.enunciado|as_crispy_field  }}
+    {{ form.tipo_resposta|as_crispy_field  }}
 
     {{ formset.management_form }}
 
@@ -24,17 +24,24 @@
 
     <h1 class="titulo__padrao">Referência</h1>
     <select name="livro" class="input__padrao" id="livros">
-        <option value="" label="Livros"></option>
+        <option hidden>Livros</option>
         {% for livro in livros %}
         <option value="{{ livro.id }}">{{ livro.nome }}</option>
         {% endfor %}
     </select>
 
-    <select name="capitulos" class="input__padrao" id="capitulos"></select>
+    <select name="versao" class="input__padrao" id="versao" required>
+        <option hidden>Versão</option>
+        {% for versao in versoes %}
+        <option value="{{ versao.id }}">{{ versao.nome }}</option>
+        {% endfor %}
+    </select>
 
-    <select name="versiculos" class="input__padrao" id="versiculos"></select>
+    <select name="capitulo" class="input__padrao" id="capitulos"><option hidden>Capítulos</option></select>
 
-    <span name="texto_biblico" id="texto_biblico"></span>
+    <select name="versiculo" class="input__padrao" id="versiculos"><option hidden>Versículos</option></select>
+
+    <input type="text" name="texto" id="texto_biblico" readonly>
 
     <!-- <a class="btn btn-info" id="add-item"><i class="fa fa-plus"></i> Add Item</a> -->
 
@@ -62,17 +69,18 @@
         });
     })
     
-    $("#livros").change(function () {
+    $("#versao").change(function () {
         data = $.post(
             "{% url 'pages:get_capitulos' %}",
-            {'livro': $("#livros").val(),},
+            {'livro': $("#livros :selected").val(),
+            'versao': $("#versao :selected").val()},
         );
     
         data.done(function (data) {
             $("#capitulos").children().remove();
             data.forEach(function (item) {
                 $("#capitulos").append(
-                    $("<option></option>").attr("value", item.id).text(item.capitulo)
+                    $("<option></option>").attr("value", item.id).text(item.capitulo, item.versao_id)
                 );
             });
         });
@@ -81,7 +89,8 @@
     $("#capitulos").change(function () {
         data = $.post(
             "{% url 'pages:get_versiculos' %}",
-            {'livro': $("#livros").val(),
+            {'livro': $("#livros :selected").val(),
+            'versao': $("#versao :selected").val(),
             'capitulo': $("#capitulos :selected").text(),
             },
         );
@@ -99,7 +108,8 @@
     $("#versiculos").change(function () {
         data = $.post(
             "{% url 'pages:get_texto_biblico' %}",
-            {'livro': $("#livros").val(),
+            {'livro': $("#livros :selected").val(),
+            'versao': $("#versao :selected").val(),
             'capitulo': $("#capitulos :selected").text(),
             'versiculo': $("#versiculos :selected").text(),
             },
@@ -107,7 +117,7 @@
     
         data.done(function (data) {
             var data_texto = JSON.stringify(data);
-            $("#texto_biblico").text(data_texto);
+            $("#texto_biblico").val(data_texto);
         });
     });
 </script>
