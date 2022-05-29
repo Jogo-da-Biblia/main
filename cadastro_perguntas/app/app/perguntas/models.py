@@ -60,12 +60,9 @@ class Pergunta(models.Model):
         blank=True
     )
 
-    outras_referencias = models.ForeignKey(
-        Referencia,
-        on_delete=models.CASCADE,
+    outras_referencias = models.TextField(
         null=True,
         blank=True,
-        related_name='outras_referencias'
     )
 
     status = models.BooleanField(default=False, verbose_name='Publicado')
