@@ -24,10 +24,6 @@
 </section>
 
 <section class="parte__referencia" id="section_referencia">
-    {% if referencia_form %}
-        {{ versiculo_form|crispy}}
-    {% else %}
-
     <div class="selecionar__opcoes">
         <div class="selecionar__referencia">
             <select name="livro" class="input__padrao" id="livros">
@@ -60,7 +56,6 @@
         <p class="descricao__livre"><spam name="texto" id="texto_biblico" class="dsc__livre"></spam></p>
     </div>
 </section>
-{% endif %}
 
 <section class="" id="section_textual">
     {{ form.outras_referencias|as_crispy_field }}

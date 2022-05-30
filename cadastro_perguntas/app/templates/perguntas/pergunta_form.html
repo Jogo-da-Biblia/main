@@ -15,7 +15,16 @@
     
         {% include 'perguntas/partials/_alternativa.html' %}
     
-        {% include 'perguntas/partials/_referencia.html' %}
+        <section class="parte__referencia" id="section_referencia">
+            {% if referencia_form %}
+                {{ versiculo_form|crispy}}
+            {% endif %}
+            {% if form.outras_referencias %}
+                <section class="" id="section_textual">
+                    {{ form.outras_referencias|as_crispy_field }}
+                </section>
+            {% endif %}
+        </section>
 
         <div class="btn__pg">
             <div class="botao__adicionar">
@@ -51,7 +60,7 @@
         if (selected_tipo_resposta == 'RES') {
             $('#radio-simples').attr('checked', 'checked');
         }
-    })
+    });
 
 </script>
 {% endblock %}

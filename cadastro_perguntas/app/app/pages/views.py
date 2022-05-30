@@ -14,6 +14,7 @@ class HomePageView(TemplateView):
 
 class PerguntasPageView(ListView):
     model = Pergunta
+    ordering = ['criado_em']
 
     def get_queryset(self):
         return Pergunta.objects.filter(criado_por=self.request.user)
@@ -68,8 +69,9 @@ class PerguntaUpdateView(UpdateView):
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=0, can_delete=True)
         context["formset"] = AlternativasFormSet(instance=self.object)
 
-        context["referencia_form"] = ReferenciaForm(instance=self.object.refencia_resposta)
-        context["versiculo_form"] = VersiculoForm(instance=self.object.refencia_resposta.versiculo)
+        if self.object.refencia_resposta:
+            context["referencia_form"] = ReferenciaForm(instance=self.object.refencia_resposta)
+            context["versiculo_form"] = VersiculoForm(instance=self.object.refencia_resposta.versiculo)
 
         return context
 

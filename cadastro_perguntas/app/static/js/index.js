@@ -66,6 +66,15 @@ $("#versiculos").change(function () {
     });
 });
 
+$("#btn_salvar").click(function () {
+    if ($("#radio_biblia").is(":checked")) {
+        esvaziaEscolhaTextual();
+    }
+    if ($("#radio_textual").is(":checked")) {
+        esvaziaEscolhaBiblica();
+    }
+});
+
 $("#radio_biblia").change(function () {
     if ($(this).is(":checked")) {
         $("#section_referencia").show();
@@ -75,22 +84,28 @@ $("#radio_biblia").change(function () {
     }
 });
 
-// Por padrão a referência textual é escondida
-$("#section_textual").hide();
+verificaCamposOutrasReferencias()
+function verificaCamposOutrasReferencias() {
+    if ("{{ form.outras_referencias }}" == "") {
+        $("#section_textual").hide();
+    } else {
+        $("#section_textual").show();
+    }
+}
+
 $("#radio_textual").change(function () {
     if ($(this).is(":checked")) {
         $("#section_textual").show();
         $("#section_referencia").hide();
-
-        esvaziaEscolhaBiblica();
     }
 });
 
 $("#radio-escolha").change(function () {
     if ($(this).is(":checked")) {
         $("#section_alternativa").show();
-        $("#section_textual").show();
+        $("#section_selecao_referencia").show()
         $("#section_referencia").show();
+        verificaCamposOutrasReferencias()
     }
 });
 
@@ -100,19 +115,15 @@ $("#radio-completa").change(function () {
         $("#section_selecao_referencia").hide();        
         $("#section_referencia").show();
         $("#section_textual").hide();
-
-        esvaziaEscolhaTextual();
     }
 });
 
 $("#radio-livro-capitulo").change(function () {
     if ($(this).is(":checked")) {
         $("#section_alternativa").hide();
-        $("#section_selecao_referencia").hide();        
+        $("#section_selecao_referencia").show();        
         $("#section_referencia").show();
         $("#section_textual").hide();
-
-        esvaziaEscolhaTextual();
     }
 });
 
@@ -122,8 +133,6 @@ $("#radio-simples").change(function () {
         $("#section_selecao_referencia").hide();        
         $("#section_referencia").hide();
         $("#section_textual").show();
-
-        esvaziaEscolhaBiblica();
     }
 });
 
