@@ -80,13 +80,12 @@ $("#radio_biblia").change(function () {
         $("#section_referencia").show();
         $("#section_textual").hide();
         $("#section_textual").hide();
-        $("#id_outras_referencias").val("");
     }
 });
 
 verificaCamposOutrasReferencias()
 function verificaCamposOutrasReferencias() {
-    if ("{{ form.outras_referencias }}" == "") {
+    if ($("#id_outras_referencias").val() == "") {
         $("#section_textual").hide();
     } else {
         $("#section_textual").show();
@@ -136,6 +135,7 @@ $("#radio-simples").change(function () {
     }
 });
 
+// Garante que campos não selecionados não estejam na requisição POST
 function esvaziaEscolhaBiblica() {
     $("#livros").text("");
     $("#versao").text("");
@@ -144,7 +144,9 @@ function esvaziaEscolhaBiblica() {
     $("#texto_biblico").text("");
 }
 
+// Garante que campos não selecionados não estejam na requisição POST
 function esvaziaEscolhaTextual() {
     $("#id_texto_biblico").val("");
+    $("#id_outras_referencias").val("");
 }
 

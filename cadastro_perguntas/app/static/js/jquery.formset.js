@@ -183,7 +183,6 @@
 
             var addButtonHTML = '<a class="' + options.addCssClass + '" href="javascript:void(0)">' + options.addText + '</a>';
             if (options.addContainerClass) {
-                console.log('primeiro')
                 // If we have a specific container for the "add" button,
                 // place it as the last child of that container:
                 var addContainer = $('[class*="' + options.addContainerClass + '"');
