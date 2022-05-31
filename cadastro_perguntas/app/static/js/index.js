@@ -149,4 +149,3 @@ function esvaziaEscolhaTextual() {
     $("#id_texto_biblico").val("");
     $("#id_outras_referencias").val("");
 }
-

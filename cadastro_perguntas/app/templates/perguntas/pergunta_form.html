@@ -11,8 +11,6 @@
         {{ form.tema|as_crispy_field  }}
         {{ form.enunciado|as_crispy_field  }}
     
-        {% include 'perguntas/partials/_tipo_resposta.html' %}
-    
         {% include 'perguntas/partials/_alternativa.html' %}
     
         <section class="parte__referencia" id="section_referencia">
@@ -40,27 +38,25 @@
     $(function() {
         $('.inlineform').formset({
             prefix: '{{ formset.prefix }}',
-            addText: 'Adicionar nova alternativa',
-            deleteText: 'Remover',
         });
     })
 
-    $(function() {
-        const selected_tipo_resposta = "{{ form.tipo_resposta.value }}"
-        if (selected_tipo_resposta == 'MES') {
-            $('#radio-escolha').attr('checked', 'checked');
-        }
-        if (selected_tipo_resposta == 'RCO') {
-            console.log('deu certo')
-            $('#radio-completa').attr('checked', 'checked');
-        }
-        if (selected_tipo_resposta == 'RLC') {
-            $('#radio-livro-capitulo').attr('checked', 'checked');
-        }
-        if (selected_tipo_resposta == 'RES') {
-            $('#radio-simples').attr('checked', 'checked');
-        }
-    });
+    // $(function() {
+    //     const selected_tipo_resposta = "{{ form.tipo_resposta.value }}"
+    //     if (selected_tipo_resposta == 'MES') {
+    //         $('#radio-escolha').attr('checked', 'checked');
+    //     }
+    //     if (selected_tipo_resposta == 'RCO') {
+    //         console.log('deu certo')
+    //         $('#radio-completa').attr('checked', 'checked');
+    //     }
+    //     if (selected_tipo_resposta == 'RLC') {
+    //         $('#radio-livro-capitulo').attr('checked', 'checked');
+    //     }
+    //     if (selected_tipo_resposta == 'RES') {
+    //         $('#radio-simples').attr('checked', 'checked');
+    //     }
+    // });
 
 </script>
 {% endblock %}

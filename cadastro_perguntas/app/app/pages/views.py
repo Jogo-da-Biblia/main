@@ -61,7 +61,7 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
 
 class PerguntaUpdateView(UpdateView):
     model = Pergunta
-    fields = ['tema', 'enunciado', 'tipo_resposta', 'refencia_resposta', 'outras_referencias']
+    fields = ['tema', 'enunciado', 'tipo_resposta', 'outras_referencias']
     success_url = '/'
 
     def get_context_data(self, **kwargs):
