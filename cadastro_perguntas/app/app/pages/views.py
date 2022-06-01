@@ -14,10 +14,9 @@ class HomePageView(TemplateView):
 
 class PerguntasPageView(ListView):
     model = Pergunta
-    ordering = ['criado_em']
 
     def get_queryset(self):
-        return Pergunta.objects.filter(criado_por=self.request.user)
+        return Pergunta.objects.filter(criado_por=self.request.user).order_by('-atualizado_em')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
