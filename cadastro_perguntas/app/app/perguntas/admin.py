@@ -46,6 +46,7 @@ class ComentarioInline(admin.TabularInline):
 
 
 class PerguntaAdmin(admin.ModelAdmin):
+    change_form_template = 'admin/perguntas/change_form.html'
     list_display = (
         'id',
         'tema',
@@ -87,6 +88,7 @@ class PerguntaAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, extra_context=None):
         if request.user.groups.filter(name='revisores').exists():
             self.fields[6] = ('revisado_status',)
+            extra_context = 'revisores'
         if request.user.groups.filter(name='publicadores').exists():
             self.fields[6] = ('status',)
         if request.user.groups.filter(name='supervisores').exists():
@@ -129,6 +131,14 @@ class PerguntaAdmin(admin.ModelAdmin):
             obj.publicado_em = None
 
         super(PerguntaAdmin, self).save_model(request, obj, form, change)
+
+    def response_change(self, request, obj):
+        print('TESTE')
+        if "revisar" in request.POST:
+            pass
+        if "publicar" in request.POST:
+            pass
+        return super().response_change(request, obj)
 
 
 class AlternativaAdmin(admin.ModelAdmin):
