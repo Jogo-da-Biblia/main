@@ -27,7 +27,7 @@
 <section class="parte__referencia" id="section_referencia">
     <div class="selecionar__opcoes">
         <div class="selecionar__referencia">
-            <select name="livro" class="input__padrao" id="livros">
+            <select name="livro" class="input__padrao select form-control" id="livros">
                 <option hidden>Livros</option>
                 {% for livro in livros %}
                 <option value="{{ livro.id }}">{{ livro.nome }}</option>
@@ -36,7 +36,7 @@
         </div>
 
         <div class="selecionar__referencia">
-            <select name="versao" class="input__padrao" id="versao">
+            <select name="versao" class="input__padrao select form-control" id="versao">
                 <option hidden>Versão</option>
                 {% for versao in versoes %}
                 <option value="{{ versao.id }}">{{ versao.nome }}</option>
@@ -45,11 +45,11 @@
         </div>
 
         <div class="opcoes--referencia">
-            <select name="capitulo" class="selecionar__referencia" id="capitulos"><option hidden>Capítulos</option></select>
+            <select name="capitulo" class="selecionar__referencia input__padrao select form-control" id="capitulos"><option hidden>Capítulos</option></select>
         </div>
 
         <div class="opcoes--referencia">
-            <select name="versiculo" class="selecionar__referencia" id="versiculos"><option hidden>Versículos</option></select>
+            <select name="versiculo" class="selecionar__referencia input__padrao select form-control" id="versiculos"><option hidden>Versículos</option></select>
         </div>
     </div>
     

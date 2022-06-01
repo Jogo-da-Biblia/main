@@ -8,7 +8,8 @@
     <h1 class="titulo__padrao">Atualizar Pergunta</h1>
 
     <form method="post">{% csrf_token %}
-        {{ form.tema|as_crispy_field  }}
+        {{ form.tema|as_crispy_field }}
+        
         {{ form.enunciado|as_crispy_field  }}
     
         {% include 'perguntas/partials/_alternativa.html' %}
