@@ -6,18 +6,20 @@
 {% block title %} Atualizar Pergunta {% endblock %}
 
 {% block content %}
-    <h1 class="titulo__padrao">Atualizar Pergunta</h1>
 
-    <form method="post">{% csrf_token %}
-        {{ form.tema|add_class:"input__padrao select form-control"|safe }}
+    <form method="post" class="form__update">{% csrf_token %}
+        {% include 'partials/_header.html' %}
+        <h1 class="titulo__padrao">Atualizar Pergunta</h1>
+
+        {{ form.tema|add_class:"input__padrao select form-control tema"|safe }}
         
-        {{ form.enunciado|add_class:"input__padrao form-control"|safe  }}
+        {{ form.enunciado|add_class:"input__padrao form-control enunciado_height"|safe  }}
     
         {% include 'perguntas/partials/_alternativa.html' %}
     
         <section class="parte__referencia" id="section_referencia">
             {% if referencia_form %}
-                {{ versiculo_form|add_class:"input__padrao select form-control"|safe}}
+                {{ versiculo_form|crispy }}
             {% endif %}
             {% if form.outras_referencias %}
                 <section class="" id="section_textual">

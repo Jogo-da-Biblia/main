@@ -149,3 +149,12 @@ function esvaziaEscolhaTextual() {
     $("#id_texto_biblico").val("");
     $("#id_outras_referencias").val("");
 }
+
+// JS MENU MOBILE
+const botaoMenu = document.querySelector('.cabecalho__menu')
+const menu = document.querySelector('.menu-lateral')
+
+botaoMenu.addEventListener('click', function(event) {
+    event.preventDefault()
+    menu.classList.toggle('menu-lateral--ativo')
+})

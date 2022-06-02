@@ -1,0 +1,64 @@
+/* LOGIN */
+.main__container {
+    padding: 0;
+}
+
+.form__login {
+    width: 496px;
+}
+
+.logo__login {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 152px;
+}
+
+.pagina__login {
+    display: grid;
+    justify-content: center;
+    gap: 12px;
+    grid-template-columns: auto;
+    align-items: center;
+    padding: 20px;
+}
+
+/* LOGOUT */
+.refirecionar__sair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 496px;
+}
+
+.pg__sair{
+    width: 270px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 33px;
+    letter-spacing: 0em;
+    color: #858585;
+    margin: 10px 10px;
+}
+
+.deseja__sair {
+    width: 270px;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 24px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.btn-danger {
+    height: 40px;
+    width: 245px;
+    margin: 30px 20px ;
+}

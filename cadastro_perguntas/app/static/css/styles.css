@@ -8,26 +8,6 @@
         src: url(icones.ttf);
     }
 
-
-    /*Login*/
-
-    .logo__login {
-        display: flex;
-        justify-content: center;
-        width: 100vw;
-        height: 152px;
-    }
-
-
-    .pagina__login {
-        display: grid;
-        justify-content: center;
-        gap: 12px;
-        grid-template-columns: auto;
-        align-items: center;
-        padding: 20px;
-    }
-
      .titulo__padrao {
         display: flex;
         text-align: start;
@@ -58,7 +38,6 @@
         border-radius: 5px;
         background: #F4F5F6;
         border: 1px solid rgba(114, 115, 118, 1);
-        box-shadow: 0px 0px 0px 2px #FFFFFF;
         display: flex;
         font-family: 'Lato';
         font-style: normal;
@@ -67,7 +46,26 @@
         line-height: 24px;
         color: rgb(158, 157, 151);
         left: 32px;
+        margin-bottom: 11px;
+    }
 
+    .inlineform textarea {
+        background: #F4F5F6;
+    }
+
+    .parte__referencia select {
+        background: #F4F5F6;
+        box-shadow: 0px 0px 0px 2px #FFFFFF;
+    }
+    
+    .parte__referencia input {
+        background: #F4F5F6;
+        box-shadow: 0px 0px 0px 2px #FFFFFF;
+    }
+    
+    #id_texto {
+        background: #F4F5F6;
+        box-shadow: 0px 0px 0px 2px #FFFFFF;
     }
 
     .card__multipla .radio-escolha:after {
@@ -645,14 +643,13 @@
     .btn__pg {
         display: flex;
         justify-content: end;
-        width: 400px;
-        margin-bottom: 20px;
     }
 
     .botao__adicionar {
         display: flex;
         height: 40px;
         width: 103px;
+        justify-content: center;
 
         border-radius: 5px;
         background: #B6B6B6;
@@ -714,7 +711,6 @@
         position: static;
     }
 
-
     .btn__enviado,
     .btn__revisado {
         height: 24px;
@@ -743,6 +739,13 @@ body {
 .main__container {
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0px 11px;
+}
+
+.menu-lateral__link {
+    width: 200px;
     margin: 0 auto;
 }
 
@@ -753,8 +756,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-self: center;
-    align-items: flex-start;
-    padding: 0px 20px;
+    padding: 0px 13px;
     background: rgba(255, 255, 255, 1);
 }
 
@@ -772,32 +774,34 @@ h2, .titulo__padrao--adicionar{
     font-weight: 700;
     font-size: 30px;
     color: #858585;
-        line-height: 40px;
-        padding: 10px 0px;
+    line-height: 40px;
+    padding: 10px 0px;
 }
 
 .desc__titulo--padrao {
-display: flex;
-justify-content: flex-start;
-font-family: Lato;
-font-size: 12px;
-font-weight: 400;
-line-height: 14px;
-letter-spacing: 0em;
-text-align: left;
-color: #000000;
-height: 37px;
+    display: flex;
+    justify-content: flex-start;
+    font-family: Lato;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #000000;
+    height: 37px;
+}
+
+.fixedAddContainer a:last-child {
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 .fixedAddContainer {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    width: 480px;
 }
-
-
-
 
 .adicionar__alternativa {
     display: flex;
@@ -823,7 +827,6 @@ height: 37px;
 
 
 .pergunta__container {
-    width: 463px;
     height: 120px;
     margin-bottom: 13px;
     padding: 0 24px;
@@ -890,6 +893,87 @@ label {
     display: none;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
+.tema {
+    margin-bottom: 11px;
+}
+
+.enunciado_height {
+    height: 120px !important;
+}
+
+.inlineform textarea {
+    background: #E5E5E5;
+    height: 136px !important;
+    border: 1px solid rgba(114, 115, 118, 1);
+    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: rgb(158, 157, 151);
+}
+
+.inlineform {
+    margin-bottom: 11px;
+}
+
+.parte__referencia select {
+    height: 56px;
+    /* width: 274px; */
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: 1px solid rgba(114, 115, 118, 1);
+    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    display: flex;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: rgb(158, 157, 151);
+}
+
+.parte__referencia input {
+    height: 56px;
+    /* width: 274px; */
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: 1px solid rgba(114, 115, 118, 1);
+    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    display: flex;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: rgb(158, 157, 151);
+}
+
+#id_texto {
+    border-radius: 5px;
+    background: #E5E5E5;
+    border: 1px solid rgba(114, 115, 118, 1);
+    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    display: flex;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: rgb(158, 157, 151);
+}
+
+.input__padrao {
+    background: #E5E5E5;
+    border: 1px solid rgba(114, 115, 118, 1);
+    box-shadow: 0px 0px 0px 2px #FFFFFF;
+}
+
 @media screen and (max-width: 720px) {
     body {
         width: auto;
@@ -908,4 +992,22 @@ label {
     .txt__pergunta {
         background: #E5E5E5;
     }
+}
+
+input[type="radio"] {
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+	border-radius: 50%;
+	transition: transform .6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+input[type="radio"]:checked {
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+	border-radius: 50%;
+	transition: transform .6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    border: 2px solid #D1D7DC;
+
 }

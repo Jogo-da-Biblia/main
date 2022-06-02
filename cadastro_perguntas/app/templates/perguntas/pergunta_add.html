@@ -10,7 +10,7 @@
 
 <form method="post" class="pergunta__texto">{% csrf_token %}
     {% include 'partials/_header.html' %}
-    
+
     <h1 class="titulo__padrao--adicionar">Adicionar Pergunta</h1>
     <p class="desc__titulo--padrao">Para começar a colaborar cadastre-se com seus dados abaixo e comece a enviar perguntas.</p>
     {{ form.tema|append_attr:"class:input__padrao select form-control placeholder:Tema"|safe }}
