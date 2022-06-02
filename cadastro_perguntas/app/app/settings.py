@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "crispy_forms",
+    'widget_tweaks',
     # my apps
     'django_sass',
     'app.biblia',

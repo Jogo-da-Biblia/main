@@ -1,4 +1,5 @@
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 
 <!-- REFERÊNCIA -->
 <h1 class="titulo__padrao">Referência</h1>
@@ -59,5 +60,5 @@
 </section>
 
 <section class="" id="section_textual">
-    {{ form.outras_referencias|as_crispy_field }}
+    {{ form.outras_referencias|add_class:"input__padrao form-control"|safe }}
 </section>

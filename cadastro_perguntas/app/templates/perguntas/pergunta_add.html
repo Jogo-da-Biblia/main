@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 
 {% block title %} Minhas Perguntas {% endblock %}
 
@@ -8,8 +9,8 @@
 <h1 class="titulo__padrao">Adicionar Pergunta</h1>
 
 <form method="post">{% csrf_token %}
-    {{ form.tema|as_crispy_field  }}
-    {{ form.enunciado|as_crispy_field  }}
+    {{ form.tema|append_attr:"class:input__padrao select form-control placeholder:Tema"|safe }}
+    {{ form.enunciado|add_class:"input__padrao form-control"|safe  }}
 
     {% include 'perguntas/partials/_tipo_resposta.html' %}
 
