@@ -3,29 +3,29 @@
 {% block title %} Minhas Perguntas {% endblock %}
 
 {% block content %}
-
-    <article class="pergunta__texto">   
+<article class="pergunta__texto">
+        {% include 'partials/_header.html' %}
         <h1 class="titulo__padrao">Minhas Perguntas</h1>
 
         {% for pergunta in object_list %}
         <a href="{{ pergunta.get_absolute_url }}">
-            <div class="pergunta__texto">
+            <div class="pergunta__container">
                 <div class="caixa__texto">
                     <div class="txt__pergunta">
                         <div cols="230" rows="5" id="mensagem" class="caixa-pergunta__resposta">
-                            <div class="enunciado">{{ pergunta.enunciado }}</div>
+                            <div class="enunciado"><strong>{{ pergunta.enunciado }}</strong></div>
 
                             {% for alternativa in alternativas %}
                                 {% if alternativa.alternativas_id == pergunta.id %}
                                     {% if alternativa.alternativas_corretas %}
-                                        <div class="alternativas">{{ alternativa }}</div>
+                                        <div class="alternativas"><strong>R:</strong>{{ alternativa }}</div>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
 
                             {% for sigla, label in pergunta.TIPO_RESPOSTA %}
                                 {% if sigla == pergunta.tipo_resposta %}
-                                    <div class="tipo_resposta">Tipo: {{ label }}</div>
+                                    <div class="tipo_resposta"><strong>Tipo: </strong>{{ label }}</div>
                                 {% endif %}	
                             {% endfor %}
                         </div>
@@ -42,4 +42,16 @@
         {% endfor %}
     </article>
 
+{% endblock %}
+
+    
+{% block scripts %}
+<script>
+    const botaoMenu = document.querySelector('.cabecalho__menu')
+    const menu = document.querySelector('.menu-lateral')
+
+    botaoMenu.addEventListener('click', () => {
+        menu.classList.toggle('menu-lateral--ativo')
+    })
+</script>   
 {% endblock %}

@@ -5,9 +5,12 @@
 {% block title %} Minhas Perguntas {% endblock %}
 
 {% block content %}
-<h1 class="titulo__padrao">Adicionar Pergunta</h1>
 
-<form method="post">{% csrf_token %}
+
+<form method="post" class="pergunta__texto">{% csrf_token %}
+    {% include 'partials/_header.html' %}
+    <h1 class="titulo__padrao--adicionar">Adicionar Pergunta</h1>
+    <p class="desc__titulo--padrao">Para começar a colaborar cadastre-se com seus dados abaixo e comece a enviar perguntas.</p>
     {{ form.tema|as_crispy_field  }}
     {{ form.enunciado|as_crispy_field  }}
 
