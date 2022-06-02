@@ -754,8 +754,6 @@ body {
     width: 496px;
     height: auto;
     flex-direction: column;
-    justify-content: center;
-    align-self: center;
     padding: 0px 13px;
     background: rgba(255, 255, 255, 1);
 }
