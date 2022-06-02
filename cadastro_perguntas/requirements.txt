@@ -18,3 +18,4 @@ python-gettext
 psycopg2==2.9.3
 django-allauth==0.50.0
 django-crispy-forms==1.14.0
+django-widget-tweaks==1.4.12

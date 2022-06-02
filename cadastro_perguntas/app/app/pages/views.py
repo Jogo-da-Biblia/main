@@ -1,6 +1,7 @@
-from django.forms import BaseInlineFormSet, inlineformset_factory, formset_factory
+from django.forms import BaseInlineFormSet, inlineformset_factory
 from django.http import JsonResponse
-from django.views.generic import TemplateView, ListView, UpdateView, CreateView
+from django.views.generic import TemplateView, ListView
+from django.views.generic.edit import UpdateView, CreateView
 
 from app.perguntas.models import Pergunta, Alternativa
 from app.perguntas.forms import AlternativaForm, ReferenciaForm
@@ -60,7 +61,8 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
 
 class PerguntaUpdateView(UpdateView):
     model = Pergunta
-    fields = ['tema', 'enunciado', 'tipo_resposta', 'outras_referencias']
+    template_name = 'perguntas/pergunta_form.html'
+    fields = ['tema', 'enunciado', 'outras_referencias']
     success_url = '/'
 
     def get_context_data(self, **kwargs):
