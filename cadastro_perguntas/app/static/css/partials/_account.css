@@ -7,11 +7,18 @@
     width: 496px;
 }
 
+header.all__blue{
+    background: #527a94;
+    padding: 24px;
+    height: 152px;
+    box-sizing: border-box;
+}
+
 .logo__login {
     display: flex;
     justify-content: center;
-    width: 100%;
-    height: 152px;
+    height: 100%;
+    margin: 0 auto;
 }
 
 .pagina__login {

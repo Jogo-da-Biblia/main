@@ -12,8 +12,8 @@
 {% block content %}
 
     <form method="post" class="form__login">
-        <header>    
-            <img src="../../media\Logo_Login.jpeg" alt="Jogo da Biblia" class="logo__login">
+        <header class="all__blue">    
+            <img src="../../media/logo.svg" alt="Jogo da Biblia" class="logo__login">
         </header>
         <article class="pagina__login">
             <h1 class="titulo__padrao">Login</h1>
@@ -23,7 +23,7 @@
 
             {% csrf_token %}
             {{ form|crispy }}
-            <div class="botao--entrar">
+            <div class="botao__entrar">
                 <button class="botao__entrar" type="submit"><a class="link__entrar">Entrar</a></button>
             </div>
         </article>

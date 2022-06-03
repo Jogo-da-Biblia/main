@@ -12,9 +12,6 @@ class Tema(models.Model):
     def __str__(self):
         return self.nome
 
-    class Meta:
-        db_table = 'tema'
-
 
 class Referencia(models.Model):
     id = models.AutoField(primary_key=True)
@@ -29,7 +26,6 @@ class Referencia(models.Model):
         return f"{self.livro} {self.versiculo}"
 
     class Meta:
-        db_table = 'referencia'
         verbose_name = 'Referência'
         verbose_name_plural = 'Referências'
 
@@ -113,7 +109,6 @@ class Pergunta(models.Model):
         return self.enunciado
 
     class Meta:
-        db_table = 'pergunta'
         verbose_name = 'Pergunta'
 
     def get_absolute_url(self):
@@ -131,9 +126,6 @@ class Alternativa(models.Model):
     )
 
     alternativas_corretas = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = 'alternativa'
 
     def __str__(self):
         return self.texto

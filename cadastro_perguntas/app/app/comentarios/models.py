@@ -22,6 +22,5 @@ class Comentario(models.Model):
         return f'{self.mensagem} - {self.email}'
 
     class Meta:
-        db_table = 'comentario'
         verbose_name = 'Comentário'
         verbose_name_plural = 'Comentários'

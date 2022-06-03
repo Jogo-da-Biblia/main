@@ -7,7 +7,7 @@ services:
       context: cadastro_perguntas
       dockerfile: Dockerfile
     environment:
-      - DB_NAME=${POSTGRES_NAME}
+      - DB_NAME=${POSTGRES_DBNAME}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_HOST=db
@@ -19,7 +19,6 @@ services:
     command: python app/manage.py runserver 0.0.0.0:8000
     depends_on:
       - db
-  
   db:
     image: postgres
     container_name: jogodabiblia_db
@@ -32,14 +31,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: trust
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-  
+      POSTGRES_DB: ${POSTGRES_DBNAME}
   nginx:
     container_name: jogodabiblia_nginx
     restart: always

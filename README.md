@@ -49,9 +49,9 @@ Só funciona em linux, é útil para executar blocos de códigos juntos, sem pre
 make init
 ```
 
-### Alguns comando úteis
+### Para ambiente de testes
 
-Execute:
+Execute para resetar sem formatar o banco de dados:
 
 ```sh
 # Se você quiser restaurar as configurações iniciais do projeto para rodar novamente como se fosse a primeira vez
@@ -61,11 +61,21 @@ make run
 # Instale as aplicações e migrations, se der erro da primeira vez ([Errno 111] Connection refused)"), execute novamente
 make migrate
 # Popule o banco de dados
-docker exec -it jogodabiblia_db bash
-cat /initial_data/*.sql | mysql -u root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE}
+make seed
 # Crie um superusuário
 make superuser
 # Depois de popular o banco ele pode cair
+make run
+```
+
+Formatando o banco de dados e reiniciando o sistema para fins de produção em ambiente de desenvolvimento:
+
+```sh
+make reset_all
+make makemigrations
+make run
+make seed
+make superuser
 make run
 ```
 
@@ -82,8 +92,15 @@ docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && 
 docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py createsuperuser"
 ```
 
+### Restaurando tabela postgres
+
+```sh
+psql -U postgres -f /initial_data/biblia_psql.sql
+```
+
 ### Backup and Restore some table
 
+**!! Deprecated !!**
 ```sh
 # Backup
 DB_TABLE=biblia_livro sh dump_table.sh

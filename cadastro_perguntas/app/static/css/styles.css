@@ -77,12 +77,12 @@
         
     }
 
-    .botao--entrar {
+    div.botao__entrar {
         display: flex;
         justify-content: flex-end;
     }
 
-    .botao__entrar {
+    button.botao__entrar {
         justify-content: center;
         height: 40px;
         width: 103px;
@@ -99,7 +99,6 @@
     }
 
     .link__entrar {
-
         text-decoration: none;
         color: #F4F5F6;
     }
@@ -193,15 +192,23 @@
         text-decoration: none;
     }
 
-
-    img.cabecalho__logo {
-        display: flex;
-        justify-content: center;
-        margin: 0px auto;
-        display: flex;
-        align-items: center;
+    header #centered_logo_header{
+        background: #547B96;
         height: 56px;
         width: 160px;
+        display: flex;
+        justify-content: center;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    img.cabecalho__logo {
+        position: absolute;
+        height: 72px;
+        top: 3px;
+        filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.2)) drop-shadow(2px 2px 0px #547B96) drop-shadow(-2px 2px 0px #547B96);
     }
 
     .menu-lateral {
