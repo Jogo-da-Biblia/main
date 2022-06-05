@@ -1039,6 +1039,12 @@ input[type="radio"]:checked {
 
 .form__login {
     width: 496px;
+    padding-bottom: 64px;
+}
+
+.form__login h1 {
+    margin-top: 0px;
+    padding: 0px 0px;
 }
 
 header.all__blue{
@@ -1053,6 +1059,7 @@ header.all__blue{
     justify-content: center;
     height: 100%;
     margin: 0 auto;
+    min-width: 0px;
 }
 
 .pagina__login {
@@ -1061,7 +1068,7 @@ header.all__blue{
     gap: 12px;
     grid-template-columns: auto;
     align-items: center;
-    padding: 20px;
+    padding: 8px 20px;
 }
 
 /* LOGOUT */
