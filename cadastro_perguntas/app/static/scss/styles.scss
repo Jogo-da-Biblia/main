@@ -49,7 +49,7 @@ main{
         src: url(icones.ttf);
     }
 
-     .titulo__padrao {
+    .titulo__padrao {
         display: flex;
         text-align: start;
         font-family: 'Roboto Slab', serif;
@@ -58,7 +58,7 @@ main{
         font-size: 30px;
         color: #858585;
         line-height: 40px;
-        padding: 20px 24px;
+        padding: 20px 0px;
     }
 
     .username__senha {
@@ -67,7 +67,7 @@ main{
         font-weight: 400;
         font-size: 12px;
         color: #000000;
-        line-height: 14px;
+        line-height: 14.4px;
     }
 
 
@@ -160,7 +160,6 @@ main{
 
     .logo__principal {
         margin: 0px;
-
     }
 
     .logo__pequeno {
@@ -719,9 +718,6 @@ main{
 
     .link__entrar {
         display: flex;
-        text-align: center;
-        height: 40px;
-        width: 103px;
         justify-content: center;
         align-items: center;
     }

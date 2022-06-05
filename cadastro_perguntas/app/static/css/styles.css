@@ -54,7 +54,7 @@ main p {
     font-size: 30px;
     color: #858585;
     line-height: 40px;
-    padding: 20px 24px;
+    padding: 20px 0px;
   }
   .username__senha {
     font-family: 'Lato', sans-serif;
@@ -62,7 +62,7 @@ main p {
     font-weight: 400;
     font-size: 12px;
     color: #000000;
-    line-height: 14px;
+    line-height: 14.4px;
   }
   .input__padrao {
     height: 56px;
@@ -606,9 +606,6 @@ main p {
   }
   .link__entrar {
     display: flex;
-    text-align: center;
-    height: 40px;
-    width: 103px;
     justify-content: center;
     align-items: center;
   }
