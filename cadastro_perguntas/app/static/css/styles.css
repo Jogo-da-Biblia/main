@@ -3,13 +3,11 @@ body, html {
 }
 
 main {
-  max-height: 100vh;
   max-width: 100vw;
   overflow: hidden;
   display: block;
   margin: 0 auto;
-  text-align: center;
-  color: #ccc;
+  color: #000000;
   font-size: 15px;
 }
 
@@ -34,6 +32,11 @@ main p {
   main p {
     padding: 0 20px;
   }
+}
+
+.section__footer {
+  position: relative;
+  margin-top: -28px;
 }
 
 @media screen and (min-width: 320px) {
@@ -139,7 +142,6 @@ main p {
     line-height: 14px;
     text-align: center;
     color: #D2D2D2;
-    margin-top: 50px;
   }
   /*Logo*/
   .logo__principal {
@@ -222,7 +224,6 @@ main p {
     flex-direction: column;
     background: #F4F5F6;
     width: 100vw;
-    height: 100vh;
     font-family: 'Lato';
     font-style: normal;
     font-weight: 700;
@@ -484,6 +485,7 @@ main p {
     align-items: center;
     margin-top: 10px;
     width: 20px;
+    min-width: 0;
   }
   .parte__referencia {
     display: flex;
@@ -565,7 +567,7 @@ main p {
     border: 1px solid #727376;
     background: #F4F5F6;
     box-shadow: 0px 0px 0px 2px #FFFFFF;
-    margin: 10px 20px;
+    margin: 10px 0px;
   }
   .dsc__livre {
     display: flex;
@@ -669,6 +671,8 @@ body {
   flex-direction: row;
   margin: 0 auto;
   padding: 0px 11px;
+  height: 100%;
+  min-height: 100vh;
 }
 
 .menu-lateral__link {
@@ -681,8 +685,9 @@ body {
   width: 496px;
   height: auto;
   flex-direction: column;
-  padding: 0px 13px;
+  padding: 0px 24px;
   background: white;
+  padding-bottom: 64px;
 }
 
 h1, h2 {
@@ -703,6 +708,10 @@ h2, .titulo__padrao--adicionar {
   padding: 10px 0px;
 }
 
+.titulo__padrao--adicionar {
+  margin-top: 32px;
+}
+
 .desc__titulo--padrao {
   display: flex;
   justify-content: flex-start;
@@ -714,6 +723,11 @@ h2, .titulo__padrao--adicionar {
   text-align: left;
   color: #000000;
   height: 37px;
+}
+
+.form__update {
+  padding: 0px 24px;
+  padding-bottom: 64px;
 }
 
 .fixedAddContainer a:last-child {
@@ -751,7 +765,6 @@ h2, .titulo__padrao--adicionar {
 .pergunta__container {
   height: 120px;
   margin-bottom: 13px;
-  padding: 0 24px;
 }
 
 .caixa__texto {
@@ -1010,6 +1023,5 @@ header.all__blue {
     line-height: 14px;
     text-align: center;
     color: #D2D2D2;
-    margin-top: 50px;
   }
 }
