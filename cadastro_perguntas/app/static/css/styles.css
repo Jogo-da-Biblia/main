@@ -379,18 +379,6 @@ main p {
     flex-direction: column;
     /* margin: 28px; */
   }
-  /* h2 {
-        display: flex;
-        width: 270px;
-        font-family: Roboto Slab;
-        font-size: 28px;
-        font-weight: 700;
-        line-height: 33px;
-        letter-spacing: 0em;
-        color: #858585;
-        margin: 10px 10px;
-
-    } */
   .card__multipla {
     display: flex;
     align-items: center;
@@ -624,7 +612,6 @@ main p {
     grid-template-columns: 1fr auto;
     box-sizing: border-box;
     grid-column: 2;
-    width: 496px;
     margin: 0 auto;
   }
   .cabecalho__menu {

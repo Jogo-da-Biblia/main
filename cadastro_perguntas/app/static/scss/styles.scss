@@ -224,8 +224,6 @@ main{
 
     /*Menu-Lateral*/
 
-
-
     .cabecalho {
         display: flex;
         justify-content: space-between;
@@ -280,7 +278,6 @@ main{
         background: #F4F5F6;
         background: #E5E5E5;
     }
-
    
     .menu-lateral__logo {
         width: 118px;
@@ -361,7 +358,6 @@ main{
         background: #5AD83A;
     }
 
-
     /* Adicionat-Pergunta*/
 
     .principal {
@@ -394,7 +390,6 @@ main{
         font-size: 20px;
         line-height: 24px;
         color: #9E9D97;
-
     }
 
     .selecionar__tema {
@@ -447,19 +442,6 @@ main{
         /* margin: 28px; */
     }
 
-    /* h2 {
-        display: flex;
-        width: 270px;
-        font-family: Roboto Slab;
-        font-size: 28px;
-        font-weight: 700;
-        line-height: 33px;
-        letter-spacing: 0em;
-        color: #858585;
-        margin: 10px 10px;
-
-    } */
-
     .card__multipla {
         display: flex;
         align-items: center;
@@ -471,8 +453,6 @@ main{
         text-align: left;
         color: #9E9D97;
         padding: 2px;
-
-
     }
 
     input {
@@ -486,8 +466,6 @@ main{
         display: flex;
         align-items: center;
         justify-content: center;
-
-
     }
 
     .card__altenar {
@@ -519,8 +497,6 @@ main{
         text-decoration: none;
         height: 50px;
         width: 350px;
-        
-        
         background: #547B96;
         border: 1px solid #3F5C70;
         box-shadow: 0px 0px 0px 2px #FFFFFF;
@@ -555,8 +531,6 @@ main{
         width: 90%;
         padding: 5px;
         background: #F4F5F6;
-
-
     }
 
     .direcionar__card--alt {
@@ -564,7 +538,6 @@ main{
         flex-direction: row;
         justify-content: space-between;
         padding: 10px;
-
     }
 
     .imagem__lixeira {
@@ -730,7 +703,6 @@ main{
         grid-template-columns: 1fr auto;
         box-sizing: border-box;
         grid-column: 2;
-        width: 496px;
         margin: 0 auto;
     }
 
