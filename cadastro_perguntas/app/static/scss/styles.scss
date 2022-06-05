@@ -7,7 +7,7 @@ body, html{
 
 main{
     // background-color: #537A95;
-    max-height: 100vh;
+    // max-height: 100vh;
     max-width: 100vw;
     overflow: hidden;
     display: block;
@@ -19,7 +19,6 @@ main{
 
     img{
         width: 60%;
-        margin-top: 10vh;
         min-width: 300px;
     }
 
@@ -49,6 +48,11 @@ main{
         src: url(icones.ttf);
     }
 
+    .img__menu {
+        width: 100%;
+        min-width: 0px;
+    }
+
     .titulo__padrao {
         display: flex;
         text-align: start;
@@ -69,7 +73,6 @@ main{
         color: #000000;
         line-height: 14.4px;
     }
-
 
     .input__padrao {
         height: 56px;
@@ -224,7 +227,6 @@ main{
     .cabecalho {
         display: flex;
         justify-content: space-between;
-        padding: 0px 24px;
         width: 100%;
     }
 
@@ -743,7 +745,7 @@ main{
     .menu-lateral {
         display: flex;
         position: static;
-        width: 200px;
+        width: 264px;
         margin-top: 88px;
     }
 
@@ -783,7 +785,6 @@ body {
 .main__container {
     display: flex;
     flex-direction: row;
-    justify-content: center;
     margin: 0 auto;
     padding: 0px 11px;
 }

@@ -3,7 +3,6 @@ body, html {
 }
 
 main {
-  max-height: 100vh;
   max-width: 100vw;
   overflow: hidden;
   display: block;
@@ -15,7 +14,6 @@ main {
 
 main img {
   width: 60%;
-  margin-top: 10vh;
   min-width: 300px;
 }
 
@@ -44,6 +42,10 @@ main p {
   @font-face {
     font-family: 'icones';
     src: url(icones.ttf);
+  }
+  .img__menu {
+    width: 100%;
+    min-width: 0px;
   }
   .titulo__padrao {
     display: flex;
@@ -191,7 +193,6 @@ main p {
   .cabecalho {
     display: flex;
     justify-content: space-between;
-    padding: 0px 24px;
     width: 100%;
   }
   .cabecalho__menu i::after {
@@ -628,7 +629,7 @@ main p {
   .menu-lateral {
     display: flex;
     position: static;
-    width: 200px;
+    width: 264px;
     margin-top: 88px;
   }
   .configuracao__botao {
@@ -664,7 +665,6 @@ body {
 .main__container {
   display: flex;
   flex-direction: row;
-  justify-content: center;
   margin: 0 auto;
   padding: 0px 11px;
 }
