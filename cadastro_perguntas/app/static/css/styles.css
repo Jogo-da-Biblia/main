@@ -1,5 +1,6 @@
-body, html {
-  font-family: 'Ubuntu', sans-serif;
+body,
+html {
+  font-family: "Ubuntu", sans-serif;
 }
 
 main {
@@ -41,20 +42,20 @@ main p {
 
 @media screen and (min-width: 320px) {
   body {
-    background: #F4F5F6;
+    background: #f4f5f6;
   }
   @font-face {
-    font-family: 'icones';
+    font-family: "icones";
     src: url(icones.ttf);
   }
   .img__menu {
     width: 100%;
     min-width: 0px;
   }
-  .titulo__padrao {
+  h1 {
     display: flex;
     text-align: start;
-    font-family: 'Roboto Slab', serif;
+    font-family: "Roboto Slab", serif;
     font-style: normal;
     font-weight: 700;
     font-size: 30px;
@@ -63,13 +64,15 @@ main p {
     padding: 20px 0px;
     margin-top: 32px;
   }
-  .username__senha {
-    font-family: 'Lato', sans-serif;
+  article > p {
+    font-family: "Lato", sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
     color: #000000;
     line-height: 14.4px;
+    margin: 0;
+    padding: 0;
   }
   .input__padrao {
     height: 56px;
@@ -77,10 +80,10 @@ main p {
     left: 22px;
     top: 275px;
     border-radius: 5px;
-    background: #F4F5F6;
+    background: #f4f5f6;
     border: 1px solid #727376;
     display: flex;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
@@ -90,26 +93,11 @@ main p {
     margin-bottom: 11px;
   }
   .inlineform textarea {
-    background: #F4F5F6;
-  }
-  .parte__referencia select {
-    background: #F4F5F6;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
-  }
-  .parte__referencia input {
-    background: #F4F5F6;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    background: #f4f5f6;
   }
   #id_texto {
-    background: #F4F5F6;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
-  }
-  .card__multipla .radio-escolha:after {
-    top: 9px;
-    left: 9px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    background: #f4f5f6;
+    box-shadow: 0px 0px 0px 2px #ffffff;
   }
   div.botao__entrar {
     display: flex;
@@ -120,7 +108,7 @@ main p {
     height: 40px;
     width: 103px;
     left: 193px;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
@@ -131,17 +119,17 @@ main p {
   }
   .link__entrar {
     text-decoration: none;
-    color: #F4F5F6;
+    color: #f4f5f6;
   }
   .copyright {
     display: flex;
     justify-content: center;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-weight: 400;
     font-size: 12px;
     line-height: 14px;
     text-align: center;
-    color: #D2D2D2;
+    color: #d2d2d2;
   }
   /*Logo*/
   .logo__principal {
@@ -162,7 +150,7 @@ main p {
     height: 40px;
     width: 103px;
     left: 193px;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
@@ -185,13 +173,13 @@ main p {
   .termo__uso {
     display: flex;
     justify-content: flex-start;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
     line-height: 19px;
     left: 64px;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   /*Menu-Lateral*/
   .cabecalho {
@@ -203,7 +191,7 @@ main p {
     text-decoration: none;
   }
   header #centered_logo_header {
-    background: #547B96;
+    background: #547b96;
     height: 56px;
     width: 160px;
     display: flex;
@@ -217,29 +205,29 @@ main p {
     position: absolute;
     height: 72px;
     top: 3px;
-    filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.2)) drop-shadow(2px 2px 0px #547B96) drop-shadow(-2px 2px 0px #547B96);
+    filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.2)) drop-shadow(2px 2px 0px #547b96) drop-shadow(-2px 2px 0px #547b96);
   }
   .menu-lateral {
     display: flex;
     flex-direction: column;
-    background: #F4F5F6;
+    background: #f4f5f6;
     width: 100vw;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 700;
     font-size: 16px;
     line-height: 12px;
     position: absolute;
     left: -100vw;
-    transition: .75s;
+    transition: 0.75s;
     margin-top: 70px;
   }
   /*JS*/
   .menu-lateral--ativo {
     left: 0;
-    transition: .75s;
-    background: #F4F5F6;
-    background: #E5E5E5;
+    transition: 0.75s;
+    background: #f4f5f6;
+    background: #e5e5e5;
   }
   .menu-lateral__logo {
     width: 118px;
@@ -248,7 +236,7 @@ main p {
   }
   .menu-lateral__link {
     height: 42px;
-    color: #9E9D97;
+    color: #9e9d97;
     padding-left: 32px;
     display: flex;
     align-items: center;
@@ -304,7 +292,7 @@ main p {
     width: 70px;
     left: 34px;
     border-radius: 10px;
-    background: #5AD83A;
+    background: #5ad83a;
   }
   /* Adicionat-Pergunta*/
   .principal {
@@ -316,7 +304,7 @@ main p {
   .selecao__tema {
     position: static;
     justify-content: center;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -328,21 +316,21 @@ main p {
     color: #000000;
   }
   .conf__tema {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 24px;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   .selecionar__tema {
     display: grid;
     height: 56px;
     width: 274px;
     border-radius: 5px;
-    background: #F4F5F6;
+    background: #f4f5f6;
     border: 1px solid #727376;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    box-shadow: 0px 0px 0px 2px #ffffff;
     border-radius: 5px;
     margin-top: 10px;
   }
@@ -354,9 +342,9 @@ main p {
     left: 22px;
     top: 259px;
     border-radius: 5px;
-    background: #F4F5F6;
+    background: #f4f5f6;
     border: 1px solid #727376;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    box-shadow: 0px 0px 0px 2px #ffffff;
     border-radius: 5px;
   }
   .card__pergunta,
@@ -369,7 +357,7 @@ main p {
     font-weight: 400;
     line-height: 24px;
     letter-spacing: 0em;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   .card__pergunta {
     margin-top: 12px;
@@ -388,8 +376,15 @@ main p {
     line-height: 24px;
     letter-spacing: 0em;
     text-align: left;
-    color: #9E9D97;
+    color: #9e9d97;
     padding: 2px;
+  }
+  .card__multipla input[type="radio"]:after {
+    top: 9px;
+    left: 9px;
+    width: 10px;
+    height: 8px;
+    border-radius: 50%;
   }
   input {
     margin: none;
@@ -402,12 +397,12 @@ main p {
     justify-content: center;
   }
   .card__altenar {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 700;
     font-size: 24px;
     line-height: 29px;
-    color: #9E9D97;
+    color: #9e9d97;
     margin: 10px 0px;
   }
   .descricao--card__alternativa {
@@ -428,9 +423,9 @@ main p {
     text-decoration: none;
     height: 50px;
     width: 350px;
-    background: #547B96;
-    border: 1px solid #3F5C70;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    background: #547b96;
+    border: 1px solid #3f5c70;
+    box-shadow: 0px 0px 0px 2px #ffffff;
     border-radius: 5px;
     font-family: Lato;
     font-size: 20px;
@@ -438,7 +433,7 @@ main p {
     line-height: 24px;
     letter-spacing: 0em;
     text-align: center;
-    color: #F0F0F0;
+    color: #f0f0f0;
   }
   .card--alternativas {
     height: 117px;
@@ -446,9 +441,9 @@ main p {
     left: 24px;
     border-radius: 5px;
     border: 1px solid #727376;
-    background: #F4F5F6;
+    background: #f4f5f6;
     border: 1px solid #727376;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    box-shadow: 0px 0px 0px 2px #ffffff;
     border-radius: 5px;
     margin-top: 12px;
   }
@@ -459,7 +454,7 @@ main p {
     height: 56px;
     width: 90%;
     padding: 5px;
-    background: #F4F5F6;
+    background: #f4f5f6;
   }
   .direcionar__card--alt {
     display: flex;
@@ -481,6 +476,44 @@ main p {
     justify-content: center;
     /* align-items: center; */
     /* width: 320px; */
+  }
+  .parte__referencia select {
+    background: #f4f5f6;
+    box-shadow: 0px 0px 0px 2px #ffffff;
+  }
+  .parte__referencia input {
+    background: #f4f5f6;
+    box-shadow: 0px 0px 0px 2px #ffffff;
+  }
+  .parte__referencia input {
+    height: 56px;
+    /* width: 274px; */
+    border-radius: 5px;
+    background: #e5e5e5;
+    border: 1px solid #727376;
+    box-shadow: 0px 0px 0px 2px #ffffff;
+    display: flex;
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: #9e9d97;
+  }
+  .parte__referencia select {
+    height: 56px;
+    /* width: 274px; */
+    border-radius: 5px;
+    background: #e5e5e5;
+    border: 1px solid #727376;
+    box-shadow: 0px 0px 0px 2px #ffffff;
+    display: flex;
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: #9e9d97;
   }
   .referencia {
     font-family: Roboto Slab;
@@ -514,24 +547,25 @@ main p {
     line-height: 24px;
     letter-spacing: 0em;
     text-align: center;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   .artigo--referencia {
     display: flex;
     justify-content: center;
     text-align: center;
-    padding: 0px 50px;
+    padding: 0px 0 16px 50px;
   }
-  .art__referencia {
+  .artigo--referencia p {
     font-family: Lato;
     font-size: 12px;
     font-style: italic;
     font-weight: 400;
     line-height: 14px;
     letter-spacing: 0em;
-    margin: 20px 0px;
+    margin: 0;
+    padding: 0;
     text-align: left;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   .selecionar__opcoes {
     display: flex;
@@ -539,22 +573,22 @@ main p {
     justify-content: center;
   }
   .opcoes--referencia {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 24px;
     display: flex;
     align-items: center;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   .selecionar__referencia {
     height: 56px;
     /* width: 274px; */
     border-radius: 5px;
     border: 1px solid #727376;
-    background: #F4F5F6;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    background: #f4f5f6;
+    box-shadow: 0px 0px 0px 2px #ffffff;
     margin: 10px 0px;
   }
   .dsc__livre {
@@ -570,7 +604,7 @@ main p {
     line-height: 24px;
     letter-spacing: 0em;
     text-align: left;
-    color: #9E9D97;
+    color: #9e9d97;
   }
   .btn__pg {
     display: flex;
@@ -582,19 +616,19 @@ main p {
     width: 103px;
     justify-content: center;
     border-radius: 5px;
-    background: #B6B6B6;
+    background: #b6b6b6;
     border: 1px solid #929292;
-    box-shadow: 0px 0px 0px 2px #FFFFFF;
+    box-shadow: 0px 0px 0px 2px #ffffff;
   }
   .btn__pg--adicionar {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 24px;
     display: flex;
     align-items: center;
-    color: #F0F0F0;
+    color: #f0f0f0;
     text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1);
   }
   .link__entrar {
@@ -643,12 +677,12 @@ main p {
     background: #ffce5b;
   }
   .btn__revisado {
-    background: #5AD83A;
+    background: #5ad83a;
   }
 }
 
 body {
-  background: #F4F5F6;
+  background: #f4f5f6;
   width: 1024px;
   margin: 0 auto;
 }
@@ -677,25 +711,20 @@ body {
   padding-bottom: 64px;
 }
 
-h1, h2 {
+h1,
+h2 {
   display: block;
   width: 100%;
-}
-
-h2, .titulo__padrao--adicionar {
   display: flex;
   justify-content: flex-start;
   text-align: start;
-  font-family: 'Roboto Slab', serif;
+  font-family: "Roboto Slab", serif;
   font-style: normal;
   font-weight: 700;
   font-size: 30px;
   color: #858585;
   line-height: 40px;
   padding: 10px 0px;
-}
-
-.titulo__padrao--adicionar {
   margin-top: 32px;
 }
 
@@ -710,6 +739,8 @@ h2, .titulo__padrao--adicionar {
   text-align: left;
   color: #000000;
   height: 37px;
+  margin: 0;
+  padding: 0;
 }
 
 .form__update {
@@ -736,9 +767,9 @@ h2, .titulo__padrao--adicionar {
   text-decoration: none;
   height: 50px;
   width: 350px;
-  background: #547B96;
-  border: 1px solid #3F5C70;
-  box-shadow: 0px 0px 0px 2px #FFFFFF;
+  background: #547b96;
+  border: 1px solid #3f5c70;
+  box-shadow: 0px 0px 0px 2px #ffffff;
   border-radius: 5px;
   font-family: Lato;
   font-size: 20px;
@@ -746,7 +777,7 @@ h2, .titulo__padrao--adicionar {
   line-height: 24px;
   letter-spacing: 0em;
   text-align: center;
-  color: #F0F0F0;
+  color: #f0f0f0;
 }
 
 .pergunta__container {
@@ -770,13 +801,13 @@ h2, .titulo__padrao--adicionar {
   font-family: Lato;
   font-size: 12px;
   font-weight: 400;
-  background-color: #F4F5F6;
+  background-color: #f4f5f6;
   padding-top: 10px;
   padding-left: 16px;
 }
 
 .caixa-pergunta__resposta {
-  color: #9E9D97;
+  color: #9e9d97;
   font-family: Lato;
   font-size: 12px;
   font-weight: 400;
@@ -825,48 +856,16 @@ a:hover {
   height: 120px !important;
 }
 
-.inlineform textarea {
-  background: #E5E5E5;
-  height: 136px !important;
-  border: 1px solid #727376;
-  box-shadow: 0px 0px 0px 2px #FFFFFF;
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #9e9d97;
-}
-
 .inlineform {
   margin-bottom: 11px;
 }
 
-.parte__referencia select {
-  height: 56px;
-  /* width: 274px; */
-  border-radius: 5px;
-  background: #E5E5E5;
+.inlineform textarea {
+  background: #e5e5e5;
+  height: 136px !important;
   border: 1px solid #727376;
-  box-shadow: 0px 0px 0px 2px #FFFFFF;
-  display: flex;
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #9e9d97;
-}
-
-.parte__referencia input {
-  height: 56px;
-  /* width: 274px; */
-  border-radius: 5px;
-  background: #E5E5E5;
-  border: 1px solid #727376;
-  box-shadow: 0px 0px 0px 2px #FFFFFF;
-  display: flex;
-  font-family: 'Lato';
+  box-shadow: 0px 0px 0px 2px #ffffff;
+  font-family: "Lato";
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
@@ -876,11 +875,11 @@ a:hover {
 
 #id_texto {
   border-radius: 5px;
-  background: #E5E5E5;
+  background: #e5e5e5;
   border: 1px solid #727376;
-  box-shadow: 0px 0px 0px 2px #FFFFFF;
+  box-shadow: 0px 0px 0px 2px #ffffff;
   display: flex;
-  font-family: 'Lato';
+  font-family: "Lato";
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
@@ -889,25 +888,25 @@ a:hover {
 }
 
 .input__padrao {
-  background: #E5E5E5;
+  background: #e5e5e5;
   border: 1px solid #727376;
-  box-shadow: 0px 0px 0px 2px #FFFFFF;
+  box-shadow: 0px 0px 0px 2px #ffffff;
 }
 
 @media screen and (max-width: 720px) {
   body {
     width: auto;
-    background: #E5E5E5;
+    background: #e5e5e5;
   }
   .pergunta__texto {
-    background: #E5E5E5;
+    background: #e5e5e5;
     margin: 0 auto;
   }
   .caixa__texto {
-    background: #E5E5E5;
+    background: #e5e5e5;
   }
   .txt__pergunta {
-    background: #E5E5E5;
+    background: #e5e5e5;
   }
 }
 
@@ -917,15 +916,12 @@ input[type="radio"] {
   height: 28px;
   border-radius: 50%;
   transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  margin-right: 8px;
 }
 
 input[type="radio"]:checked {
   box-sizing: border-box;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  border: 2px solid #D1D7DC;
+  border: 2px solid #d1d7dc;
 }
 
 /* LOGIN */
@@ -977,7 +973,7 @@ header.all__blue {
 
 .pg__sair {
   width: 270px;
-  font-family: 'Lato';
+  font-family: "Lato";
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
@@ -992,7 +988,7 @@ header.all__blue {
 
 .deseja__sair {
   width: 270px;
-  font-family: 'Lato';
+  font-family: "Lato";
   font-style: normal;
   font-weight: 400;
   font-size: 28px;
@@ -1011,11 +1007,11 @@ header.all__blue {
   .copyright {
     display: flex;
     justify-content: center;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-weight: 400;
     font-size: 12px;
     line-height: 14px;
     text-align: center;
-    color: #D2D2D2;
+    color: #d2d2d2;
   }
 }

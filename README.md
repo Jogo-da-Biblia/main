@@ -115,7 +115,7 @@ cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root
 ## To watch/compile sass
 
 ```sh
-python manage.py sass app/perguntas/static/scss/ app/perguntas/static/css/ --watch
+make sass
 python manage.py sass app/perguntas/static/scss/ app/perguntas/static/css/ -t compressed
 ```
 

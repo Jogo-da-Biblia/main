@@ -5,7 +5,7 @@
 {% block content %}
 <article class="pergunta__texto">
         {% include 'partials/_header.html' %}
-        <h1 class="titulo__padrao">Minhas Perguntas</h1>
+        <h1>Minhas Perguntas</h1>
 
         {% for pergunta in object_list %}
         <a href="{{ pergunta.get_absolute_url }}">
