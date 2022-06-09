@@ -46,6 +46,8 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
                 referencia_form.save()
                 form.instance.refencia_resposta = referencia_form.instance
                 form.save()
+            elif self.request.POST['versiculo'] == '0':
+                form.instance.outras_referencias = self.get_referencia_livro_capitulo()
 
         return super().form_valid(form)
 
@@ -57,6 +59,11 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=1, can_delete=True)
         context["formset"] = AlternativasFormSet()
         return context
+
+    def get_referencia_livro_capitulo(self):
+        livro = Livro.objects.get(id=self.request.POST['livro'])
+        capitulo = self.request.POST['capitulo']
+        return f'{livro.nome}, Capítulo {capitulo}'
 
 
 class PerguntaUpdateView(UpdateView):

@@ -70,6 +70,9 @@ $("#btn_salvar").click(function () {
   if ($("#radio_textual").is(":checked")) {
     esvaziaEscolhaBiblica();
   }
+  if ($("#radio-livro-capitulo").is(":checked")) {
+    referenciaLivroCapitulo();
+  }
 });
 
 $("#radio_biblia").change(function () {
@@ -117,9 +120,10 @@ $("#radio-completa").change(function () {
 $("#radio-livro-capitulo").change(function () {
   if ($(this).is(":checked")) {
     $("#section_alternativa").hide();
-    $("#section_selecao_referencia").show();
+    $("#section_selecao_referencia").hide();
     $("#section_referencia").show();
     $("#section_textual").hide();
+    $("#versiculos").hide();
   }
 });
 
@@ -145,6 +149,15 @@ function esvaziaEscolhaBiblica() {
 function esvaziaEscolhaTextual() {
   $("#id_texto_biblico").val("");
   $("#id_outras_referencias").val("");
+}
+
+function referenciaLivroCapitulo() {
+  $("#versiculos").show();
+  $("#versiculos").empty();
+  $("#versiculos").append(
+    $("<option></option>").attr("value", 0).text("referencia_livro_capitulo")
+    );
+  console.log($("#versiculos").text());
 }
 
 // JS MENU MOBILE
