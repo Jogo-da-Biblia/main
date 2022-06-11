@@ -208,6 +208,12 @@ main {
         display: flex;
         justify-content: space-between;
         width: 100%;
+        position: relative;
+    }
+
+    .cabecalho__menu {
+        position: absolute;
+        top: 14px;
     }
 
     .cabecalho__menu i::after {
@@ -221,8 +227,6 @@ main {
         display: flex;
         justify-content: center;
         margin: 0 auto;
-        display: flex;
-        align-items: center;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     }
 
