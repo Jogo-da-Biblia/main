@@ -19,7 +19,13 @@
     
         <section class="parte__referencia" id="section_referencia">
             {% if referencia_form %}
-                {{ versiculo_form|crispy }}
+                {{ versiculo_form.versao|as_crispy_field }}
+                {{ versiculo_form.livro|as_crispy_field }}
+                {{ versiculo_form.capitulo|as_crispy_field }}
+                {% if not tipo_resposta == 'RLC' %}
+                    {{ versiculo_form.versiculo|as_crispy_field }}
+                    {{ versiculo_form.texto|as_crispy_field }}
+                {% endif %}
             {% endif %}
             {% if form.outras_referencias %}
                 <section class="" id="section_textual">

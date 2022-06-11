@@ -46,8 +46,6 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
                 referencia_form.save()
                 form.instance.refencia_resposta = referencia_form.instance
                 form.save()
-            elif self.request.POST['versiculo'] == '0':
-                form.instance.outras_referencias = self.get_referencia_livro_capitulo()
 
         return super().form_valid(form)
 
@@ -59,11 +57,6 @@ class PerguntaCreateView(CreateView, BaseInlineFormSet):
         AlternativasFormSet = inlineformset_factory(Pergunta, Alternativa, form=AlternativaForm, extra=1, can_delete=True)
         context["formset"] = AlternativasFormSet()
         return context
-
-    def get_referencia_livro_capitulo(self):
-        livro = Livro.objects.get(id=self.request.POST['livro'])
-        capitulo = self.request.POST['capitulo']
-        return f'{livro.nome}, Capítulo {capitulo}'
 
 
 class PerguntaUpdateView(UpdateView):
@@ -80,6 +73,7 @@ class PerguntaUpdateView(UpdateView):
         if self.object.refencia_resposta:
             context["referencia_form"] = ReferenciaForm(instance=self.object.refencia_resposta)
             context["versiculo_form"] = VersiculoForm(instance=self.object.refencia_resposta.versiculo)
+            context['tipo_resposta'] = self.object.tipo_resposta
 
         return context
 
@@ -97,7 +91,7 @@ def get_capitulos(request):
     if request.method == 'POST':
         versao = Versiculo.objects.filter(versao_id=request.POST['versao'])
         capitulos = versao.filter(livro_id=request.POST['livro']).distinct('capitulo')
-        return JsonResponse(list(capitulos.values("capitulo")), safe=False)
+        return JsonResponse(list(capitulos.values("capitulo", 'id')), safe=False)
 
 
 def get_versiculos(request):
@@ -105,7 +99,7 @@ def get_versiculos(request):
         versao = Versiculo.objects.filter(versao_id=request.POST['versao'])
         capitulos = versao.filter(livro_id=request.POST['livro'])
         versiculos = capitulos.filter(capitulo=request.POST['capitulo']).distinct('versiculo')
-        return JsonResponse(list(versiculos.values('versiculo')), safe=False)
+        return JsonResponse(list(versiculos.values('versiculo', 'id')), safe=False)
 
 
 def get_texto_biblico(request):
