@@ -22,18 +22,9 @@ main {
     }
 
     p {
-        // padding: 0 30vw;
         margin: 0;
         width: 100%;
         box-sizing: border-box;
-
-        @media (max-width: 730px) {
-            padding: 0 120px;
-        }
-
-        @media (max-width: 612px) {
-            padding: 0 20px;
-        }
     }
 }
 
@@ -725,7 +716,7 @@ main {
     }
 }
 
-@media screen and (min-width: 720px) {
+@media screen and (min-width: 989px) {
     .cabecalho {
         display: grid;
         align-items: center;
@@ -743,7 +734,7 @@ main {
     .menu-lateral {
         display: flex;
         position: static;
-        width: 264px;
+        width: 25%;
         margin-top: 88px;
     }
 
@@ -775,13 +766,15 @@ main {
 
 body {
     background: #f4f5f6;
-    width: 1024px;
-    margin: 0 auto;
+    // width: 1024px;
+    // margin: 0 auto;
 }
 
 .main__container {
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    max-width: 1024px;
     margin: 0 auto;
     padding: 0px 11px;
     height: 100%;
@@ -795,12 +788,19 @@ body {
 
 .pergunta__texto {
     display: flex;
-    width: 496px;
+    width: 48%;
+    max-width: 496px;
+    min-width: 496px;
     height: auto;
     flex-direction: column;
     padding: 0px 24px;
     background: rgba(255, 255, 255, 1);
     padding-bottom: 64px;
+
+    @media (max-width: 520px) {
+        width: 100%;
+        min-width: 274px;
+    }
 }
 
 h1,
@@ -838,6 +838,10 @@ h2 {
 .form__update {
     padding: 0px 24px;
     padding-bottom: 64px;
+
+    @media (max-width: 988px) {
+        margin: 0 auto;
+    }
 }
 
 .fixedAddContainer a:last-child {
@@ -985,7 +989,7 @@ a:hover {
     box-shadow: 0px 0px 0px 2px #ffffff;
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 988px) {
     body {
         width: auto;
         background: #e5e5e5;
@@ -1027,6 +1031,10 @@ input[type="radio"] {
 .form__login {
     width: 496px;
     padding-bottom: 64px;
+
+    @media (max-width: 988px) {
+        margin: 0 auto;
+    }
 }
 
 .form__login h1 {

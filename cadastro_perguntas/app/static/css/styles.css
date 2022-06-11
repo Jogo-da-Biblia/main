@@ -23,18 +23,6 @@ main p {
   box-sizing: border-box;
 }
 
-@media (max-width: 730px) {
-  main p {
-    padding: 0 120px;
-  }
-}
-
-@media (max-width: 612px) {
-  main p {
-    padding: 0 20px;
-  }
-}
-
 .section__footer {
   position: relative;
   margin-top: -28px;
@@ -641,7 +629,7 @@ main p {
   }
 }
 
-@media screen and (min-width: 720px) {
+@media screen and (min-width: 989px) {
   .cabecalho {
     display: grid;
     align-items: center;
@@ -657,7 +645,7 @@ main p {
   .menu-lateral {
     display: flex;
     position: static;
-    width: 264px;
+    width: 25%;
     margin-top: 88px;
   }
   .configuracao__botao {
@@ -686,13 +674,13 @@ main p {
 
 body {
   background: #f4f5f6;
-  width: 1024px;
-  margin: 0 auto;
 }
 
 .main__container {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  max-width: 1024px;
   margin: 0 auto;
   padding: 0px 11px;
   height: 100%;
@@ -706,12 +694,21 @@ body {
 
 .pergunta__texto {
   display: flex;
-  width: 496px;
+  width: 48%;
+  max-width: 496px;
+  min-width: 496px;
   height: auto;
   flex-direction: column;
   padding: 0px 24px;
   background: white;
   padding-bottom: 64px;
+}
+
+@media (max-width: 520px) {
+  .pergunta__texto {
+    width: 100%;
+    min-width: 274px;
+  }
 }
 
 h1,
@@ -749,6 +746,12 @@ h2 {
 .form__update {
   padding: 0px 24px;
   padding-bottom: 64px;
+}
+
+@media (max-width: 988px) {
+  .form__update {
+    margin: 0 auto;
+  }
 }
 
 .fixedAddContainer a:last-child {
@@ -896,7 +899,7 @@ a:hover {
   box-shadow: 0px 0px 0px 2px #ffffff;
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 988px) {
   body {
     width: auto;
     background: #e5e5e5;
@@ -935,6 +938,12 @@ input[type="radio"]:checked {
 .form__login {
   width: 496px;
   padding-bottom: 64px;
+}
+
+@media (max-width: 988px) {
+  .form__login {
+    margin: 0 auto;
+  }
 }
 
 .form__login h1 {
