@@ -88,13 +88,20 @@ class PerguntaAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, extra_context=None):
         if request.user.groups.filter(name='revisores').exists():
             self.fields[6] = ('revisado_status',)
-            extra_context = 'revisores'
-        if request.user.groups.filter(name='publicadores').exists():
-            self.fields[6] = ('status',)
-        if request.user.groups.filter(name='supervisores').exists():
+        elif request.user.groups.filter(name='publicadores').exists():
+            obj = self.get_object(request, object_id)
+            if obj.revisado_status:
+                self.fields[6] = ('status',)
+            else:
+                self.fields.pop(6)
+        elif request.user.groups.filter(name='supervisores').exists():
             self.fields[6] = ('revisado_status', 'status')
-        if request.user.groups.filter(name='administradores').exists():
+        elif request.user.groups.filter(name='administradores').exists():
             self.fields[6] = ('revisado_status', 'status')
+        elif request.user.is_superuser:
+            self.fields[6] = ('revisado_status', 'status')
+        else:
+            self.fields.pop(6)
 
         return super().change_view(request, object_id, extra_context)
 
@@ -133,7 +140,6 @@ class PerguntaAdmin(admin.ModelAdmin):
         super(PerguntaAdmin, self).save_model(request, obj, form, change)
 
     def response_change(self, request, obj):
-        print('TESTE')
         if "revisar" in request.POST:
             pass
         if "publicar" in request.POST:
