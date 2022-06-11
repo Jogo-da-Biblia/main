@@ -98,40 +98,30 @@ $("#radio_textual").change(function () {
 
 $("#radio-escolha").change(function () {
   if ($(this).is(":checked")) {
-    $("#section_alternativa").show();
-    $("#section_selecao_referencia").show();
-    $("#section_referencia").show();
-    $("#versiculos").show();
+    showRadioEscolha();
+    $(".form-check-label").text("Alternativa errada")
+    $("input.checkboxinput.form-check-input").prop("checked", false);
+    $("input.checkboxinput.form-check-input").attr("disabled", false);
     verificaCamposOutrasReferencias();
   }
 });
 
 $("#radio-completa").change(function () {
   if ($(this).is(":checked")) {
-    $("#section_alternativa").hide();
-    $("#section_selecao_referencia").hide();
-    $("#section_referencia").show();
-    $("#versiculos").show();
-    $("#section_textual").hide();
+    showRadioCompleta();
   }
 });
 
 $("#radio-livro-capitulo").change(function () {
   if ($(this).is(":checked")) {
-    $("#section_alternativa").hide();
-    $("#section_selecao_referencia").hide();
-    $("#section_referencia").show();
-    $("#section_textual").hide();
-    $("#versiculos").hide();
+    showRadioLivroCapitulo();
   }
 });
 
 $("#radio-simples").change(function () {
   if ($(this).is(":checked")) {
-    $("#section_alternativa").hide();
-    $("#section_selecao_referencia").hide();
-    $("#section_referencia").hide();
-    $("#section_textual").show();
+    showRadioSimples();
+    $("input.checkboxinput.form-check-input:not(:checked)").attr("disabled", false);
   }
 });
 
@@ -157,4 +147,56 @@ const menu = document.querySelector(".menu-lateral");
 botaoMenu.addEventListener("click", function (event) {
   event.preventDefault();
   menu.classList.toggle("menu-lateral--ativo");
+});
+
+function showRadioEscolha() {
+  $("#section_alternativa").show();
+  $("#section_selecao_referencia").show();
+  $("#section_referencia").show();
+  $("#versiculos").show();
+  $("input.checkboxinput.form-check-input:not(:checked)").attr("disabled", true);
+}
+
+function showRadioCompleta() {
+  $("#section_alternativa").hide();
+  $("#section_selecao_referencia").hide();
+  $("#section_referencia").show();
+  $("#versiculos").show();
+  $("#section_textual").hide();
+}
+
+function showRadioLivroCapitulo() {
+  $("#section_alternativa").hide();
+  $("#section_selecao_referencia").hide();
+  $("#section_referencia").show();
+  $("#section_textual").hide();
+  $("#versiculos").hide();
+  $(".parte__referencia").css("margin-top", "32px");
+}
+
+function showRadioSimples() {
+  $("#section_alternativa").show();
+  $("#section_selecao_referencia").show();
+  $("#section_referencia").show();
+  $("#versiculos").show();
+}
+
+$(function() {
+  const selected_tipo_resposta = $('input[name="tipo_resposta"]:checked').val();
+  if (selected_tipo_resposta == 'MES') {
+      showRadioEscolha();
+      return;
+  }
+  if (selected_tipo_resposta == 'RCO') {
+      showRadioCompleta();
+      return;
+  }
+  if (selected_tipo_resposta == 'RLC') {
+      showRadioLivroCapitulo();
+      return;
+  }
+  if (selected_tipo_resposta == 'RES') {
+      showRadioSimples();
+      return;
+  }
 });

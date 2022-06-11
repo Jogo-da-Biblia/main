@@ -14,7 +14,9 @@
         {{ form.tema|add_class:"input__padrao select form-control tema"|safe }}
         
         {{ form.enunciado|add_class:"input__padrao form-control enunciado_height"|safe  }}
-    
+
+        {% include 'perguntas/partials/_tipo_resposta.html' %}
+
         {% include 'perguntas/partials/_alternativa.html' %}
     
         <section class="parte__referencia" id="section_referencia">

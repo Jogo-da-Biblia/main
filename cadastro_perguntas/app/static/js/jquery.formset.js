@@ -216,6 +216,13 @@
                     updateElementIndex($(this), options.prefix, formCount);
                 });
                 totalForms.val(formCount + 1);
+
+                $(".inlineform textarea").attr(
+                    'placeholder' ,'descreva a alternativa e clique em adicionar, assinale a alternativa que deve ficar como correta'
+                );
+
+                multiplaEscolhaRespostaCerta();
+
                 // Check if we're above the minimum allowed number of forms -> show all delete link(s)
                 if (showDeleteLinks()){
                     $('a.' + delCssSelector).each(function(){$(this).show();});
@@ -230,6 +237,45 @@
 
         return $$;
     };
+
+    $("input.checkboxinput.form-check-input").click(function(){
+        multiplaEscolhaRespostaCerta();
+        if ($(this).is(':checked')) {
+            getTextAlternativaCorreta()
+        } else {
+            multiplaEscolhaRespostaCerta();
+            var getParent = $(this).parent()
+            getParent.find('label').text("Alternativa errada")
+        }
+    });
+
+    function multiplaEscolhaRespostaCerta () {
+        if ($("#radio-simples").is(":not(:checked)")) {
+            if ($("input.checkboxinput.form-check-input:checked").length > 0) {
+                desabilitaAlternativas();
+            } else {
+                habilitaAlternativas();
+            }
+        } else {
+            habilitaAlternativas();
+        }
+    }
+
+    function getTextAlternativaCorreta() {
+        var getParent = $("input.checkboxinput.form-check-input:checked").parent()
+        getParent.find('label').text("Alternativa correta")
+    }
+
+    function habilitaAlternativas() {
+        $("input.checkboxinput.form-check-input:not(:checked)").attr("disabled", false);
+    }
+
+    function desabilitaAlternativas() {
+        $("input.checkboxinput.form-check-input:not(:checked)").attr("disabled", true);
+    }
+
+    $(".form-check-label").text("Alternativa errada")
+    getTextAlternativaCorreta()
 
     /* Setup plugin defaults */
     $.fn.formset.defaults = {

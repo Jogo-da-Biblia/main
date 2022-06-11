@@ -3,18 +3,34 @@
     <h2>Resposta</h2>
     
     <label for="radio-escolha" class="card__multipla">
-        <input type="radio" name="tipo_resposta" value="MES" id="radio-escolha" checked="checked">Múltipla Escolha
+        {% if tipo_resposta == 'MES' %}
+            <input type="radio" name="tipo_resposta" value="MES" id="radio-escolha" checked="checked">Múltipla Escolha
+        {% else %}
+            <input type="radio" name="tipo_resposta" value="MES" id="radio-escolha">Múltipla Escolha
+        {% endif %}
     </label>
 
     <label for="radio-completa" class="card__multipla">
-        <input type="radio" name="tipo_resposta" value="RCO" id="radio-completa">Refêrencia Completa
+        {% if tipo_resposta == 'RCO' %}
+            <input type="radio" name="tipo_resposta" value="RCO" id="radio-completa" checked>Refêrencia Completa
+        {% else %}
+            <input type="radio" name="tipo_resposta" value="RCO" id="radio-completa">Refêrencia Completa
+        {% endif %}
     </label>
 
     <label for="radio-livro-capitulo" class="card__multipla">
-        <input type="radio" name="tipo_resposta" value="RLC" id="radio-livro-capitulo">Referência Livro-Capítulo
+        {% if tipo_resposta == 'RLC' %}
+            <input type="radio" name="tipo_resposta" value="RLC" id="radio-livro-capitulo" checked>Referência Livro-Capítulo
+        {% else %}
+            <input type="radio" name="tipo_resposta" value="RLC" id="radio-livro-capitulo">Referência Livro-Capítulo
+        {% endif %}
     </label>
 
     <label for="radio-simples" class="card__multipla">
-        <input type="radio" name="tipo_resposta" value="RES" id="radio-simples">Resposta simples
+        {% if tipo_resposta == 'RES' %}
+            <input type="radio" name="tipo_resposta" value="RES" id="radio-simples" checked>Resposta simples
+        {% else %}
+            <input type="radio" name="tipo_resposta" value="RES" id="radio-simples">Resposta simples
+        {% endif %}
     </label>
 </section>

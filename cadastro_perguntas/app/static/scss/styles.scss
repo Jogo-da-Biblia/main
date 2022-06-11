@@ -521,12 +521,11 @@ main {
     }
 
     .imagem__lixeira {
-        display: flex;
-        justify-content: end;
-        align-items: center;
-        margin-top: 10px;
         width: 20px;
         min-width: 0;
+        position: absolute;
+        left: calc(100% - 20px);
+        top: 157px;
     }
 
     .parte__referencia {
@@ -844,16 +843,40 @@ h2 {
     }
 }
 
-.fixedAddContainer a:last-child {
-    align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
 .fixedAddContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    .adicionar__alternativa {
+        align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .delete-row {
+        display: flex;
+        justify-content: end;
+        flex-direction: row;
+    }
+
+    .form-check label {
+        display: block;
+        align-self: center;
+        padding-left: 9px;
+    }
+
+    .form-check {
+        position: relative;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .form-check-input {
+        position: static;
+        align-self: center;
+        margin-top: 0px;
+    }
 }
 
 .adicionar__alternativa {
@@ -914,12 +937,6 @@ strong {
     line-height: 15px;
 }
 
-.delete-row {
-    display: flex;
-    justify-content: end;
-    flex-direction: row;
-}
-
 .btn__conf {
     display: flex;
     padding-left: 16px;
@@ -954,6 +971,7 @@ a:hover {
 
 .inlineform {
     margin-bottom: 11px;
+    position: relative;
 
     textarea {
         background: #e5e5e5;
@@ -1118,3 +1136,4 @@ header.all__blue {
         color: #d2d2d2;
     }
 }
+

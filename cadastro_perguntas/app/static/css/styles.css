@@ -454,12 +454,11 @@ main p {
     padding: 10px;
   }
   .imagem__lixeira {
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    margin-top: 10px;
     width: 20px;
     min-width: 0;
+    position: absolute;
+    left: calc(100% - 20px);
+    top: 157px;
   }
   .parte__referencia {
     display: flex;
@@ -754,16 +753,40 @@ h2 {
   }
 }
 
-.fixedAddContainer a:last-child {
+.fixedAddContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fixedAddContainer .adicionar__alternativa {
   align-items: center;
   width: 100%;
   margin-bottom: 20px;
 }
 
-.fixedAddContainer {
+.fixedAddContainer .delete-row {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: end;
+  flex-direction: row;
+}
+
+.fixedAddContainer .form-check label {
+  display: block;
+  align-self: center;
+  padding-left: 9px;
+}
+
+.fixedAddContainer .form-check {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.fixedAddContainer .form-check-input {
+  position: static;
+  align-self: center;
+  margin-top: 0px;
 }
 
 .adicionar__alternativa {
@@ -824,12 +847,6 @@ strong {
   line-height: 15px;
 }
 
-.delete-row {
-  display: flex;
-  justify-content: end;
-  flex-direction: row;
-}
-
 .btn__conf {
   display: flex;
   padding-left: 16px;
@@ -864,6 +881,7 @@ a:hover {
 
 .inlineform {
   margin-bottom: 11px;
+  position: relative;
 }
 
 .inlineform textarea {
