@@ -18,23 +18,8 @@
         {% include 'perguntas/partials/_tipo_resposta.html' %}
 
         {% include 'perguntas/partials/_alternativa.html' %}
-    
-        <section class="parte__referencia" id="section_referencia">
-            {% if referencia_form %}
-                {{ versiculo_form.versao|as_crispy_field }}
-                {{ versiculo_form.livro|as_crispy_field }}
-                {{ versiculo_form.capitulo|as_crispy_field }}
-                {% if not tipo_resposta == 'RLC' %}
-                    {{ versiculo_form.versiculo|as_crispy_field }}
-                    {{ versiculo_form.texto|as_crispy_field }}
-                {% endif %}
-            {% endif %}
-            {% if form.outras_referencias %}
-                <section class="" id="section_textual">
-                    {{ form.outras_referencias|add_class:"input__padrao form-control"|safe }}
-                </section>
-            {% endif %}
-        </section>
+
+        {% include 'perguntas/partials/_referencia.html' %}
 
         <div class="btn__pg">
             <div class="botao__adicionar">

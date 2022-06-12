@@ -1,3 +1,12 @@
+// JS MENU MOBILE
+const botaoMenu = document.querySelector(".cabecalho__menu");
+const menu = document.querySelector(".menu-lateral");
+
+botaoMenu.addEventListener("click", function (event) {
+  event.preventDefault();
+  menu.classList.toggle("menu-lateral--ativo");
+});
+
 $(function () {
   $.ajaxSetup({
     headers: {
@@ -76,7 +85,6 @@ $("#radio_biblia").change(function () {
   if ($(this).is(":checked")) {
     $("#section_referencia").show();
     $("#section_textual").hide();
-    $("#section_textual").hide();
   }
 });
 
@@ -84,8 +92,12 @@ verificaCamposOutrasReferencias();
 function verificaCamposOutrasReferencias() {
   if ($("#id_outras_referencias").val() == "") {
     $("#section_textual").hide();
+    $("#section_referencia").show();
+    $("#radio_biblia").prop("checked", true);
   } else {
     $("#section_textual").show();
+    $("#section_referencia").hide();
+    $("#radio_textual").prop("checked", true);
   }
 }
 
@@ -140,19 +152,10 @@ function esvaziaEscolhaTextual() {
   $("#id_outras_referencias").val("");
 }
 
-// JS MENU MOBILE
-const botaoMenu = document.querySelector(".cabecalho__menu");
-const menu = document.querySelector(".menu-lateral");
-
-botaoMenu.addEventListener("click", function (event) {
-  event.preventDefault();
-  menu.classList.toggle("menu-lateral--ativo");
-});
-
 function showRadioEscolha() {
   $("#section_alternativa").show();
   $("#section_selecao_referencia").show();
-  $("#section_referencia").show();
+  verificaCamposOutrasReferencias();
   $("#versiculos").show();
   $("input.checkboxinput.form-check-input:not(:checked)").attr("disabled", true);
 }

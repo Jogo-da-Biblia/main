@@ -2,15 +2,16 @@
 
 <!-- ALTERNATIVA -->
 <section id="section_alternativa">
-    
-    <h1>Adicionar alternativas</h1>
-    <div class="fixedAddContainer">
-    {{ formset.management_form }}
-    {% for alternativa in formset %}
-    <div class="inlineform">
-        {{ alternativa|crispy }}
-    </div>
+  <h1>Adicionar alternativas</h1>
+  <textarea
+    name="alternativa_text"
+    class="input__padrao form-control"
+    id="alternativa_text"
+    placeholder="descreva a alternativa e clique em adicionar, assinale a alternativa que deve ficar como correta"
+  ></textarea>
+  <div class="fixedAddContainer">
+    {{ formset.management_form }} {% for alternativa in formset %}
+    <div class="inlineform">{{ alternativa|crispy }}</div>
     {% endfor %}
-</div>
-    
+  </div>
 </section>

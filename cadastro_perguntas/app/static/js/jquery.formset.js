@@ -186,7 +186,8 @@
                 // If we have a specific container for the "add" button,
                 // place it as the last child of that container:
                 var addContainer = $('[class*="' + options.addContainerClass + '"');
-                addContainer.append(addButtonHTML);
+                // addContainer.append(addButtonHTML);
+                addContainer.prepend(addButtonHTML);
                 addButton = addContainer.find('[class="' + options.addCssClass + '"]');
             } else if ($$.is('TR')) {
                 console.log('segundo')
@@ -205,21 +206,24 @@
 
             if (hideAddButton) addButton.hide();
 
+
             addButton.click(function() {
                 var formCount = parseInt(totalForms.val()),
                     row = options.formTemplate.clone(true).removeClass('formset-custom-template'),
                     buttonRow = $($(this).parents('tr.' + options.formCssClass + '-add').get(0) || this),
                     delCssSelector = $.trim(options.deleteCssClass).replace(/\s+/g, '.');
                 applyExtraClasses(row, formCount);
-                row.insertBefore(buttonRow).show();
+                row.insertAfter(buttonRow).show();
                 row.find(childElementSelector).each(function() {
                     updateElementIndex($(this), options.prefix, formCount);
                 });
                 totalForms.val(formCount + 1);
 
-                $(".inlineform textarea").attr(
-                    'placeholder' ,'descreva a alternativa e clique em adicionar, assinale a alternativa que deve ficar como correta'
-                );
+                // var alternativa = row.find('textarea:text[id $= "_alternativa-"' + formCount + '-texto"]');
+                var alternativaInline = $('#id_alternativas-' + formCount + '-texto');
+                var textAlternativa = $("#alternativa_text").val();
+                alternativaInline.val(textAlternativa);
+                $("#alternativa_text").val("");
 
                 multiplaEscolhaRespostaCerta();
 
@@ -263,7 +267,8 @@
 
     function getTextAlternativaCorreta() {
         var getParent = $("input.checkboxinput.form-check-input:checked").parent()
-        getParent.find('label').text("Alternativa correta")
+        var labelInput = getParent.find('label')
+        labelInput.text("Alternativa correta")
     }
 
     function habilitaAlternativas() {
@@ -275,6 +280,7 @@
     }
 
     $(".form-check-label").text("Alternativa errada")
+
     getTextAlternativaCorreta()
 
     /* Setup plugin defaults */

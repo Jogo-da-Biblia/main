@@ -520,14 +520,6 @@ main {
         padding: 10px;
     }
 
-    .imagem__lixeira {
-        width: 20px;
-        min-width: 0;
-        position: absolute;
-        left: calc(100% - 20px);
-        top: 157px;
-    }
-
     .parte__referencia {
         display: flex;
         flex-direction: column;
@@ -614,6 +606,10 @@ main {
         letter-spacing: 0em;
         text-align: center;
         color: #9e9d97;
+
+        @media screen and (max-width: 340px) {
+            margin: 5px 3px;
+        }
     }
 
     .artigo--referencia {
@@ -765,8 +761,6 @@ main {
 
 body {
     background: #f4f5f6;
-    // width: 1024px;
-    // margin: 0 auto;
 }
 
 .main__container {
@@ -835,12 +829,30 @@ h2 {
 }
 
 .form__update {
+    display: flex;
+    width: 48%;
+    max-width: 496px;
+    min-width: 496px;
+    height: auto;
+    flex-direction: column;
     padding: 0px 24px;
+    background: white;
     padding-bottom: 64px;
 
     @media (max-width: 988px) {
         margin: 0 auto;
     }
+
+    @media (max-width: 520px) {
+        width: 100%;
+        min-width: 274px;
+    }
+}
+
+#alternativa_text {
+    height: 136px;
+    margin: 5px 0 13.86px 0;
+    color: rgb(158, 157, 151) !important;
 }
 
 .fixedAddContainer {
@@ -854,28 +866,75 @@ h2 {
         margin-bottom: 20px;
     }
 
-    .delete-row {
-        display: flex;
-        justify-content: end;
-        flex-direction: row;
-    }
-
     .form-check label {
         display: block;
         align-self: center;
         padding-left: 9px;
+        color: rgb(158, 157, 151) !important;
     }
 
     .form-check {
-        position: relative;
         display: flex;
         justify-content: flex-start;
+        padding-left: 0px;
+        margin-bottom: -5px;
     }
 
     .form-check-input {
         position: static;
         align-self: center;
-        margin-top: 0px;
+        margin: 0px 0px 0px 8px;
+    }
+
+    .inlineform {
+        margin-bottom: 11px;
+        position: relative;
+    
+        background: #e5e5e5;
+        border: 1px solid rgba(114, 115, 118, 1);
+        border-radius: 5px;
+        box-shadow: 0px 0px 0px 2px #ffffff;
+        color: rgb(158, 157, 151) !important;
+    
+        font-family: "Lato";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 24px;
+    
+        textarea {
+            max-height: 56px;
+            width: calc(100% - 16px);
+            background: #e5e5e5;
+            border: 0;
+            border-radius: 0;
+            margin: 0px auto;
+            margin-top: 14px;
+            margin-bottom: 3px;
+            padding: 0;
+
+            font-family: "Lato";
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 24px;
+            color: rgb(158, 157, 151) !important;
+        }
+    
+        .form-group {
+            margin-bottom: 0px;
+        }
+
+        .delete-row {
+            position: relative;
+            left: calc(100% - 40px);
+            top: -14px;
+        }
+
+        .imagem__lixeira {
+            width: 20px;
+            min-width: 0;
+        }
     }
 }
 
@@ -967,24 +1026,6 @@ a:hover {
 
 .enunciado_height {
     height: 120px !important;
-}
-
-.inlineform {
-    margin-bottom: 11px;
-    position: relative;
-
-    textarea {
-        background: #e5e5e5;
-        height: 136px !important;
-        border: 1px solid rgba(114, 115, 118, 1);
-        box-shadow: 0px 0px 0px 2px #ffffff;
-        font-family: "Lato";
-        font-style: normal;
-        font-weight: 400;
-        font-size: 20px;
-        line-height: 24px;
-        color: rgb(158, 157, 151);
-    }
 }
 
 #id_texto {
@@ -1137,3 +1178,73 @@ header.all__blue {
     }
 }
 
+
+.custom__radio {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 28px;
+        width: 28px;
+        background-color: white;
+        border-radius: 50%;
+        border: 1px solid #727376;
+    }
+
+    input:checked ~ .checkmark {
+        background-color: #547B96;
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    .checkmark:after {
+        top: 9px;
+        left: 9px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .square {
+        border-radius: 0px;
+    }
+
+    .square:after {
+        left: 9px;
+        top: 2px;
+        width: 11px;
+        height: 20px;
+        border: solid white;
+        border-width: 0 5px 5px 0;
+        border-radius: 0px;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+}

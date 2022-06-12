@@ -6,15 +6,17 @@
 
 <section id="section_selecao_referencia">
     <div class="cartao__referencia">
-        <legend class="card__referencia">
+        <label for="radio_biblia" class="card__referencia custom__radio">
             <input type="radio" name="escolha" value="#" id="radio_biblia" checked="checked">Biblía
-        </legend>
+            <span class="checkmark"></span>
+        </label>
     </div>
 
     <div class="cartao__referencia">
-        <legend class="card__referencia">
+        <label for="radio_textual" class="card__referencia custom__radio">
             <input type="radio" name="escolha" value="#" id="radio_textual">Textual (livros históricos)
-        </legend>
+            <span class="checkmark"></span>
+        </label>
     </div>
     
     <div class="card--referencia">
@@ -26,37 +28,49 @@
 </section>
 
 <section class="parte__referencia" id="section_referencia">
-    <div class="selecionar__opcoes">
-        <div class="selecionar__referencia">
-            <select name="livro" class="input__padrao select form-control" id="livros">
-                <option hidden>Livros</option>
-                {% for livro in livros %}
-                <option value="{{ livro.id }}">{{ livro.nome }}</option>
-                {% endfor %}
-            </select>
+    {% if referencia_form %}
+        {{ versiculo_form.versao|as_crispy_field }}
+        {{ versiculo_form.livro|as_crispy_field }}
+        {{ versiculo_form.capitulo|as_crispy_field }}
+        {% if not tipo_resposta == 'RLC' %}
+            {{ versiculo_form.versiculo|as_crispy_field }}
+            {{ versiculo_form.texto|as_crispy_field }}
+        {% endif %}
+
+    {% else %}
+        <div class="selecionar__opcoes">
+            <div class="selecionar__referencia">
+                <select name="livro" class="input__padrao select form-control" id="livros">
+                    <option hidden>Livros</option>
+                    {% for livro in livros %}
+                    <option value="{{ livro.id }}">{{ livro.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="selecionar__referencia">
+                <select name="versao" class="input__padrao select form-control" id="versao">
+                    <option hidden>Versão</option>
+                    {% for versao in versoes %}
+                    <option value="{{ versao.id }}">{{ versao.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="opcoes--referencia">
+                <select name="capitulo" class="selecionar__referencia input__padrao select form-control" id="capitulos"><option hidden>Capítulos</option></select>
+            </div>
+
+            <div class="opcoes--referencia">
+                <select name="versiculo" class="selecionar__referencia input__padrao select form-control" id="versiculos"><option hidden>Versículos</option></select>
+            </div>
         </div>
 
-        <div class="selecionar__referencia">
-            <select name="versao" class="input__padrao select form-control" id="versao">
-                <option hidden>Versão</option>
-                {% for versao in versoes %}
-                <option value="{{ versao.id }}">{{ versao.nome }}</option>
-                {% endfor %}
-            </select>
+        <div class="dsc__livre">
+            <p class="descricao__livre"><spam name="texto" id="texto_biblico" class="dsc__livre"></spam></p>
         </div>
 
-        <div class="opcoes--referencia">
-            <select name="capitulo" class="selecionar__referencia input__padrao select form-control" id="capitulos"><option hidden>Capítulos</option></select>
-        </div>
-
-        <div class="opcoes--referencia">
-            <select name="versiculo" class="selecionar__referencia input__padrao select form-control" id="versiculos"><option hidden>Versículos</option></select>
-        </div>
-    </div>
-    
-    <div class="dsc__livre">
-        <p class="descricao__livre"><spam name="texto" id="texto_biblico" class="dsc__livre"></spam></p>
-    </div>
+    {% endif %}
 </section>
 
 <section class="" id="section_textual">

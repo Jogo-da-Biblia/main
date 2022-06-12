@@ -453,13 +453,6 @@ main p {
     justify-content: space-between;
     padding: 10px;
   }
-  .imagem__lixeira {
-    width: 20px;
-    min-width: 0;
-    position: absolute;
-    left: calc(100% - 20px);
-    top: 157px;
-  }
   .parte__referencia {
     display: flex;
     flex-direction: column;
@@ -539,6 +532,15 @@ main p {
     text-align: center;
     color: #9e9d97;
   }
+}
+
+@media screen and (min-width: 320px) and (max-width: 340px) {
+  .card__referencia {
+    margin: 5px 3px;
+  }
+}
+
+@media screen and (min-width: 320px) {
   .artigo--referencia {
     display: flex;
     justify-content: center;
@@ -743,7 +745,14 @@ h2 {
 }
 
 .form__update {
+  display: flex;
+  width: 48%;
+  max-width: 496px;
+  min-width: 496px;
+  height: auto;
+  flex-direction: column;
   padding: 0px 24px;
+  background: white;
   padding-bottom: 64px;
 }
 
@@ -751,6 +760,19 @@ h2 {
   .form__update {
     margin: 0 auto;
   }
+}
+
+@media (max-width: 520px) {
+  .form__update {
+    width: 100%;
+    min-width: 274px;
+  }
+}
+
+#alternativa_text {
+  height: 136px;
+  margin: 5px 0 13.86px 0;
+  color: #9e9d97 !important;
 }
 
 .fixedAddContainer {
@@ -765,28 +787,72 @@ h2 {
   margin-bottom: 20px;
 }
 
-.fixedAddContainer .delete-row {
-  display: flex;
-  justify-content: end;
-  flex-direction: row;
-}
-
 .fixedAddContainer .form-check label {
   display: block;
   align-self: center;
   padding-left: 9px;
+  color: #9e9d97 !important;
 }
 
 .fixedAddContainer .form-check {
-  position: relative;
   display: flex;
   justify-content: flex-start;
+  padding-left: 0px;
+  margin-bottom: -5px;
 }
 
 .fixedAddContainer .form-check-input {
   position: static;
   align-self: center;
-  margin-top: 0px;
+  margin: 0px 0px 0px 8px;
+}
+
+.fixedAddContainer .inlineform {
+  margin-bottom: 11px;
+  position: relative;
+  background: #e5e5e5;
+  border: 1px solid #727376;
+  border-radius: 5px;
+  box-shadow: 0px 0px 0px 2px #ffffff;
+  color: #9e9d97 !important;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.fixedAddContainer .inlineform textarea {
+  max-height: 56px;
+  width: calc(100% - 16px);
+  background: #e5e5e5;
+  border: 0;
+  border-radius: 0;
+  margin: 0px auto;
+  margin-top: 14px;
+  margin-bottom: 3px;
+  padding: 0;
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  color: #9e9d97 !important;
+}
+
+.fixedAddContainer .inlineform .form-group {
+  margin-bottom: 0px;
+}
+
+.fixedAddContainer .inlineform .delete-row {
+  position: relative;
+  left: calc(100% - 40px);
+  top: -14px;
+}
+
+.fixedAddContainer .inlineform .imagem__lixeira {
+  width: 20px;
+  min-width: 0;
 }
 
 .adicionar__alternativa {
@@ -877,24 +943,6 @@ a:hover {
 
 .enunciado_height {
   height: 120px !important;
-}
-
-.inlineform {
-  margin-bottom: 11px;
-  position: relative;
-}
-
-.inlineform textarea {
-  background: #e5e5e5;
-  height: 136px !important;
-  border: 1px solid #727376;
-  box-shadow: 0px 0px 0px 2px #ffffff;
-  font-family: "Lato";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
-  color: #9e9d97;
 }
 
 #id_texto {
@@ -1044,4 +1092,74 @@ header.all__blue {
     text-align: center;
     color: #d2d2d2;
   }
+}
+
+.custom__radio {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.custom__radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom__radio .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 28px;
+  width: 28px;
+  background-color: white;
+  border-radius: 50%;
+  border: 1px solid #727376;
+}
+
+.custom__radio input:checked ~ .checkmark {
+  background-color: #547B96;
+}
+
+.custom__radio .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom__radio input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.custom__radio .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.custom__radio .square {
+  border-radius: 0px;
+}
+
+.custom__radio .square:after {
+  left: 9px;
+  top: 2px;
+  width: 11px;
+  height: 20px;
+  border: solid white;
+  border-width: 0 5px 5px 0;
+  border-radius: 0px;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
