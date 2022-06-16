@@ -84,7 +84,6 @@ class Pergunta(models.Model):
     )
 
     revisado_em = models.DateTimeField(
-        auto_now_add=True,
         null=True,
         blank=True
     )
@@ -98,7 +97,6 @@ class Pergunta(models.Model):
     )
 
     publicado_em = models.DateTimeField(
-        auto_now_add=True,
         null=True,
         blank=True
     )

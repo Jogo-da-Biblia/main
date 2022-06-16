@@ -38,12 +38,6 @@ class ComentarioInline(admin.TabularInline):
             kwargs["disabled"] = True
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    # Garante que os campos email e phone estarão na requisição POST
-    def has_add_permission(self, request, obj):
-        if request.method == 'POST':
-            self.fields = ('mensagem', 'email', 'phone')
-        return super().has_add_permission(request, obj)
-
 
 class PerguntaAdmin(admin.ModelAdmin):
     change_form_template = 'admin/perguntas/change_form.html'
@@ -86,8 +80,9 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     # Garante que publicadores e revisores alterem apenas seus status
     def change_view(self, request, object_id, extra_context=None):
+        initial_readonly_fields = ('revisado_por', 'revisado_em', 'publicado_por', 'publicado_em')
         if request.user.groups.filter(name='revisores').exists():
-            self.fields[6] = ('revisado_status',)
+            self.readonly_fields += ('status',)
         elif request.user.groups.filter(name='publicadores').exists():
             obj = self.get_object(request, object_id)
             if obj.revisado_status:
@@ -97,7 +92,7 @@ class PerguntaAdmin(admin.ModelAdmin):
         elif request.user.groups.filter(name='supervisores').exists() or request.user.groups.filter(name='administradores').exists() or request.user.is_superuser:
             self.fields[6] = ('revisado_status', 'status')
         else:
-            self.fields.pop(6)
+            self.readonly_fields += ('status', 'revisado_status')
 
         pergunta = self.model.objects.get(id=object_id)
         if not extra_context:
