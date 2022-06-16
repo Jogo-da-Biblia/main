@@ -38,12 +38,6 @@ class ComentarioInline(admin.TabularInline):
             kwargs["disabled"] = True
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    # Garante que os campos email e phone estarão na requisição POST
-    def has_add_permission(self, request, obj):
-        if request.method == 'POST':
-            self.fields = ('mensagem', 'email', 'phone')
-        return super().has_add_permission(request, obj)
-
 
 class PerguntaAdmin(admin.ModelAdmin):
     change_form_template = 'admin/perguntas/change_form.html'
