@@ -92,18 +92,22 @@ class PerguntaAdmin(admin.ModelAdmin):
             obj = self.get_object(request, object_id)
             if obj.revisado_status:
                 self.fields[6] = ('status',)
-            else:
+            elif 6 in self.fields:
                 self.fields.pop(6)
-        elif request.user.groups.filter(name='supervisores').exists():
-            self.fields[6] = ('revisado_status', 'status')
-        elif request.user.groups.filter(name='administradores').exists():
-            self.fields[6] = ('revisado_status', 'status')
-        elif request.user.is_superuser:
+        elif request.user.groups.filter(name='supervisores').exists() or request.user.groups.filter(name='administradores').exists() or request.user.is_superuser:
             self.fields[6] = ('revisado_status', 'status')
         else:
             self.fields.pop(6)
 
-        return super().change_view(request, object_id, extra_context)
+        pergunta = self.model.objects.get(id=object_id)
+        if not extra_context:
+            extra_context = {}
+        extra_context['pergunta'] = {
+            'revisado_em': pergunta.revisado_em,
+            'publicado_em': pergunta.publicado_em,
+        }
+        print(extra_context)
+        return super().change_view(request, object_id, extra_context=extra_context)
 
     def double_check(self, request, obj):
         if request.user.groups.filter(name='administradores').exists() \

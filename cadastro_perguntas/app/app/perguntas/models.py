@@ -106,7 +106,7 @@ class Pergunta(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.enunciado
+        return f'<Pergunta enunciado="{self.enunciado}">'
 
     class Meta:
         verbose_name = 'Pergunta'

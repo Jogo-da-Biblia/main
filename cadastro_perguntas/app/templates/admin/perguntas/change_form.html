@@ -1,18 +1,28 @@
 {% extends 'admin/change_form.html' %}
 
 {% block submit_buttons_bottom %}
-    {{ block.super }} 
+    {% comment %} Os botões completos somente aparecerão para admin e root {% endcomment %}
+    {% if user.groups.all.0.name != 'revisores' and user.groups.all.0.name != 'publicadores' %}
+      {{ block.super }} 
+    {% endif %}
 
+    
     {% if user.groups.all.0.name == 'revisores' %}
     <div class="submit-row">
-      <input type="submit" value="Revisar" name="revisar">
+        <input type="submit" value="Revisar" name="revisar">
     </div>
     {% endif %}
-    
 
     {% if user.groups.all.0.name == 'publicadores' %}
+
     <div class="submit-row">
-        <input type="submit" value="Publicar" name="publicar">
+        {% if pergunta.revisado_em and pergunta.revisado_em %} 
+            <input type="submit" value="Atualizar Publicação" name="publicar">
+        {% elif pergunta.revisado_em %}
+            <input type="submit" value="Publicar" name="publicar">
+        {% else %}
+            <input type="submit" value="Você não pode Publicar uma pergunta que não foi revisada" name="publicar" disabled="true">
+        {% endif %}    
     </div>
     {% endif %}
 {% endblock %}
