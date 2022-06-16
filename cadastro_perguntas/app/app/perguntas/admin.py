@@ -86,22 +86,20 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     # Garante que publicadores e revisores alterem apenas seus status
     def change_view(self, request, object_id, extra_context=None):
+        initial_readonly_fields = ('revisado_por', 'revisado_em', 'publicado_por', 'publicado_em')
         if request.user.groups.filter(name='revisores').exists():
-            self.fields[6] = ('revisado_status',)
+            self.readonly_fields += ('status',)
         elif request.user.groups.filter(name='publicadores').exists():
             obj = self.get_object(request, object_id)
             if obj.revisado_status:
-                self.fields[6] = ('status',)
+                self.readonly_fields += ('revisado_status',)
             else:
-                self.fields.pop(6)
-        elif request.user.groups.filter(name='supervisores').exists():
-            self.fields[6] = ('revisado_status', 'status')
-        elif request.user.groups.filter(name='administradores').exists():
-            self.fields[6] = ('revisado_status', 'status')
-        elif request.user.is_superuser:
-            self.fields[6] = ('revisado_status', 'status')
+                self.readonly_fields += ('status', 'revisado_status')
+        elif request.user.groups.filter(name='supervisores').exists() or\
+                request.user.groups.filter(name='administradores').exists() or request.user.is_superuser:
+            self.readonly_fields = initial_readonly_fields
         else:
-            self.fields.pop(6)
+            self.readonly_fields += ('status', 'revisado_status')
 
         return super().change_view(request, object_id, extra_context)
 
