@@ -2,19 +2,19 @@
 
 {% block submit_buttons_bottom %}
     {% comment %} Os botões completos somente aparecerão para admin e root {% endcomment %}
-    {% if user.groups.all.0.name != 'revisores' and user.groups.all.0.name != 'publicadores' %}
+    {% if user.groups.all.0.name != 'revisores' and user.groups.all.0.name != 'publicadores' and user.groups.all.0.name != 'supervisores' %}
       {{ block.super }} 
     {% endif %}
 
-    
+    <!-- Revisores Block -->
     {% if user.groups.all.0.name == 'revisores' %}
     <div class="submit-row">
       <input type="submit" value="Revisar" name="revisar">
     </div>
     {% endif %}
 
+    <!-- Publicadores Block -->
     {% if user.groups.all.0.name == 'publicadores' %}
-
     <div class="submit-row">
       {% if pergunta.revisado_em and pergunta.publicado_em %} 
         <input type="submit" value="Atualizar Publicação" name="publicar">
@@ -23,6 +23,25 @@
       {% else %}
         <input type="submit" value="Você não pode Publicar uma pergunta que não foi revisada" name="publicar" disabled="true">
       {% endif %}    
+    </div>
+    {% endif %}
+
+    <!-- Supervisores Block -->
+    {% if user.groups.all.0.name == 'supervisores' %}
+    <div class="submit-row">
+      {% if pergunta.publicado_em %}
+        <input type="submit" value="Despublicar" name="despublicar">
+      {% endif %}
+
+      {% if pergunta.revisado_por == user %}
+        <input type="submit" value="Você não pode Publicar uma pergunta que foi revisada por você" name="publicar" disabled="true">
+      {% elif pergunta.publicado_em %}
+        <input type="submit" value="Atualizar Publicação" name="publicar">
+      {% elif pergunta.revisado_em %}
+        <input type="submit" value="Publicar" name="publicar">
+      {% else %}
+        <input type="submit" value="Revisar" name="revisar">
+      {% endif %}
     </div>
     {% endif %}
 {% endblock %}

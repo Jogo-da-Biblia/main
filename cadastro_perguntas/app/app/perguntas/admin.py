@@ -82,11 +82,8 @@ class PerguntaAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, extra_context=None):
         initial_readonly_fields = ('revisado_por', 'revisado_em', 'publicado_por', 'publicado_em')
         self.readonly_fields = initial_readonly_fields
-        if request.user.groups.filter(name='revisores').exists():
-            self.readonly_fields += ('status', 'revisado_status')
-        elif request.user.groups.filter(name='publicadores').exists():
-            self.readonly_fields += ('status', 'revisado_status')
-        elif self.valida_supergroup(request):
+        self.readonly_fields += ('status', 'revisado_status')
+        if self.valida_supergroup(request):
             self.readonly_fields = initial_readonly_fields
 
         pergunta = self.model.objects.get(id=object_id)
@@ -95,15 +92,15 @@ class PerguntaAdmin(admin.ModelAdmin):
         extra_context['pergunta'] = {
             'revisado_em': pergunta.revisado_em,
             'publicado_em': pergunta.publicado_em,
+            'revisado_por': pergunta.revisado_por,
         }
-        print(extra_context)
         return super().change_view(request, object_id, extra_context=extra_context)
 
     def double_check(self, request, obj):
         if request.user.groups.filter(name='administradores').exists() \
                 or request.user.is_superuser:
             return True
-        if obj.publicado_por == obj.revisado_por:
+        if obj.revisado_por == request.user:
             obj.status = False
 
     def save_model(self, request, obj, form, change):
@@ -142,12 +139,14 @@ class PerguntaAdmin(admin.ModelAdmin):
             obj.status = True
             obj.publicado_por = request.user
             obj.publicado_em = datetime.now()
+        if "despublicar" in request.POST:
+            obj.status = False
+            obj.publicado_por = None
+            obj.publicado_em = None
         obj.save()
         return super().response_change(request, obj)
 
     def valida_supergroup(self, request):
-        if request.user.groups.filter(name='supervisores').exists():
-            return True
         if request.user.groups.filter(name='administradores').exists():
             return True
         if request.user.is_superuser:
