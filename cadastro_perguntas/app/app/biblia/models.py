@@ -2,15 +2,14 @@ from django.db import models
 
 
 class Livro(models.Model):
+    posicao = models.IntegerField()
+    nome = models.CharField(max_length=20)
+    sigla = models.CharField(max_length=20)
     testamento = models.ForeignKey(
         'Testamento',
         related_name='livros',
         on_delete=models.CASCADE
-    )
-
-    posicao = models.IntegerField()
-    # capitulos = models.IntegerField(default=1)
-    nome = models.CharField(max_length=20)
+    ) 
 
     def __str__(self):
         return self.nome
@@ -24,21 +23,19 @@ class Testamento(models.Model):
 
 
 class Versiculo(models.Model):
-    versao = models.ForeignKey(
-        'Versao',
-        related_name='versiculos',
-        on_delete=models.CASCADE
-    )
-
+    capitulo = models.IntegerField()
+    versiculo = models.IntegerField()
+    texto = models.TextField()
     livro = models.ForeignKey(
         'Livro',
         related_name='versiculos',
         on_delete=models.CASCADE
     )
-
-    capitulo = models.IntegerField()
-    versiculo = models.IntegerField()
-    texto = models.TextField()
+    versao = models.ForeignKey(
+        'Versao',
+        related_name='versiculos',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return (
@@ -60,3 +57,12 @@ class Versao(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+class TotalVersiculo(models.Model):
+    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    capitulo = models.IntegerField(default=1)
+    nu_total_versiculos = models.IntegerField(default=1)
+    
+    def __str__(self):
+        return "livro: {}, capitulo: {}, total_versículos: {}".format(self.livro, self.capitulo, self.nu_total_versiculos)

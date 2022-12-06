@@ -13,6 +13,8 @@ reset:
 run: 
 	docker-compose down
 	docker-compose up -d
+down:
+	docker-compose down
 build:
 	docker-compose build --no-cache
 	make run

@@ -44,13 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    
     # app terceiros
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "crispy_forms",
     'widget_tweaks',
+    "graphene_django",
     # my apps
+    
     'django_sass',
     'app.biblia',
     'app.perguntas',
@@ -58,6 +61,10 @@ INSTALLED_APPS = [
     'app.comentarios',
     'app.pages',
 ]
+
+GRAPHENE = {
+    "SCHEMA": "app.schema.schema"
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
