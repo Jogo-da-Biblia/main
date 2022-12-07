@@ -24,7 +24,7 @@ from app.perguntas.views import tmp_home
 
 from graphene_django.views import GraphQLView
 
-from app.schema import schema
+from app.biblia.schemas import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),

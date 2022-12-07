@@ -62,9 +62,9 @@ INSTALLED_APPS = [
     'app.pages',
 ]
 
-GRAPHENE = {
-    "SCHEMA": "app.schema.schema"
-}
+# GRAPHENE = {
+#     "SCHEMA": "app.schema.schema"
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -60,7 +60,7 @@ class Versao(models.Model):
 
 
 class TotalVersiculo(models.Model):
-    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    livro = models.ForeignKey('Livro', on_delete=models.CASCADE)
     capitulo = models.IntegerField(default=1)
     nu_total_versiculos = models.IntegerField(default=1)
     
