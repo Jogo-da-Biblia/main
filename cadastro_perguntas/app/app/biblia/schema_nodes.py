@@ -1,7 +1,5 @@
-# import graphene
-from graphene import relay, ObjectType, Schema
+from graphene import relay
 from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import Livro, Testamento, Versiculo, Versao
 
@@ -40,31 +38,3 @@ class VersaoNode(DjangoObjectType):
         filter_fields = ["nome"]
         fields = "__all__"
         interfaces = (relay.Node, )
-        
-        
-class Query(ObjectType):
-    livro = relay.Node.Field(LivroNode)
-    livros = DjangoFilterConnectionField(LivroNode)
-    
-    testamento = relay.Node.Field(TestamentoNode)
-    testamentos = DjangoFilterConnectionField(TestamentoNode)
-    
-    versiculo = relay.Node.Field(VersiculoNode)
-    versiculos = DjangoFilterConnectionField(VersiculoNode)
-    
-    versao = relay.Node.Field(VersaoNode)
-    versoes = DjangoFilterConnectionField(VersaoNode)
-    
-    
-class Mutation(ObjectType):
-    pass
-
-schema = Schema(query=Query)
-
-# my_schema = Schema(
-#     query=MyRootQuery,
-#     mutation=MyRootMutation,
-#     subscription=MyRootSubscription
-#     types=[SomeExtraObjectType, ]
-# )
-    
