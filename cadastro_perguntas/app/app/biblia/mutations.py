@@ -19,7 +19,7 @@ class CreateLivroMutation(Mutation):
     livro = Field(LivroNode)
     
     @classmethod
-    def mutate(cls, root, info, data=None):
+    def mutate(cls, root, info, data):
         testamento = Testamento.objects.get(pk=data.testamento)
         livro = Livro.objects.create(
                 posicao=data.posicao,
@@ -31,6 +31,37 @@ class CreateLivroMutation(Mutation):
         ok = True
         return CreateLivroMutation(livro=livro, ok=ok)
     
+    
+class UpdateLivroInputFields(InputObjectType):
+    posicao = Int()
+    nome = String()
+    sigla = String()
+    testamento = String()
+    
+    
+class UpdateLivroMutation(Mutation):
+    class Arguments:
+        id = Int(required=True)
+        data = LivroInputFields(required=True)
+        
+    ok = Boolean()
+    livro = Field(LivroNode)
+        
+    @classmethod
+    def mutate(cls, root, info, id, data):
+        try:
+            testamento = Testamento.objects.get(pk=data.testamento)
+            livro = Livro.objects.get(pk=id)
+            livro.posicao=data.posicao
+            livro.nome=data.nome
+            livro.sigla=data.sigla
+            livro.testamento=testamento
+            livro.save()
+            ok = True
+            return UpdateLivroMutation(livro=livro, ok=ok)
+        except Livro.DoesNotExist:
+            return None
+        
     
 class CreateTestamentoMutation(Mutation):
     class Arguments:
@@ -75,6 +106,7 @@ class CreateVersiculoMutation(Mutation):
         versiculo.save()
         ok = True
         return CreateVersiculoMutation(versiculo=versiculo, ok=ok)
+    
     
     
 class CreateVersaoMutation(Mutation):

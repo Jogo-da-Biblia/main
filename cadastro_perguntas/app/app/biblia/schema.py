@@ -6,6 +6,8 @@ from .mutations import *
         
         
 class Query(ObjectType):
+    nodes = relay.Node.Field()
+    
     livro = relay.Node.Field(LivroNode)
     livros = DjangoFilterConnectionField(LivroNode)
     
@@ -21,20 +23,20 @@ class Query(ObjectType):
     
 class Mutation(ObjectType):
     create_livro = CreateLivroMutation.Field()
-    # update_livro
+    update_livro = UpdateLivroMutation.Field()
     # delete_livro
     
     create_testamento = CreateTestamentoMutation.Field()
-    # update_livro
-    # delete_livro
+    # update_testamento
+    # delete_testamento
     
     create_versiculo = CreateVersiculoMutation.Field()
-    # update_livro
-    # delete_livro
+    # update_versiculo
+    # delete_versiculo
     
     create_versao = CreateVersaoMutation.Field()
-    # update_livro
-    # delete_livro
+    # update_versao
+    # delete_versao
     
 
 biblia_schema = Schema(query=Query, mutation=Mutation)
