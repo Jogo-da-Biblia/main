@@ -24,8 +24,6 @@ from app.perguntas.views import tmp_home
 
 from graphene_django.views import GraphQLView
 
-from app.biblia.schema import biblia_schema
-
 from app.schema import schema
 
 urlpatterns = [
@@ -33,7 +31,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('app.pages.urls'), name='pages'),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
-    path("graphql/biblia", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=biblia_schema))),
 ]
 
 urlpatterns += static(

@@ -4,7 +4,7 @@ from django.db import models
 class Livro(models.Model):
     posicao = models.IntegerField()
     nome = models.CharField(max_length=20)
-    sigla = models.CharField(max_length=20)
+    sigla = models.CharField(max_length=3)
     testamento = models.ForeignKey(
         'Testamento',
         related_name='livros',
@@ -40,8 +40,9 @@ class Versiculo(models.Model):
     def __str__(self):
         return (
             f"""{self.livro.nome},
-            {self.versao.nome},
-            {self.capitulo}:{self.versiculo}"""
+            {self.versao.nome} |
+            Capitulo: {self.versiculo}, 
+            Vercículo: {self.capitulo}"""
         )
 
     class Meta:

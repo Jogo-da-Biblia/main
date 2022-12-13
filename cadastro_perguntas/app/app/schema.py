@@ -1,30 +1,59 @@
 import graphene
-from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
 
-from app.biblia.models import Livro
+from app.biblia.schema_nodes import *
+from app.biblia.models import *
 
-class LivroType(DjangoObjectType):
-    class Meta:
-        model = Livro
-        fields = ("id", "nome", "posicao", "sigla", "testamento")
+from app.perguntas.schema_nodes import *
+from app.perguntas.mutations import *
+from app.perguntas.models import *
 
 
-class Query(graphene.ObjectType):
-    all_livros = graphene.List(LivroType)
-    # category_by_name = graphene.Field(CategoryType, name=graphene.String(required=True))
+class Query(graphene.ObjectType):    
+    livro = graphene.Field(LivroNode, id=graphene.Int())
+    livros = DjangoFilterConnectionField(LivroNode)
 
-    def resolve_all_livros(root, info):
-        # We can easily optimize query count in the resolve method
-        # if info.context.user.is_authenticated():
-        #     return Livro.objects.all()
-        # else:
-        #     return Livro.objects.none()
-        return Livro.objects.all()
+    def resolve_livro(root, info, id):
+        try:
+            livro = Livro.objects.get(id=id)
+            return livro
+        except Exception:
+            return None
+    
+    testamento = graphene.relay.Node.Field(TestamentoNode)
+    testamentos = DjangoFilterConnectionField(TestamentoNode)
+    
+    versiculo = graphene.relay.Node.Field(VersiculoNode)
+    versiculos = DjangoFilterConnectionField(VersiculoNode)
+    
+    versao = graphene.relay.Node.Field(VersaoNode)
+    versoes = DjangoFilterConnectionField(VersaoNode)
+    
+    tema = graphene.relay.Node.Field(TemaNode)
+    temas = DjangoFilterConnectionField(TemaNode)
+    
+    referencia = graphene.relay.Node.Field(ReferenciaNode)
+    referencias = DjangoFilterConnectionField(ReferenciaNode)
+    
+    pergunta = graphene.relay.Node.Field(PerguntaNode)
+    perguntas = DjangoFilterConnectionField(PerguntaNode)
+    
+    alternativa = graphene.relay.Node.Field(AlternativaNode)
+    alternativas = g.List(AlternativaNode)
+    
+    
+class Mutation(graphene.ObjectType):
+    create_tema = CreateTema.Field()
+    create_referencia = CreateReferencia.Field()
+    create_pergunta = CreatePergunta.Field()
+    create_alternativa = CreateAlternativa.Field()
 
-    # def resolve_category_by_name(root, info, name):
-    #     try:
-    #         return Category.objects.get(name=name)
-    #     except Category.DoesNotExist:
-    #         return None
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
+
+# my_schema = Schema(
+#     query=MyRootQuery,
+#     mutation=MyRootMutation,
+#     subscription=MyRootSubscription
+#     types=[SomeExtraObjectType, ]
+# )

@@ -1,14 +1,14 @@
-from graphene import relay, ID, Node
+import graphene
 from graphene_django import DjangoObjectType
 
 from .models import Livro, Testamento, Versiculo, Versao
 
-class CustomNode(Node):
+class CustomNode(graphene.Node):
     """
         For fetching object id instead of Node id
     """
     class Meta:
-        name = 'Nodes'
+        name = 'NodeId'
         
     @staticmethod
     def to_global_id(type, id):
@@ -16,7 +16,7 @@ class CustomNode(Node):
 
 
 class LivroNode(DjangoObjectType):
-    # id = ID(source='pk', required=True)
+    # id = graphene.ID(source='pk', required=True)
     
     class Meta:
         model = Livro
@@ -27,12 +27,6 @@ class LivroNode(DjangoObjectType):
             'testamento': ['exact'],
         }
         interfaces = (CustomNode, )
-        
-        
-    # pk = Int()
-
-    # def resolve_pk(self, info):
-    #     return self.pk
 
 
 class TestamentoNode(DjangoObjectType):
@@ -40,14 +34,18 @@ class TestamentoNode(DjangoObjectType):
         model = Testamento
         filter_fields = ["nome"]
         fields = "__all__"
-        interfaces = (relay.Node, )
+        interfaces = (CustomNode, )
 
 
 class VersiculoNode(DjangoObjectType):
     class Meta:
         model = Versiculo
-        filter_fields = ["livro"]
-        interfaces = (relay.Node, )
+        filter_fields = {
+            'livro': ['exact'],
+            'capitulo': ['exact'],
+            'versiculo': ['exact'],
+        }
+        interfaces = (CustomNode, )
         fields = "__all__"
 
 
@@ -56,4 +54,4 @@ class VersaoNode(DjangoObjectType):
         model = Versao
         filter_fields = ["nome"]
         fields = "__all__"
-        interfaces = (relay.Node, )
+        interfaces = (CustomNode, )

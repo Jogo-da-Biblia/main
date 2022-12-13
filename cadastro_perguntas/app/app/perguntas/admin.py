@@ -157,8 +157,12 @@ class PerguntaAdmin(admin.ModelAdmin):
 class AlternativaAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
+    
+    
+class ReferenciaAdmin(admin.ModelAdmin):
+    raw_id_fields = ("livro", "versiculo", )
 
 
 admin.site.register(Pergunta, PerguntaAdmin)
 admin.site.register(Alternativa, AlternativaAdmin)
-admin.site.register(Referencia)
+admin.site.register(Referencia, ReferenciaAdmin)
