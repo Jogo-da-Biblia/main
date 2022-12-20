@@ -4,6 +4,7 @@ reset_all:
 	echo "Criando migrations core..."
 	docker-compose down --volumes --remove-orphans
 	sudo rm -rf data
+	cd reactapp && sudo rm -r node_modules/
 	docker-compose build --no-cache
 	docker-compose up -d 
 reset:
@@ -18,6 +19,8 @@ down:
 build:
 	docker-compose build --no-cache
 	make run
+make init:
+	docker exec -it jogodabiblia_cadastro_perguntas bash -c "npm init -y"
 migrate:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
 makemigrations:

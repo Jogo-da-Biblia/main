@@ -1,5 +1,17 @@
 version: "3"
 services:
+  reactapp:
+    container_name: jogodabiblia__reactapp
+    restart: always
+    build: reactapp
+    ports:
+      - "${REACT_APP_PORT}:3000"
+    volumes:
+      - /home/node/app/node_modules
+      - ./reactapp:/home/node/app
+    links:
+      - cadastro_perguntas
+    stdin_open: true
   cadastro_perguntas:
     container_name: jogodabiblia_cadastro_perguntas
     restart: always
