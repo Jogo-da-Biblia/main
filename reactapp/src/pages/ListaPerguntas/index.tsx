@@ -1,19 +1,17 @@
 import { perguntasData } from "mockData/perguntas";
 import Pergunta from "./components/Pergunta";
-import { Container, Content } from "./styles";
+import { Container } from "./styles";
 
 function ListaPergunta() {
     return (
-        <Container>
-            <Content>
+            <Container>
                 <h2>Minhas Perguntas</h2>
                 {
                     perguntasData.map(p => (
                         <Pergunta data={p} />
                     ))
                 }
-            </Content>
-        </Container>
+            </Container>
     )
 }
 

@@ -27,7 +27,7 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
             */
 
             // temp
-            setUser(() => buscarUsuario("s"))
+            // setUser(() => buscarUsuario("s"))
         };
         initApp();
     }, []);
@@ -43,7 +43,7 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
         const user: SimpleUser = {
             username: "admin",
             email: "admin@admin.com",
-            whatsappNumber: null,
+            whatsappNumber: "",
         }
 
         return user

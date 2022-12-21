@@ -9,10 +9,15 @@ import ListaPergunta from "pages/ListaPerguntas";
 import Cadastro from "pages/Cadastro";
 import AddPergunta from "pages/AddPergunta";
 import Ranking from "pages/Ranking";
+import Home from "pages/Home";
 
 const router = createBrowserRouter([
     {
         path: "/",
+        element: <RouterWrapper isPrivate element={Home} />,
+    },
+    {
+        path: "/login",
         element: <Login />,
     },
     {

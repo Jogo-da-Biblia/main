@@ -4,9 +4,10 @@ import { Field } from "formik"
 
 export const Container = styled.div`
     background-color: white;
-    height: 100vh;
+    min-height: 100vh;
     width: 500px;
     margin: auto;
+    padding-bottom: 40px;
 
     & form {
         padding: 20px;
@@ -37,18 +38,4 @@ export const SubmitBtn = styled.button`
     border: none;
     padding: 10px 25px;
     border-radius: 5px;
-`;
-
-export const StyledField = styled(Field).attrs(props => ({
-    ...props,
-    style: {
-        border: `1px solid ${props.bordercolor || '#727376'}`,
-    }
-}))`
-    border-radius: 5px;
-    padding: 20px;
-    outline: none;
-    font-size: 20px;
-    height: 55px;
-    &:hover{ background: var(--inputHoverColor); }
 `;

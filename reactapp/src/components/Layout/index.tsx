@@ -1,30 +1,13 @@
+import LeftBar from "components/NavBar/LeftBar";
 import React from "react";
-import { NavBar } from "./styles";
+import { Container } from "./styles";
 
 const Layout: React.FC<{ children: JSX.Element }> = ({ children }) => {
     return (
-        <>
-            <NavBar >
-                <ul>
-                    <li>
-                        <a href="/">Adicionar Pergunta</a>
-                    </li>
-                    <li>
-                        <a href="/">Minhas Perguntas</a>
-                    </li>
-                    <li>
-                        <a href="/">Ranking</a>
-                    </li>
-                    <li>
-                        <a href="/">Redefinir Senha</a>
-                    </li>
-                    <li>
-                        <a href="/">Sair</a>
-                    </li>
-                </ul>
-            </NavBar>
+        <Container>
+            <LeftBar />
             {children}
-        </>
+        </Container>
     );
 }
 

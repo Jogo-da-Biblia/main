@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 const LoginSchema = Yup.object().shape({
-    login: Yup.string()
+    username: Yup.string()
     .required("Campo obrigatório"),
     password: Yup.string()
     .min(8, "Senha muito curto!")

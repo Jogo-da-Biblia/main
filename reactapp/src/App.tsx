@@ -1,4 +1,3 @@
-import React from 'react';
 import { GlobalStyle } from 'styles/globalStyles';
 import { UserProvider } from './contexts/UserContext';
 import Routes from './routes';

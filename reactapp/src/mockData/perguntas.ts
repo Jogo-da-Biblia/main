@@ -1,4 +1,6 @@
-export const perguntasData = [
+import { IPergunta } from "types/pergunta";
+
+export const perguntasData: IPergunta[] = [
     {
         id: "1",
         enumciado: "Qual a cor dos olhos castanhos?",

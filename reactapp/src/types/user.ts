@@ -8,7 +8,7 @@ export interface IUser {
     username: string;
     email: string;
     password: string;
-    whatsappNumber: number | null;
+    whatsappNumber: string;
 }
 
 export type SimpleUser = Pick<IUser, "username" | "email" | "whatsappNumber">

@@ -13,7 +13,7 @@ export const RouterWrapper: React.FC<IRouterWrapper> = ({ isPrivate, element: El
 
     if (isPrivate && !authenticated) {
         return (
-            <Navigate to="/" replace />
+            <Navigate to="/login" replace />
         )
     }
 

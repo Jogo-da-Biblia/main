@@ -1,14 +1,6 @@
 import React from "react";
+import { IPergunta } from "types/pergunta";
 import { Container } from "./styles";
-
-interface IPergunta {
-    id: string;
-    enumciado: string;
-    resposta: string;
-    tipoResposta: string;
-    // status: "ENV" | "REV" | "PUB" | "NEG";
-    status: string;
-}
 
 const Pergunta: React.FC<{ data: IPergunta }> = ({ data }) => {
 

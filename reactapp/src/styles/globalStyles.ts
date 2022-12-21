@@ -24,7 +24,7 @@ export const GlobalStyle = createGlobalStyle`
 
     }
 
-    p {
+    p, label {
         font-family: 'Lato', sans-serif;
     }
 `;
@@ -34,9 +34,6 @@ export const Label = styled.label`
     margin-top: 4px;
     margin-bottom: 20px;
     flex-direction: column;
-    font-weight: 500;
-    font-size: 15px;
-    color: red;
     width: auto;
 
     &.checkbox-container {
