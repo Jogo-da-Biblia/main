@@ -1,8 +1,12 @@
 Django==3.1.*
 djangorestframework
+djangorestframework-simplejwt
+djangorestframework-camel-case
 markdown
 django-filter
+django-url-filter
 django-guardian
+drf-yasg
 Pygments
 python-dotenv
 gunicorn
@@ -16,8 +20,6 @@ xhtml2pdf
 pymysql
 python-gettext
 graphene_django
-# graphene_django>=3
 psycopg2==2.9.3
-django-allauth==0.50.0
 django-crispy-forms==1.14.0
 django-widget-tweaks==1.4.12
