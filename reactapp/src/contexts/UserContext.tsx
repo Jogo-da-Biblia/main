@@ -1,16 +1,17 @@
+import { api, axiosPrivate } from "api/axios";
+import jwtDecode from "jwt-decode";
 import React, { createContext, useEffect, useState } from "react";
-import { AuthUser, IUser, IUserProvider, IUserProviderValue, SimpleUser } from "types/user";
+import { AuthUser, IUser, IUserProvider, IUserProviderValue, IUserStage } from "types/user";
 
 
 export const UserContext = createContext<IUserProviderValue>({});
 
 export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
     // const navigate = useNavigate();
-    const [user, setUser] = useState<SimpleUser | null>(null);
+    const [user, setUser] = useState<IUserStage | null>(null);
 
     useEffect(() => {
         const initApp = async () => {
-            /*
             const recoveredToken = localStorage.getItem("jogo_da_biblia-token");
 
             if (!recoveredToken) return null
@@ -18,13 +19,12 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
             try {
                 await api.post("/token/verify/", { token: recoveredToken });
                 axiosPrivate.defaults.headers.Authorization = `Bearer ${recoveredToken}`;
-                const userData = await getUserData(recoveredToken);
+                const userData = await buscarUsuario(recoveredToken);
 
                 setUser(userData);
             } catch (err) {
                 axiosPrivate.defaults.headers.Authorization = "";
             }
-            */
 
             // temp
             // setUser(() => buscarUsuario("s"))
@@ -32,31 +32,40 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
         initApp();
     }, []);
 
-    function buscarUsuario(token: string): SimpleUser {
-        /*
+    async function buscarUsuario(token: string): Promise<IUserStage> {
         const decodedToken = jwtDecode(token);
-        const user = await axiosPrivate.get(`/users/${decodedToken.user_id}/`);
+        const user = await axiosPrivate.post(`/graphql/`, {
+            data: {
+                query: `{
+                    usuario (id:${decodedToken.user_id}) {
+                        username
+                        email
+                        name
+                        createdAt
+                        phone
+                    }
+                }`
+            }
+        });
         return user.data;
-        */
 
         // temp
-        const user: SimpleUser = {
-            username: "admin",
-            email: "admin@admin.com",
-            whatsappNumber: "",
-        }
+        // const user: IUserStage = {
+        //     username: "admin",
+        //     email: "admin@admin.com",
+        //     whatsappNumber: "",
+        // }
 
-        return user
+        // return user
     }
 
     async function cadastrar(userData: IUser) {
         // return api.post("/users/", userData);
     }
 
-    function login(userData: AuthUser, callback: () => void) {
-        /*
+    async function login(data: AuthUser, callback: () => void | any) {
         try {
-            const response = await api.post("/token/", userData);
+            const response: any = await api.post("/token/", data);
             const { access, refresh } = response.data;
 
             localStorage.setItem("jogo_da_biblia-token", access);
@@ -66,16 +75,15 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
             const userData = await buscarUsuario(access);
             setUser({ ...userData, refreshToken: refresh, accessToken: access });
             callback();
-        } catch (err) {
+        } catch (err: any) {
             return err.response;
         }
-        */
     }
 
     function logout() {
         localStorage.removeItem("jogo_da_biblia-token")
         setUser(null)
-        // axiosPrivate.defaults.headers.Authorization = null;
+        axiosPrivate.defaults.headers.Authorization = null;
     }
 
     const value: IUserProviderValue = {

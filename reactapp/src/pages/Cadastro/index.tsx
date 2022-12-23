@@ -55,8 +55,8 @@ function Cadastro() {
                         <p>Para começar a colaborar cadastre-se com seus dados abaixo e comece a enviar perguntas.</p>
 
                         <InputsContainer >
-                            {inputData.map(d => (
-                                <>
+                            {inputData.map((d, i) => (
+                                <div key={i}>
                                     <InputField
                                         label={d.label}
                                         bordercolor={
@@ -76,7 +76,7 @@ function Cadastro() {
                                             <ParagraphError children={errors[d.name as keyof typeof errors]} />
                                         )
                                     }
-                                </>
+                                </div>
                             ))}
                         </InputsContainer>
                         <Label className="checkbox-container">

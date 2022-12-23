@@ -14,10 +14,6 @@ const navData = [
     {
         label: "Redefinir senha",
     },
-    {
-        label: "Sair",
-        to: "../"
-    },
 ]
 
 export default navData;

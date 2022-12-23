@@ -10,7 +10,6 @@ interface IInputField {
 
 const InputField = ({ label, bordercolor, value, ...rest }: IInputField) => {
     const labelRef = React.useRef<HTMLLabelElement | null>(null);
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
 
     const focusIn = () => {
         if (labelRef.current) {
@@ -31,7 +30,6 @@ const InputField = ({ label, bordercolor, value, ...rest }: IInputField) => {
         <Container>
             <label ref={labelRef} className="input-label">{label || "label ?"}</label>
             <StyledField
-                ref={inputRef}
                 bordercolor={bordercolor}
                 onFocus={focusIn}
                 onBlur={focusOut}

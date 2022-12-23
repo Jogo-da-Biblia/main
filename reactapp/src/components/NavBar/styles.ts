@@ -12,7 +12,8 @@ export const NavBar = styled.nav`
 
         & li {
             list-style: none;
-            & a {
+            
+            &.sair, a {
                 text-decoration: none;
                 color: #9E9D97;
                 line-height: 150%;
@@ -23,6 +24,10 @@ export const NavBar = styled.nav`
                 &:hover {
                     color: #858585;
                 }
+            }
+
+            &.sair{
+                cursor: pointer;
             }
         }
     }

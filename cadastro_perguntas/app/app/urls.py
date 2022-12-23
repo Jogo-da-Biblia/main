@@ -7,23 +7,22 @@ from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
 
 from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
-
-from .core.views import ObtainAuthToken
 
 from app.schema import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.pages.urls'), name='pages'),
-    path("api/graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
+    path("api/v1/graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
     
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     
     # simplejwt
-    path('api/v1/token/', ObtainAuthToken.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]

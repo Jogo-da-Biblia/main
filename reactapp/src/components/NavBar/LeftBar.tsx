@@ -1,9 +1,11 @@
+import { useUserData } from "hooks/UseUserData"
 import React from "react"
 import { NavLink } from "react-router-dom"
 import navData from "./data"
 import { NavBar } from "./styles"
 
 const LeftBar: React.FC<{}> = () => {
+    const { logout } = useUserData()
 
     const activeStyle = {
         color: "#858585"
@@ -13,8 +15,8 @@ const LeftBar: React.FC<{}> = () => {
         <NavBar>
             <ul>
                 {
-                    navData.map(link => (
-                        <li>
+                    navData.map((link, index) => (
+                        <li key={index}>
                             <NavLink
                                 to={link.to || "../"}
                                 style={({ isActive }) =>
@@ -24,6 +26,7 @@ const LeftBar: React.FC<{}> = () => {
                         </li>
                     ))
                 }
+                <li className="sair" onClick={logout}>Sair</li>
             </ul>
         </NavBar>
     )

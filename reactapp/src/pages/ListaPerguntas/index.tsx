@@ -7,8 +7,8 @@ function ListaPergunta() {
             <Container>
                 <h2>Minhas Perguntas</h2>
                 {
-                    perguntasData.map(p => (
-                        <Pergunta data={p} />
+                    perguntasData.map((p, index) => (
+                        <Pergunta key={index} data={p} />
                     ))
                 }
             </Container>

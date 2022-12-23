@@ -8,8 +8,22 @@ from app.perguntas.schema_nodes import *
 from app.perguntas.mutations import *
 from app.perguntas.models import *
 
+from django.contrib.auth import get_user_model
+from app.core.schema_nodes import UsuarioNode
 
-class Query(graphene.ObjectType):    
+User = get_user_model()
+
+
+class Query(graphene.ObjectType):
+    usuario = graphene.Field(UsuarioNode, id=graphene.Int())
+    
+    def resolve_usuario(root, info, id):
+        try:
+            usuario = User.objects.get(id=id)
+            return usuario
+        except Exception:
+            return None
+    
     livro = graphene.Field(LivroNode, id=graphene.Int())
     livros = DjangoFilterConnectionField(LivroNode)
 

@@ -14,20 +14,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', False)
 
+AUTH_USER_MODEL = "core.User"
+
+ROOT_URLCONF = 'app.urls'
+
 ALLOWED_HOSTS = [
+    '162.214.108.8',
     '192.168.100.17',
     '127.0.0.1',
     'djangoapp',
     'localhost',
+    'localhost:3010',
+    'localhost:3000',
+    'localhost:3001',
 ]
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,10 +61,6 @@ INSTALLED_APPS = [
     'app.pages',
 ]
 
-# GRAPHENE = {
-#     "SCHEMA": "app.schema.schema"
-# }
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,7 +76,9 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://localhost:3001',
     'http://localhost:3010',
+    'http://localhost:8001',
     'http://localhost:8088',
 ]
 
@@ -84,7 +86,10 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-client',
 ]
 
-ROOT_URLCONF = 'app.urls'
+AUTHENTICATION_BACKENDS = [
+    # Application custom auth backend
+    'app.core.authenticate.AuthentificationBackend',
+]
 
 TEMPLATES = [
     {
@@ -105,8 +110,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -147,9 +150,6 @@ DATABASES = {
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -166,7 +166,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Email configurations
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.jogodabiblia.com'
 EMAIL_PORT = 465  # 465 # 25 # 587
@@ -200,12 +199,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# User Model
-
-AUTH_USER_MODEL = "core.User"
-
-
 SITE_ID = 1
+
 ACCOUNT_FORMS = {
     "login": "app.core.forms.MyCustomLoginForm",
     "signup": "app.core.forms.MyCustomSignupForm",
@@ -223,5 +218,4 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
 # crispy-forms
-
 CRISPY_TEMPLATE_PACK = "bootstrap4"

@@ -15,10 +15,15 @@ export type SimpleUser = Pick<IUser, "username" | "email" | "whatsappNumber">
 
 export type AuthUser = Pick<IUser, "username" | "password">
 
+export interface IUserStage extends SimpleUser{
+    refreshToken?: string;
+    accessToken?: string;
+}
+
 export interface IUserProviderValue {
     authenticated?: boolean;
-    user?: SimpleUser | null;
-    setUser?: Dispatch<SetStateAction<SimpleUser | null>>;
+    user?: IUserStage | null;
+    setUser?: Dispatch<SetStateAction<IUserStage | null>>;
     cadastrar?: (user: IUser) => void;
     login?: (user: AuthUser, callback: () => void) => void;
     logout?: () => void;
