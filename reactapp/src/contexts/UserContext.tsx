@@ -34,20 +34,18 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
 
     async function buscarUsuario(token: string): Promise<IUserStage> {
         const decodedToken = jwtDecode(token);
-        const user = await axiosPrivate.post(`/graphql/`, {
-            data: {
-                query: `{
+        const res = await axiosPrivate.post(`/graphql/`, {
+            query: `{
                     usuario (id:${decodedToken.user_id}) {
                         username
                         email
                         name
-                        createdAt
                         phone
                     }
                 }`
-            }
         });
-        return user.data;
+        const { usuario } = res.data.data
+        return usuario;
 
         // temp
         // const user: IUserStage = {

@@ -1,12 +1,12 @@
 Django==3.1.*
-djangorestframework
-djangorestframework-simplejwt
-djangorestframework-camel-case
+djangorestframework==3.12.4
+djangorestframework-simplejwt==4.7.0
+djangorestframework-camel-case==1.2.0
 markdown
 django-filter
 django-url-filter
 django-guardian
-drf-yasg
+drf-yasg==1.20.0
 Pygments
 python-dotenv
 gunicorn
