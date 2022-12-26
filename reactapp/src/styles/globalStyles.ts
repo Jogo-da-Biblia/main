@@ -2,6 +2,9 @@ import styled, { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
     :root {
+        --blueColor: #537A95;
+        --greyColor1: #858585;
+        --greyColor2: #9E9D97;
         background-color: #F4F5F6;
     }
 
@@ -66,6 +69,11 @@ export const Label = styled.label`
     }
 `;
 
+interface ICheckmark {
+    borderRadius?: string;
+    spanHidden?: boolean;
+}
+
 export const Checkmark = styled.span`
   background-color: #eee;
   position: absolute;
@@ -74,19 +82,20 @@ export const Checkmark = styled.span`
   height: 25px;
   width: 25px;
   border: 1px solid #727376;
-  border-radius: 5px;
+  border-radius: ${({ borderRadius }: ICheckmark) => borderRadius || "5px"};
+  
   &:after {
-      content: "";
-      position: absolute;
-      display: none;
-      left: 9px;
-      top: 5px;
-      height: 10px;
-      width: 5px;
-      border: solid white;
-      border-width: 0 3px 3px 0;
-      transform: rotate(45deg);
-      -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-  }
+    ${({ spanHidden }: ICheckmark) => spanHidden ? "" : "content: '';"}
+    position: absolute;
+    display: none;
+    left: 9px;
+    top: 5px;
+    height: 10px;
+    width: 5px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+}
 `;

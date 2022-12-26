@@ -16,3 +16,7 @@ export const perguntasData: IPergunta[] = [
         status: "REV"
     },
 ]
+
+export const temas = [
+    
+]

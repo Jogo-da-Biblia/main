@@ -5,3 +5,15 @@ export interface IPergunta {
     tipoResposta: string;
     status: "ENV" | "REV" | "PUB" | "NEG";
 }
+
+export interface IAlternativa {
+    texto: string;
+    alternativaCorreta: boolean
+}
+
+export interface IAddPergunta {
+    tema: number;
+    enumciado: string;
+    tipoResposta: number;
+    alternativas?: IAlternativa[]
+}

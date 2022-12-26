@@ -40,7 +40,7 @@ class ComentarioInline(admin.TabularInline):
 
 
 class PerguntaAdmin(admin.ModelAdmin):
-    change_form_template = 'admin/perguntas/change_form.html'
+    # change_form_template = 'admin/perguntas/change_form.html'
     list_display = (
         'id',
         'tema',

@@ -5,5 +5,5 @@ export const Container = styled.main`
     height: 100vh;
     width: 500px;
     margin: auto;
-    padding: 20px;
+    padding: 0 20px;
 `;

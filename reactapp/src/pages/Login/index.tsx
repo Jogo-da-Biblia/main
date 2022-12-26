@@ -15,10 +15,11 @@ function Login() {
     const from = "/perguntas"
 
     const onSubmit = async (data: AuthUser) => {
-        if (login) {
-            const response = await login(data, () => navigate(from, { replace: true }))
-            console.log(response.data.detail)
+        if (!login) {
+            return;
+            // console.log(response.data.detail)
         }
+        const response = await login(data, () => navigate(from, { replace: true }))
         // alert(JSON.stringify(data, null, 2))
     }
 
