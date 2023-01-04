@@ -1,4 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
+import Select, { Props as SelectProps, StylesConfig } from 'react-select';
 
 export const GlobalStyle = createGlobalStyle`
     :root {
@@ -30,6 +31,28 @@ export const GlobalStyle = createGlobalStyle`
     p, label {
         font-family: 'Lato', sans-serif;
     }
+`;
+
+interface IButton {
+    color?: string;
+    bg?: string;
+    w?: string;
+}
+
+export const Button = styled.button`
+    height: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    font-size: 20px;
+    margin: 10px 0;
+    padding: 0 20px;
+
+    ${(props: IButton) => `
+    color: ${props.color || "white"};
+    width: ${props.w || "100%"};
+    background-color: ${props.bg || "var(--blueColor)"};
+    `}
 `;
 
 export const Label = styled.label`
@@ -99,3 +122,57 @@ export const Checkmark = styled.span`
     -ms-transform: rotate(45deg);
 }
 `;
+
+type MyOptionType = {
+    label: string;
+    value: string;
+};
+
+type IsMulti = false;
+
+const selectStyle: StylesConfig<MyOptionType, IsMulti> = {
+    control: (_, state) => ({
+        // background: state.hasValue ? 'rgba(0, 89, 255, 0.151)' : 'white',
+        display: 'flex',
+        flexDirection: 'row',
+        height: '55px',
+        fontSize: "20px",
+        color: "var(--greyColor2)",
+        borderRadius: '5px',
+        border: "1px solid var(--greyColor1)",
+        marginTop: "20px",
+        marginBottom: "5px",
+    }),
+    loadingIndicator: provided => ({ ...provided }),
+    indicatorSeparator: () => ({ display: 'none' }),
+    option: (provided, state) => ({
+        ...provided,
+        fontSize: window.innerWidth < 500 ? "12px" : "15px",
+        backgroundColor: state.isFocused ? "var(--blueColor)" : "white",
+        color: state.isFocused ? "white" : "var(--greyColor2)",
+    }),
+}
+
+interface ISelectProps extends SelectProps {
+    width?: string;
+    error: boolean
+}
+
+export const StyledSelect = styled(Select).attrs((props: ISelectProps) => ({
+    ...props,
+    classNamePrefix: "select",
+    placeholder: "Buscar...",
+    styles: {
+        ...selectStyle,
+        loadingIndicator: (provided: any) => ({
+            ...provided,
+            color: props.error ? "red" : "var(--blueColor)"
+        }),
+        dropdownIndicator: (provided: any) => ({
+            ...provided,
+            height: "115%",
+            width: "40px",
+            paddingTop: "50%",
+        })
+    }
+}))``;

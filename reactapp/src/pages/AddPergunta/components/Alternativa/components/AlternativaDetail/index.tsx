@@ -5,14 +5,14 @@ import { IAlternativa } from "types/pergunta";
 import { AlternativaLabel, Container, Controls, DeleteBtn } from "./styles";
 import lixeiraIcon from "assets/lixeira.png"
 
-interface IAlternativaDetail {
+interface IAlternativaDetailProps {
     alt: IAlternativa;
     index: number;
-    setAlternativaCorreta: (i: number) => void
+    setAlternativaCorreta: (i: number, single: true) => void
     removerAlternativa: (i: number) => void
 }
 
-const AlternativaDetail: React.FC<IAlternativaDetail> = (props) => {
+const AlternativaDetail: React.FC<IAlternativaDetailProps> = (props) => {
     return (
         <Container>
             {props.alt.texto}
@@ -25,7 +25,7 @@ const AlternativaDetail: React.FC<IAlternativaDetail> = (props) => {
                     </AlternativaLabel>
                     <input
                         type="checkbox"
-                        onChange={() => props.setAlternativaCorreta(props.index)}
+                        onChange={() => props.setAlternativaCorreta(props.index, true)}
                         checked={props.alt.alternativaCorreta}
                     />
                     <Checkmark />

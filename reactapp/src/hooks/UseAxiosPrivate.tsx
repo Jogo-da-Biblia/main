@@ -4,18 +4,19 @@ import { useEffect } from "react";
 import useRefreshToken from "./UseRefreshToken";
 import { useUserData } from "./UseUserData";
 
+
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
     const { user } = useUserData();
 
     useEffect(() => {
 
-        const requestIntercept = axiosPrivate.interceptors.request.use(
-            config => {
-                config.headers!.Authorization = `Bearer ${user?.accessToken}`;
-                return config;
-            }, (error) => Promise.reject(error)
-        );
+        // const requestIntercept = axiosPrivate.interceptors.request.use(
+        //     config => {
+        //         config.headers!.Authorization = `Bearer ${user?.accessToken}`;
+        //         return config;
+        //     }, (error) => Promise.reject(error)
+        // );
 
         const responseIntercept = axiosPrivate.interceptors.response.use(
             response => response,
@@ -33,7 +34,7 @@ const useAxiosPrivate = () => {
         );
 
         return () => {
-            axiosPrivate.interceptors.request.eject(requestIntercept);
+            // axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
         }
     }, [])

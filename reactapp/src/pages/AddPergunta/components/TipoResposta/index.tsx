@@ -18,8 +18,8 @@ const TipoResposta: React.FC<ITipoResposta> = ({ mainValue, setData }) => {
     return (
         <Container>
             <h2>Tipo de Resposta</h2>
-            {tipoRespostaData.map(op => (
-                <CheckboxLabel >
+            {tipoRespostaData.map((op, i) => (
+                <CheckboxLabel key={i} >
                     <p>{op.label}</p>
                     <input type="checkbox" onChange={() => handleChange(op.value)} checked={op.value === mainValue} />
                     <Checkmark spanHidden borderRadius="50%" />

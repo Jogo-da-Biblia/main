@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Button } from "styles/globalStyles";
 // import { Label } from "styles/globalStyles";
 
 export const Container = styled.div``;
@@ -6,6 +7,22 @@ export const Container = styled.div``;
 export const Form = styled.form`
     display: flex;
     flex-direction: column;
+`;
+
+export const SubmitBtn = styled(Button)`
+    align-self: flex-end;
+`;
+
+export const Select = styled.select`
+    height: 55px;
+    font-size: 20px;
+    border: 1px solid var(--greyColor1);
+    color: var(--greyColor2);
+    border-radius: 5px;
+    padding: 0 10px;
+    outline: none;
+    margin-top: 20px;
+    margin-bottom: 5px;
 `;
 
 export const CheckboxLabel = styled.label`

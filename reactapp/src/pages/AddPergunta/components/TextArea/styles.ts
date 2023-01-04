@@ -11,4 +11,8 @@ export const StyledTextarea = styled.textarea`
     max-width: 100%;
     min-width: 100%;
     min-height: 50px;
+
+    &::placeholder {
+        color: var(--greyColor2);
+    }
 `;

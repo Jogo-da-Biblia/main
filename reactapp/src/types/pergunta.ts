@@ -11,9 +11,16 @@ export interface IAlternativa {
     alternativaCorreta: boolean
 }
 
+export interface IReferencia {
+    regex: string;
+    textual: string;
+}
+
 export interface IAddPergunta {
     tema: number;
     enumciado: string;
     tipoResposta: number;
-    alternativas?: IAlternativa[]
+    referencia: IReferencia;
+    tipoReferencia: number;
+    alternativas: IAlternativa[]
 }

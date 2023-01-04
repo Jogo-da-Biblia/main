@@ -4,6 +4,11 @@ export interface IUserProvider {
     children: JSX.Element;
 }
 
+export interface IUserList {
+    username: string;
+    points: number;
+}
+
 export interface IUser {
     username: string;
     email: string;

@@ -33,6 +33,7 @@ const InputField = ({ label, bordercolor, value, ...rest }: IInputField) => {
                 bordercolor={bordercolor}
                 onFocus={focusIn}
                 onBlur={focusOut}
+                autoComplete="off"
                 {...rest} />
         </Container>
     )

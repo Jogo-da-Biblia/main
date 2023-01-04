@@ -1,15 +1,19 @@
 import Logo from "components/Logo";
 import LeftBar from "components/NavBar/LeftBar";
 import React from "react";
-import { Container } from "./styles";
+import { Container, Footer } from "./styles";
 
 const Layout: React.FC<{ children: JSX.Element }> = ({ children }) => {
     return (
-        <Container>
+        <>
             <LeftBar />
-            <Logo />
-            {children}
-        </Container>
+            <Container>
+                <Logo />
+                {children}
+                <Footer>Jogo da Bíblia 2022</Footer>
+            </Container>
+        </>
+
     );
 }
 

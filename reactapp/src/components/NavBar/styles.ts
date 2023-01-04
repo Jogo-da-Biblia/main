@@ -31,4 +31,8 @@ export const NavBar = styled.nav`
             }
         }
     }
+
+    @media (max-width: 1000px) {
+        display: none;
+    }
 `;

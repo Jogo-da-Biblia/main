@@ -15,8 +15,8 @@ const LeftBar: React.FC<{}> = () => {
         <NavBar>
             <ul>
                 {
-                    navData.map((link, index) => (
-                        <li key={index}>
+                    navData.map((link, i) => (
+                        <li key={i}>
                             <NavLink
                                 to={link.to || "../"}
                                 style={({ isActive }) =>
