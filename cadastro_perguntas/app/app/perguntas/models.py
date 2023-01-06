@@ -23,7 +23,7 @@ class Referencia(models.Model):
     )
 
     def __str__(self):
-        return f"{self.livro} {self.versiculo}"
+        return f"{self.versiculo}"
 
     class Meta:
         verbose_name = 'Referência'
@@ -117,7 +117,7 @@ class Alternativa(models.Model):
     id = models.AutoField(primary_key=True)
     texto = models.TextField()
 
-    alternativas = models.ForeignKey(
+    pergunta = models.ForeignKey(
         Pergunta,
         related_name='alternativas',
         on_delete=models.CASCADE

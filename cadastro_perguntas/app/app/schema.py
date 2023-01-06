@@ -1,4 +1,5 @@
 import graphene
+import graphql_jwt
 from graphene_django.filter import DjangoFilterConnectionField
 
 from app.biblia.schema_nodes import *
@@ -9,13 +10,30 @@ from app.perguntas.mutations import *
 from app.perguntas.models import *
 
 from django.contrib.auth import get_user_model
-from app.core.schema_nodes import UserNode
+from app.core.schema_nodes import UserType
+
 
 User = get_user_model()
 
-
 class Query(graphene.ObjectType):
-    user = graphene.Field(UserNode, id=graphene.Int())
+    users = graphene.List(UserType)
+
+    def resolve_users(self, info):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+        return User.objects.all()
+    
+    me = graphene.Field(UserType)
+    
+    def resolve_me(root, info):
+        try:
+            user = User.objects.get(pk=info.context.user.pk)
+            return user
+        except Exception:
+            return None
+        
+    user = graphene.Field(UserType, id=graphene.Int())
     
     def resolve_user(root, info, id):
         try:
@@ -61,6 +79,10 @@ class Mutation(graphene.ObjectType):
     create_referencia = CreateReferencia.Field()
     create_pergunta = CreatePergunta.Field()
     create_alternativa = CreateAlternativa.Field()
+    
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

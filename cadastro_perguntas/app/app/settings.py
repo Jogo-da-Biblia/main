@@ -94,6 +94,19 @@ SITE_ID = 1
 
 ROOT_URLCONF = 'app.urls'
 
+GRAPHENE = {
+    'SCHEMA': 'mysite.myschema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
+
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'app.core.authenticate.AuthentificationBackend',
+]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -145,11 +158,6 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-client',
-]
-
-AUTHENTICATION_BACKENDS = [
-    # Application custom auth backend
-    'app.core.authenticate.AuthentificationBackend',
 ]
 
 TEMPLATES = [

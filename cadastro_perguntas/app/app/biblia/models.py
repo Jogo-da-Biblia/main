@@ -39,10 +39,11 @@ class Versiculo(models.Model):
 
     def __str__(self):
         return (
-            f"""{self.livro.nome},
-            {self.versao.nome} |
+            f"""{self.livro.nome} |
             Capitulo: {self.versiculo}, 
-            Vercículo: {self.capitulo}"""
+            Vercículo: {self.capitulo} - 
+            '{self.texto}'
+            """
         )
 
     class Meta:
