@@ -41,7 +41,7 @@ cp .env.example .env
 
 ## Gerando chaves
 
-Para gerar um `SECRET_KEY` para o Django ou um `SIGNING_KEY` para o pacote `simple-jwt` use:
+Para gerar um `SECRET_KEY` para o Django use:
 
 ```sh
 python -c "import secrets; print(secrets.token_urlsafe())"

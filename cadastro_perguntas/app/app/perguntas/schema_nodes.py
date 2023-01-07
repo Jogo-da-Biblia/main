@@ -7,11 +7,6 @@ from .models import *
 class TemaNode(DjangoObjectType):
     class Meta:
         model = Tema
-        filter_fields = {
-            "nome": ['exact', 'icontains', 'istartswith']
-        }
-        interfaces = (g.relay.Node, )
-        fields = "__all__"
 
 
 class ReferenciaNode(DjangoObjectType):

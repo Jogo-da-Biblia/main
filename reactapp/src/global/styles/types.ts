@@ -19,6 +19,7 @@ export type MyOptionType = {
 export type IsMulti = false;
 
 export interface ISelectProps extends SelectProps {
+    placeholder?: string;
     width?: string;
     error: boolean
 }

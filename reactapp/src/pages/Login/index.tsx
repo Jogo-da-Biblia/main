@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom"
 import { Formik, Form } from "formik"
-import { ClientContext, useMutation, useManualQuery } from 'graphql-hooks'
+import { ClientContext, useMutation } from 'graphql-hooks'
 
 import { LOGIN_MUTATION } from "./graphql_operations"
-import { Container, InputsContainer, StyledField, SubmitBtn } from "./styles"
+import { Container, InputsContainer, SubmitBtn } from "./styles"
 import LoginSchema from "./schema"
 import { AuthUser } from "./types";
 
@@ -35,6 +35,7 @@ function Login() {
         }
 
         const { token } = data.tokenAuth
+
         localStorage.setItem("jogo_da_biblia-token", token);
         client.setHeader('Authorization', `JWT ${token}`)
 

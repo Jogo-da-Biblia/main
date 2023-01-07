@@ -10,6 +10,7 @@ import Cadastro from "pages/Cadastro";
 import AddPergunta from "pages/AddPergunta";
 import Ranking from "pages/Ranking";
 import Home from "pages/Home";
+import RedefinirSenha from "pages/RedefinirSenha";
 
 import { listaUsuarios } from "mockData/usuarios";
 import { perguntasData } from "mockData/perguntas";
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
         path: "ranking",
         element: <RouterWrapper isPrivate element={Ranking} />,
         loader: async () => fetchRankingList()
+    },
+    {
+        path: "redefinir-senha",
+        element: <RouterWrapper isPrivate element={RedefinirSenha} />,
     },
 ]);
 

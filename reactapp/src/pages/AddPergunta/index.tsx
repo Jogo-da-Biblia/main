@@ -15,23 +15,9 @@ import { IAlternativa, IReferencia } from "global/types/pergunta";
 import SelectField from "components/Select";
 // import useAxiosPrivate from "hooks/UseAxiosPrivate"
 
-// temp
-const selectOptions = [
-    { id: 1, name: "tema 1", },
-    { id: 2, name: "tema 2", },
-    { id: 3, name: "tema 3", },
-    { id: 4, name: "tema 4", },
-]
 
 function AddPergunta() {
     const { loading, error, data } = useQuery(TEMAS_QUERY, { errorPolicy: "all" })
-    // const axiosPrivate = useAxiosPrivate()
-
-    useEffect(() => {
-        console.log(data)
-    }, [data])
-
-
     const [perguntaData, setData] = useState<IAddPergunta>({
         tema: 1,
         enumciado: "",
@@ -50,6 +36,8 @@ function AddPergunta() {
             [name]: value
         }))
     }
+
+    const setTema = (value: number) => setDataByKey("tema", value)
 
     const handleChangeEnunciado = (e: React.ChangeEvent<HTMLTextAreaElement>) => setDataByKey("enumciado", e.target.value)
 
@@ -141,12 +129,16 @@ function AddPergunta() {
         console.log(perguntaData)
     }
 
+    if (loading) {
+        return <h1>Carregando...</h1>
+    }
+
     return (
         <Container>
             <h1>Adicionar Pergunta</h1>
             <p>Para começar a colaborar cadastre-se com seus dados abaixo e comece a enviar perguntas.</p>
             <Form onSubmit={onSubmit}>
-                <SelectField array={selectOptions} />
+                <SelectField value={perguntaData.tema} setValue={setTema} optionValue="id" optionLabel="nome" array={data?.temas} />
                 <TextArea name="" id="enumciado" value={perguntaData.enumciado} onChange={handleChangeEnunciado} />
                 <TipoResposta mainValue={perguntaData.tipoResposta} setData={handleChangeTipoResposta} />
                 {perguntaData.tipoResposta === 1 && (

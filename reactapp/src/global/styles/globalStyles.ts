@@ -139,7 +139,7 @@ const selectStyle: StylesConfig<MyOptionType, IsMulti> = {
 export const StyledSelect = styled(Select).attrs((props: ISelectProps) => ({
     ...props,
     classNamePrefix: "select",
-    placeholder: "Buscar...",
+    placeholder: props.placeholder || "Buscar...",
     styles: {
         ...selectStyle,
         loadingIndicator: (provided: any) => ({

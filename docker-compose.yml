@@ -29,7 +29,6 @@ services:
       - DB_HOST=db
       - DB_PORT=${DB_PORT}
       - SECRET_KEY=${SECRET_KEY}
-      - SIGNING_KEY=${SIGNING_KEY}
     ports:
       - "${CADASTRO_PERGUNTAS_PORT}:8000"
     volumes:

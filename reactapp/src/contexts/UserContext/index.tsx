@@ -3,9 +3,9 @@ import React, { createContext, useEffect, useState, useContext } from "react";
 import { useMutation, useManualQuery } from 'graphql-hooks'
 
 import { IUserProvider, IUserProviderValue } from "./types"
-import { LOGIN_MUTATION, ME_QUERY, VERIFY_TOKEN_MUTATION } from "./graphql_operations";
+import { ME_QUERY, VERIFY_TOKEN_MUTATION } from "./graphql_operations";
 
-import { IUser, IUserStage } from "types/user";
+import { IUserStage } from "types/user";
 import { useGrapgQLClient } from "hooks/UseGraphQLClient";
 
 
@@ -40,7 +40,8 @@ export const UserProvider: React.FC<IUserProvider> = ({ children }) => {
     const value: IUserProviderValue = {
         authenticated: !!user,
         user,
-        setUser
+        setUser,
+        fetchUser
     }
 
     return <UserContext.Provider value={value} >{children}</UserContext.Provider>

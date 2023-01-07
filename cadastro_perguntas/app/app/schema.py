@@ -62,7 +62,14 @@ class Query(graphene.ObjectType):
     versoes = DjangoFilterConnectionField(VersaoNode)
     
     tema = graphene.relay.Node.Field(TemaNode)
-    temas = DjangoFilterConnectionField(TemaNode)
+    
+    temas = graphene.List(TemaNode)
+    
+    def resolve_temas(root, info):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+        return Tema.objects.all()
     
     referencia = graphene.relay.Node.Field(ReferenciaNode)
     referencias = DjangoFilterConnectionField(ReferenciaNode)

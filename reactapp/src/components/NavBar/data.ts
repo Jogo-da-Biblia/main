@@ -13,6 +13,7 @@ const navData = [
     },
     {
         label: "Redefinir senha",
+        to: "../redefinir-senha"
     },
 ]
 
