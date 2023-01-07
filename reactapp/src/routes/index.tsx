@@ -15,7 +15,7 @@ import { listaUsuarios } from "mockData/usuarios";
 import { perguntasData } from "mockData/perguntas";
 
 import { IUserList } from "types/user";
-import { IPergunta } from "types/pergunta";
+import { IPergunta } from "global/types/pergunta";
 
 // const ListaPergunta = lazy(() => import(""))
 

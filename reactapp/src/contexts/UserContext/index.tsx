@@ -2,8 +2,10 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { useMutation, useManualQuery } from 'graphql-hooks'
 
-import { IUser, IUserProvider, IUserProviderValue, IUserStage } from "types/user";
+import { IUserProvider, IUserProviderValue } from "./types"
 import { LOGIN_MUTATION, ME_QUERY, VERIFY_TOKEN_MUTATION } from "./graphql_operations";
+
+import { IUser, IUserStage } from "types/user";
 import { useGrapgQLClient } from "hooks/UseGraphQLClient";
 
 

@@ -8,9 +8,10 @@ import RespostaSimples from "./components/RespostaSimples";
 import TextArea from "./components/TextArea";
 import TipoResposta from "./components/TipoResposta";
 import { TEMAS_QUERY } from "./graphql_operations";
+import { IAddPergunta } from "./types";
 import { Container, Form, SubmitBtn } from "./styles";
 
-import { IAddPergunta, IAlternativa, IReferencia } from "types/pergunta";
+import { IAlternativa, IReferencia } from "global/types/pergunta";
 import SelectField from "components/Select";
 // import useAxiosPrivate from "hooks/UseAxiosPrivate"
 

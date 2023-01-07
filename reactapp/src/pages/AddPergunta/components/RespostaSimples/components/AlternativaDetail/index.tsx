@@ -1,7 +1,7 @@
 import { CheckboxLabel } from "pages/AddPergunta/styles";
 import React from "react";
-import { Checkmark } from "styles/globalStyles";
-import { IAlternativa } from "types/pergunta";
+import { Checkmark } from "global/styles/globalStyles";
+import { IAlternativa } from "global/types/pergunta";
 import { AlternativaLabel, Container, Controls, DeleteBtn } from "./styles";
 import lixeiraIcon from "assets/lixeira.png"
 

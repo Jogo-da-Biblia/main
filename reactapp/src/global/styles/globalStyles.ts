@@ -1,5 +1,6 @@
 import styled, { createGlobalStyle } from "styled-components";
-import Select, { Props as SelectProps, StylesConfig } from 'react-select';
+import Select, { StylesConfig } from 'react-select';
+import { IButton, ICheckmark, ISelectProps, IsMulti, MyOptionType } from "./types";
 
 export const GlobalStyle = createGlobalStyle`
     :root {
@@ -32,12 +33,6 @@ export const GlobalStyle = createGlobalStyle`
         font-family: 'Lato', sans-serif;
     }
 `;
-
-interface IButton {
-    color?: string;
-    bg?: string;
-    w?: string;
-}
 
 export const Button = styled.button`
     height: 40px;
@@ -92,11 +87,6 @@ export const Label = styled.label`
     }
 `;
 
-interface ICheckmark {
-    borderRadius?: string;
-    spanHidden?: boolean;
-}
-
 export const Checkmark = styled.span`
   background-color: #eee;
   position: absolute;
@@ -123,13 +113,6 @@ export const Checkmark = styled.span`
 }
 `;
 
-type MyOptionType = {
-    label: string;
-    value: string;
-};
-
-type IsMulti = false;
-
 const selectStyle: StylesConfig<MyOptionType, IsMulti> = {
     control: (_, state) => ({
         // background: state.hasValue ? 'rgba(0, 89, 255, 0.151)' : 'white',
@@ -151,11 +134,6 @@ const selectStyle: StylesConfig<MyOptionType, IsMulti> = {
         backgroundColor: state.isFocused ? "var(--blueColor)" : "white",
         color: state.isFocused ? "white" : "var(--greyColor2)",
     }),
-}
-
-interface ISelectProps extends SelectProps {
-    width?: string;
-    error: boolean
 }
 
 export const StyledSelect = styled(Select).attrs((props: ISelectProps) => ({

@@ -1,5 +1,5 @@
 import React from "react";
-import { IPergunta } from "types/pergunta";
+import { IPergunta } from "global/types/pergunta";
 import { Container } from "./styles";
 
 const Pergunta: React.FC<{ data: IPergunta }> = ({ data }) => {

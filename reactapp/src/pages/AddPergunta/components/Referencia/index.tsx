@@ -1,7 +1,7 @@
 import { CheckboxLabel } from "pages/AddPergunta/styles";
+import { IReferencia } from "pages/AddPergunta/types";
 import React from "react";
-import { Checkmark } from "styles/globalStyles";
-import { IReferencia } from "types/pergunta";
+import { Checkmark } from "global/styles/globalStyles";
 import TextArea from "../TextArea";
 import { referenciaData } from "./data";
 import { Container } from "./styles";

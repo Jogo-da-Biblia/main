@@ -1,7 +1,9 @@
 import GraphQLClientProvider from 'contexts/GraphQLContext';
-import { GlobalStyle } from 'styles/globalStyles';
+
 import { UserProvider } from './contexts/UserContext';
 import Routes from './routes';
+
+import { GlobalStyle } from 'global/styles/globalStyles';
 
 function App() {
   return (

@@ -1,4 +1,4 @@
-import { IPergunta } from "types/pergunta";
+import { IPergunta } from "global/types/pergunta";
 
 export const perguntasData: IPergunta[] = [
     {

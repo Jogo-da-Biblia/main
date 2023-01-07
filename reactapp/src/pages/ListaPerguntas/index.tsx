@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router-dom";
 import { useQuery } from 'graphql-hooks'
 
-import { IPergunta } from "types/pergunta";
+import { IPergunta } from "global/types/pergunta";
 import Pergunta from "./components/Pergunta";
 import { Container } from "./styles";
 

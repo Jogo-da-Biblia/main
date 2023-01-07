@@ -1,6 +1,6 @@
 import { CheckboxLabel } from "pages/AddPergunta/styles";
 import React from "react";
-import { Checkmark } from "styles/globalStyles";
+import { Checkmark } from "global/styles/globalStyles";
 import { tipoRespostaData } from "./data";
 import { Container } from "./styles";
 

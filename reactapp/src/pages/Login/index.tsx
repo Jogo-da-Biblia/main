@@ -6,8 +6,8 @@ import { ClientContext, useMutation, useManualQuery } from 'graphql-hooks'
 import { LOGIN_MUTATION } from "./graphql_operations"
 import { Container, InputsContainer, StyledField, SubmitBtn } from "./styles"
 import LoginSchema from "./schema"
+import { AuthUser } from "./types";
 
-import { AuthUser } from "types/user"
 import { useUserData } from "hooks/UseUserData"
 import Logo from "assets/jogodabiblia.png"
 import InputField from "components/InputField"

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { Button } from "styles/globalStyles";
-// import { Label } from "styles/globalStyles";
+import { Button } from "global/styles/globalStyles";
+// import { Label } from "global/styles/globalStyles";
 
 export const Container = styled.div``;
 

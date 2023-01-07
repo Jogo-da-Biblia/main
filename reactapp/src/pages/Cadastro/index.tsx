@@ -7,7 +7,7 @@ import { Container, InputsContainer, SubmitBtn } from "./styles"
 
 import { IUser } from "types/user"
 import Logo from "assets/jogodabiblia.png"
-import { Checkmark, Label } from "styles/globalStyles"
+import { Checkmark, Label } from "global/styles/globalStyles"
 import InputField from "components/InputField"
 import ParagraphError from "components/ParagraphError"
 

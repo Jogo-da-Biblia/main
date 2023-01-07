@@ -1,6 +1,6 @@
 import { FieldProps, FormikFormProps } from "formik";
 import React from "react";
-import { StyledSelect } from "styles/globalStyles"
+import { StyledSelect } from "global/styles/globalStyles"
 
 interface SelectFieldProps {
     array?: any[];

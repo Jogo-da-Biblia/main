@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button } from "styles/globalStyles";
-import { IAlternativa } from "types/pergunta";
+import { Button } from "global/styles/globalStyles";
+import { IAlternativa } from "global/types/pergunta";
 import TextArea from "../TextArea";
 import AlternativaDetail from "./components/AlternativaDetail";
 
