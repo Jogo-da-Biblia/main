@@ -1,13 +1,17 @@
-import SelectField from "components/Select";
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FormEvent, useState, useEffect } from "react";
-import { IAddPergunta, IAlternativa, IReferencia } from "types/pergunta";
+import { useQuery } from 'graphql-hooks'
+
 import Alternativa from "./components/Alternativa";
 import Referencia from "./components/Referencia";
 import RespostaSimples from "./components/RespostaSimples";
 import TextArea from "./components/TextArea";
 import TipoResposta from "./components/TipoResposta";
+import { TEMAS_QUERY } from "./graphql_operations";
 import { Container, Form, SubmitBtn } from "./styles";
-import { useQuery } from 'graphql-hooks'
+
+import { IAddPergunta, IAlternativa, IReferencia } from "types/pergunta";
+import SelectField from "components/Select";
 // import useAxiosPrivate from "hooks/UseAxiosPrivate"
 
 // temp
@@ -18,41 +22,13 @@ const selectOptions = [
     { id: 4, name: "tema 4", },
 ]
 
-const TEMAS_QUERY = `query {
-    temas {
-      edges {
-        node {
-          nome
-          cor
-        }
-      }
-    }
-  }`
-
 function AddPergunta() {
     const { loading, error, data } = useQuery(TEMAS_QUERY, { errorPolicy: "all" })
     // const axiosPrivate = useAxiosPrivate()
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const res = await axiosPrivate.post(`/graphql/`, {
-    //             query: `{
-    //                     temas {
-    //                         edges {
-    //                             node {
-    //                                 nome
-    //                                 cor
-    //                             }
-    //                         }
-    //                   }
-    //                 }`
-    //         });
-    //         console.log(res.data)
-    //     }
-
-    //     fetchData()
-
-    // }, [])
+    useEffect(() => {
+        console.log(data)
+    }, [data])
 
 
     const [perguntaData, setData] = useState<IAddPergunta>({

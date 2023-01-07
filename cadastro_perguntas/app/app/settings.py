@@ -84,9 +84,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 STATIC_URL = 'django-static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -95,7 +92,7 @@ SITE_ID = 1
 ROOT_URLCONF = 'app.urls'
 
 GRAPHENE = {
-    'SCHEMA': 'mysite.myschema.schema',
+    'SCHEMA': 'app.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
@@ -185,7 +182,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),
-        'PORT': '5432',
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -204,13 +201,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# ACCOUNT_FORMS = {
-#     "login": "app.core.forms.MyCustomLoginForm",
-#     "signup": "app.core.forms.MyCustomSignupForm",
-# }
-
-# ACCOUNT_ADAPTER = 'app.core.forms.CustomAccountAdapter'
-
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_SESSION_REMEMBER = True
@@ -219,6 +209,3 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-
-# crispy-forms
-# CRISPY_TEMPLATE_PACK = "bootstrap4"

@@ -1,26 +1,48 @@
+import { useContext } from "react";
 import { Navigate, useNavigate } from "react-router-dom"
-import { useUserData } from "hooks/UseUserData"
 import { Formik, Form } from "formik"
-import LoginSchema from "./schema"
-import { AuthUser } from "types/user"
+import { ClientContext, useMutation, useManualQuery } from 'graphql-hooks'
+
+import { LOGIN_MUTATION } from "./graphql_operations"
 import { Container, InputsContainer, StyledField, SubmitBtn } from "./styles"
+import LoginSchema from "./schema"
+
+import { AuthUser } from "types/user"
+import { useUserData } from "hooks/UseUserData"
 import Logo from "assets/jogodabiblia.png"
 import InputField from "components/InputField"
 import ParagraphError from "components/ParagraphError"
 
+
 function Login() {
-    const { authenticated, login } = useUserData()
+    const [loginUserMutation] = useMutation(LOGIN_MUTATION)
+    const { authenticated, setUser, fetchUser } = useUserData()
+    const client = useContext(ClientContext)
     const navigate = useNavigate()
 
     const from = "/perguntas"
 
-    const onSubmit = async (data: AuthUser) => {
-        if (!login) {
-            return;
-            // console.log(response.data.detail)
+    const onSubmit = async (authData: AuthUser) => {
+        // const response = await login(data, () => navigate(from, { replace: true }))
+
+        let { username, password } = authData;
+
+        const { data, error } = await loginUserMutation({ variables: { username, password } })
+
+        if (error) {
+            console.log(error)
+            return error
         }
-        const response = await login(data, () => navigate(from, { replace: true }))
-        // alert(JSON.stringify(data, null, 2))
+
+        const { token } = data.tokenAuth
+        localStorage.setItem("jogo_da_biblia-token", token);
+        client.setHeader('Authorization', `JWT ${token}`)
+
+        const userData = await fetchUser()
+        const { me } = userData.data
+        setUser({ ...me, token });
+        navigate(from, { replace: true })
+
     }
 
     if (authenticated) {
@@ -74,7 +96,7 @@ function Login() {
                                 )
                             }
                         </InputsContainer>
-                        <SubmitBtn children="Entrar" />
+                        <SubmitBtn type="submit" children="Entrar" />
                     </Form>
                 </Container>
 

@@ -1,3 +1,4 @@
+import { useGrapgQLClient } from "hooks/UseGraphQLClient"
 import { useUserData } from "hooks/UseUserData"
 import React from "react"
 import { NavLink } from "react-router-dom"
@@ -5,7 +6,14 @@ import navData from "./data"
 import { NavBar } from "./styles"
 
 const LeftBar: React.FC<{}> = () => {
-    const { logout } = useUserData()
+    const { setUser } = useUserData()
+    const client = useGrapgQLClient()
+
+    const logout = () => {
+        localStorage.removeItem("jogo_da_biblia-token")
+        setUser(null)
+        client.setHeader('Authorization', null)
+    }
 
     const activeStyle = {
         color: "#858585"

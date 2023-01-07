@@ -1,8 +1,11 @@
 import { useLoaderData } from "react-router-dom";
-import { IUserList } from "types/user";
+import { useQuery } from 'graphql-hooks'
+
 import UserDetail from "./components/UserDetail"
 import { ListaUsuarios } from "./styles"
-import { useQuery } from 'graphql-hooks'
+
+import { IUserList } from "types/user";
+
 
 const USERS_QUERY = `query users($limit: Int) {
     id

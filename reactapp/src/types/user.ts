@@ -29,7 +29,5 @@ export interface IUserProviderValue {
     authenticated?: boolean;
     user?: IUserStage | null;
     setUser?: Dispatch<SetStateAction<IUserStage | null>>;
-    cadastrar?: (user: IUser) => void;
-    login?: (user: AuthUser, callback: () => void) => void;
-    logout?: () => void;
+    fetchUser?: () => any;
 }

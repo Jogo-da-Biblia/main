@@ -35,4 +35,10 @@ export const StyledField = styled(Field).attrs(props => ({
     font-size: 20px;
     height: 55px;
     &:hover{ background: var(--inputHoverColor); }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover, 
+    &:-webkit-autofill:focus {
+        border: 1px solid green;
+    }
 `;

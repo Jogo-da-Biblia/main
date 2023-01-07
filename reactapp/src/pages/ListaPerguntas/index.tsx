@@ -1,8 +1,10 @@
 import { useLoaderData } from "react-router-dom";
+import { useQuery } from 'graphql-hooks'
+
 import { IPergunta } from "types/pergunta";
 import Pergunta from "./components/Pergunta";
 import { Container } from "./styles";
-import { useQuery } from 'graphql-hooks'
+
 
 const PERGUNTAS_QUERY = `query perguntas($limit: Int) {
     id

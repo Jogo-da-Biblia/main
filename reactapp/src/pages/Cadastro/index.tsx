@@ -1,12 +1,14 @@
-import { IUser } from "types/user"
-import { Formik, Form } from "formik"
-import CadastroSchema from "./schema"
-import Logo from "assets/jogodabiblia.png"
-import { Container, InputsContainer, SubmitBtn } from "./styles"
-import { Checkmark, Label } from "styles/globalStyles"
 import { useState } from "react"
-import InputField from "components/InputField"
+import { Formik, Form } from "formik"
+
+import CadastroSchema from "./schema"
 import { inputData } from "./data"
+import { Container, InputsContainer, SubmitBtn } from "./styles"
+
+import { IUser } from "types/user"
+import Logo from "assets/jogodabiblia.png"
+import { Checkmark, Label } from "styles/globalStyles"
+import InputField from "components/InputField"
 import ParagraphError from "components/ParagraphError"
 
 interface ICadastroUser extends IUser {
