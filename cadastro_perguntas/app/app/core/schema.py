@@ -9,7 +9,7 @@ User = get_user_model()
 class UserType(DjangoObjectType):
     id = graphene.ID(source='pk', required=True)
     class Meta:
-        model = get_user_model()
+        model = User
         
         
 class CreateUser(graphene.Mutation):
@@ -22,13 +22,16 @@ class CreateUser(graphene.Mutation):
         email = graphene.String(required=True)
 
     def mutate(self, info, username, password, phone, email):
-        user = get_user_model()(
-            username=username,
-            email=email,
-            phone=phone,
-        )
-        user.set_password(password)
-        user.save()
+        try: 
+            user = User(
+                username=username,
+                email=email,
+                phone=phone,
+            )
+            user.set_password(password)
+            user.save()
+        except Exception as e:
+            return e
 
         return CreateUser(user=user)
 

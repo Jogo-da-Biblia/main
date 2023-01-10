@@ -2,19 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 
-from app.core.serializers import CustomTokenObtainPairSerializer
-
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.views import TokenViewBase
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-
-from rest_framework import status
-from rest_framework.response import Response
-
-from .validations import validate_email
-
-from .exceptions import *
-
 from .forms import NewUserForm
 from django.contrib.auth import get_user_model
 

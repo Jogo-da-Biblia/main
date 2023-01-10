@@ -15,7 +15,7 @@ import ParagraphError from "components/ParagraphError"
 
 
 function Login() {
-    const [loginUserMutation] = useMutation(LOGIN_MUTATION)
+    const [loginUser] = useMutation(LOGIN_MUTATION)
     const { authenticated, setUser, fetchUser } = useUserData()
     const client = useContext(ClientContext)
     const navigate = useNavigate()
@@ -27,11 +27,10 @@ function Login() {
 
         let { username, password } = authData;
 
-        const { data, error } = await loginUserMutation({ variables: { username, password } })
+        const { data, error } = await loginUser({ variables: { username, password } })
 
         if (error) {
-            console.log(error)
-            return error
+            return alert(error.graphQLErrors[0].message)
         }
 
         const { token } = data.tokenAuth

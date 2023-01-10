@@ -1,15 +1,18 @@
 import { useState } from "react"
 import { Formik, Form } from "formik"
+import { ClientContext, useMutation } from 'graphql-hooks'
 
 import CadastroSchema from "./schema"
 import { inputData } from "./data"
 import { Container, InputsContainer, SubmitBtn } from "./styles"
+import { CADASTRO_MUTATION } from "./graphql_operations"
 
-import { IUser } from "types/user"
+import { IUser } from "global/types/user"
 import Logo from "assets/jogodabiblia.png"
 import { Checkmark, Label } from "global/styles/globalStyles"
 import InputField from "components/InputField"
 import ParagraphError from "components/ParagraphError"
+
 
 interface ICadastroUser extends IUser {
     password_2: string
@@ -25,15 +28,32 @@ function validatePassword_2(value: string, mainValue: string) {
 }
 
 function Cadastro() {
+    const [cadastrar] = useMutation(CADASTRO_MUTATION)
     const [useTermsChecked, setChecked] = useState(false);
 
-    const onSubmit = async (data: ICadastroUser) => {
+    const onSubmit = async (authData: ICadastroUser) => {
 
         if (!useTermsChecked) {
             alert("Favor peencher caixa de termos de uso!")
             return;
         }
-        alert(JSON.stringify(data, null, 2))
+
+        const { username, email, whatsappNumber, password } = authData
+
+        const { error } = await cadastrar({
+            variables: {
+                username,
+                email,
+                phone: whatsappNumber,
+                password
+            }
+        })
+
+        if (error) {
+            return alert(error.graphQLErrors[0].message)
+        }
+
+        alert("Conta criada!")
     }
 
     return (
@@ -69,7 +89,7 @@ function Cadastro() {
                                         value={values[d.name as keyof typeof values]}
                                         validate={
                                             d.name === "password_2" ?
-                                            () => validatePassword_2(values.password_2, values.password) : undefined
+                                                () => validatePassword_2(values.password_2, values.password) : undefined
                                         }
                                     />
                                     {
