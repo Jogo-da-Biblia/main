@@ -20,7 +20,7 @@ function AddPergunta() {
     const { loading, error, data } = useQuery(TEMAS_QUERY, { errorPolicy: "all" })
     const [perguntaData, setData] = useState<IAddPergunta>({
         tema: 1,
-        enumciado: "",
+        enunciado: "",
         tipoResposta: 1,
         alternativas: [],
         referencia: {
@@ -39,7 +39,7 @@ function AddPergunta() {
 
     const setTema = (value: number) => setDataByKey("tema", value)
 
-    const handleChangeEnunciado = (e: React.ChangeEvent<HTMLTextAreaElement>) => setDataByKey("enumciado", e.target.value)
+    const handleChangeEnunciado = (e: React.ChangeEvent<HTMLTextAreaElement>) => setDataByKey("enunciado", e.target.value)
 
     const handleChangeTipoResposta = (value: number) => setDataByKey("tipoResposta", value)
 
@@ -81,7 +81,7 @@ function AddPergunta() {
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        let mandatoryData = ['Tema', 'Enumciado']
+        let mandatoryData = ['Tema', 'enunciado']
 
         let emptyField: {
             fields: string[],
@@ -139,7 +139,7 @@ function AddPergunta() {
             <p>Para começar a colaborar cadastre-se com seus dados abaixo e comece a enviar perguntas.</p>
             <Form onSubmit={onSubmit}>
                 <SelectField value={perguntaData.tema} setValue={setTema} optionValue="id" optionLabel="nome" array={data?.temas} />
-                <TextArea name="" id="enumciado" value={perguntaData.enumciado} onChange={handleChangeEnunciado} />
+                <TextArea name="" id="enunciado" value={perguntaData.enunciado} onChange={handleChangeEnunciado} />
                 <TipoResposta mainValue={perguntaData.tipoResposta} setData={handleChangeTipoResposta} />
                 {perguntaData.tipoResposta === 1 && (
                     <Alternativa

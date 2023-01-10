@@ -1,5 +1,6 @@
 import graphene as g
-from .schema_nodes import *
+from .schema import *
+import re
 
 from .models import *
 
@@ -46,30 +47,70 @@ class CreatePergunta(g.Mutation):
         enunciado = g.String(required=True)
         tipo_resposta = g.String(required=True)
         alternativas = g.List(g.String)
-        refencia_resposta_id = g.Int()
+        tipo_refencia = g.Int()
+        refencia_regex = g.String()
         outras_referencias = g.String()
         
     ok = g.Boolean()
     pergunta = g.Field(PerguntaNode)
     
     @classmethod
-    def mutate(cls, root, info, tema_id, enunciado, tipo_resposta, alternativas=None, refencia_resposta_id=None, outras_referencias=None):
+    def mutate(cls, root, info, tema_id, enunciado, tipo_resposta, alternativas=None, refencia_regex=None, outras_referencias=None, tipo_refencia=1):
+        
+        user_ctx = info.context.user
+        if user_ctx.is_anonymous:
+            raise Exception('Not logged in!')
+        
         tema = Tema.objects.get(id=tema_id)
+        user = User.objects.get(pk=user_ctx.pk)
         
         pergunta = Pergunta(
             tema=tema,
             enunciado=enunciado,
             tipo_resposta=tipo_resposta,
-            # criado_por,
+            criado_por=user,
             # enviado_status=True,
         )
-        if outras_referencias:
+        
+        if outras_referencias and tipo_refencia == 2:
             pergunta.outras_referencias=outras_referencias
-        if refencia_resposta_id:
-            referencia = Referencia.objects.get(id=refencia_resposta_id)
-            pergunta.refencia_resposta = referencia
             
         pergunta.save()
+            
+        if refencia_regex and tipo_refencia == 1:
+          matches = refencia_regex.split(";")
+          
+          for m in matches:
+            sigla = m.split(" ")[0]
+            
+            versiculos = re.findall(r"[\s,][\d]{1,2}:", m)
+            capitulos = re.split("[^\d][\d]{1,2}:", "," + m.split(" ")[1])[1:]
+        
+            for i in range(len(capitulos)):
+                capitulos[i] = capitulos[i].split(",")
+        
+            for i in range(len(capitulos)):
+                for j in range(len(capitulos[i])):
+                    regex_pattern = re.compile(r"[\d]{1,2}-[\d]{1,2}")
+                    if regex_pattern.search(capitulos[i][j]):
+                        cap_range = capitulos[i][j].split("-")
+                        range_list = [num for num in range(int(cap_range[0]), int(cap_range[1]) + 1)]
+                        
+                        capitulos[i].pop(j)
+                        
+                        for n in range_list:
+                            capitulos[i].append(str(n))
+                        
+            versiculos_n = [re.sub(r'[^\d]', "", v) for v in versiculos]                  
+            
+            for i in range(len(versiculos_n)):
+                for c in capitulos[i]:
+                    livro = Livro.objects.get(sigla=sigla)
+                    versiculo = Versiculo.objects.get(versiculo=versiculos_n[i], capitulo=c)
+    
+                    referencia = Referencia(livro=livro, versiculo=versiculo, pergunta=pergunta)
+                    referencia.save()
+        
         if alternativas: 
             for alter in alternativas:
                 alternativa = Alternativa(texto=alter.texto, pergunta=pergunta)

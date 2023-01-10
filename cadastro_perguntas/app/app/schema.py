@@ -2,21 +2,21 @@ import graphene
 import graphql_jwt
 from graphene_django.filter import DjangoFilterConnectionField
 
-from app.biblia.schema_nodes import *
+import app.biblia.schema as biblia
 from app.biblia.models import *
 
-from app.perguntas.schema_nodes import *
+from app.perguntas.schema import *
 from app.perguntas.mutations import *
 from app.perguntas.models import *
 
 from django.contrib.auth import get_user_model
-from app.core.schema_nodes import UserType
+import app.core.schema as core
 
 
 User = get_user_model()
 
 class Query(graphene.ObjectType):
-    users = graphene.List(UserType)
+    users = graphene.List(core.UserType)
 
     def resolve_users(self, info):
         user = info.context.user
@@ -24,7 +24,7 @@ class Query(graphene.ObjectType):
             raise Exception('Not logged in!')
         return User.objects.all()
     
-    me = graphene.Field(UserType)
+    me = graphene.Field(core.UserType)
     
     def resolve_me(root, info):
         try:
@@ -33,7 +33,7 @@ class Query(graphene.ObjectType):
         except Exception:
             return None
         
-    user = graphene.Field(UserType, id=graphene.Int())
+    user = graphene.Field(core.UserType, id=graphene.Int())
     
     def resolve_user(root, info, id):
         try:
@@ -42,8 +42,8 @@ class Query(graphene.ObjectType):
         except Exception:
             return None
     
-    livro = graphene.Field(LivroNode, id=graphene.Int())
-    livros = DjangoFilterConnectionField(LivroNode)
+    livro = graphene.Field(biblia.LivroNode, id=graphene.Int())
+    livros = DjangoFilterConnectionField(biblia.LivroNode)
 
     def resolve_livro(root, info, id):
         try:
@@ -52,14 +52,14 @@ class Query(graphene.ObjectType):
         except Exception:
             return None
     
-    testamento = graphene.relay.Node.Field(TestamentoNode)
-    testamentos = DjangoFilterConnectionField(TestamentoNode)
+    testamento = graphene.relay.Node.Field(biblia.TestamentoNode)
+    testamentos = DjangoFilterConnectionField(biblia.TestamentoNode)
     
-    versiculo = graphene.relay.Node.Field(VersiculoNode)
-    versiculos = DjangoFilterConnectionField(VersiculoNode)
+    versiculo = graphene.relay.Node.Field(biblia.VersiculoNode)
+    versiculos = DjangoFilterConnectionField(biblia.VersiculoNode)
     
-    versao = graphene.relay.Node.Field(VersaoNode)
-    versoes = DjangoFilterConnectionField(VersaoNode)
+    versao = graphene.relay.Node.Field(biblia.VersaoNode)
+    versoes = DjangoFilterConnectionField(biblia.VersaoNode)
     
     tema = graphene.relay.Node.Field(TemaNode)
     
@@ -81,7 +81,7 @@ class Query(graphene.ObjectType):
     alternativas = g.List(AlternativaNode)
     
     
-class Mutation(graphene.ObjectType):
+class Mutation(core.Mutation, graphene.ObjectType):
     create_tema = CreateTema.Field()
     create_referencia = CreateReferencia.Field()
     create_pergunta = CreatePergunta.Field()

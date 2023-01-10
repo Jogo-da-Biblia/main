@@ -1,9 +1,9 @@
-import graphene
+import graphene as g
 from graphene_django import DjangoObjectType
 
 from .models import Livro, Testamento, Versiculo, Versao
 
-class CustomNode(graphene.Node):
+class CustomNode(g.Node):
     """
         For fetching object id instead of Node id
     """
@@ -16,7 +16,7 @@ class CustomNode(graphene.Node):
 
 
 class LivroNode(DjangoObjectType):
-    # id = graphene.ID(source='pk', required=True)
+    # id = g.ID(source='pk', required=True)
     
     class Meta:
         model = Livro
@@ -55,3 +55,5 @@ class VersaoNode(DjangoObjectType):
         filter_fields = ["nome"]
         fields = "__all__"
         interfaces = (CustomNode, )
+        
+        

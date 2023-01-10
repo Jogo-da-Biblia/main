@@ -20,6 +20,8 @@ build:
 	make run
 rebuild_reactapp:
 	docker-compose up -d --no-deps --build reactapp
+rebuild_backend:
+	docker-compose up -d --no-deps --build cadastro_perguntas
 make init:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "npm init -y"
 migrate:

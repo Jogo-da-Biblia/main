@@ -21,6 +21,7 @@ class Referencia(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Versículo'
     )
+    pergunta = models.ForeignKey("Pergunta", on_delete=models.CASCADE, related_name="referencias")
 
     def __str__(self):
         return f"{self.versiculo}"
@@ -47,13 +48,6 @@ class Pergunta(models.Model):
         max_length=3,
         choices=TIPO_RESPOSTA,
         verbose_name='Tipo de Resposta'
-    )
-
-    refencia_resposta = models.ForeignKey(
-        Referencia,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
     )
 
     outras_referencias = models.TextField(

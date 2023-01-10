@@ -7,7 +7,7 @@ export interface IReferencia {
 
 export interface IAddPergunta {
     tema: number;
-    enumciado: string;
+    enunciado: string;
     tipoResposta: number;
     referencia: IReferencia;
     tipoReferencia: number;

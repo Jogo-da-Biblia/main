@@ -34,4 +34,3 @@ class AlternativaNode(DjangoObjectType):
         model = Alternativa
         interfaces = (g.relay.Node, )
         fields = "__all__"
-
