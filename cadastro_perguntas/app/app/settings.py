@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     'app.core',
     'app.comentarios',
     'app.pages',
+    # graphql
+    "graphene_django",
 ]
 
 MIDDLEWARE = [
@@ -189,3 +191,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 # crispy-forms
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# graphql
+GRAPHENE = {
+    "SCHEMA": "app.graphql.schema.schema"
+}
