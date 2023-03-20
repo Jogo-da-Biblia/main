@@ -1,3 +1,5 @@
+import random
+
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django import DjangoListField
@@ -40,7 +42,7 @@ class Query(graphene.ObjectType):
     #     return Pergunta.objects.all()
 
     def resolve_pergunta(root, info, tema):
-        return Pergunta.objects.filter(tema=tema)
+        return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
     
     # def resolve_users(root, info):
     #     return User.objects.all()
