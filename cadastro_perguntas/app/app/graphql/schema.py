@@ -1,10 +1,15 @@
 import graphene
 from graphene_django import DjangoObjectType
+from graphene_django import DjangoListField
 
 from app.perguntas.models import Pergunta, Tema, Referencia
 from app.core.models import User
+from app.graphql.mutations import Mutations
 from django.contrib.auth.models import Group
+from graphene_django.forms.mutation import DjangoModelFormMutation
+from app.core.forms import NewUserForm
 
+# Queries
 
 class PerguntasType(DjangoObjectType):
     class Meta:
@@ -12,13 +17,14 @@ class PerguntasType(DjangoObjectType):
         fields = ("id", "enunciado", "tipo_resposta", "refencia_resposta","status", "revisado_por")
 
 
-class TemasType(DjangoObjectType):
+class TemaType(DjangoObjectType):
     class Meta:
         model = Tema
         fields = ("nome", "cor")
 
 
-class UserTypes(DjangoObjectType):
+class UserType(DjangoObjectType):
+
     class Meta:
         model = User
         fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser", "roles")
@@ -27,8 +33,9 @@ class UserTypes(DjangoObjectType):
 class Query(graphene.ObjectType):
     perguntas = graphene.List(PerguntasType)
     pergunta = graphene.List(PerguntasType, tema=graphene.String())
-    users = graphene.List(UserTypes)
-    user = graphene.List(UserTypes, id=graphene.Int())
+    users = graphene.List(UserType)
+    user = graphene.List(UserType, id=graphene.Int())
+    temas = graphene.List(TemaType)
 
     def resolve_perguntas(root, info):
         return Pergunta.objects.all()
@@ -41,5 +48,28 @@ class Query(graphene.ObjectType):
 
     def resolve_user(root, info, id):
         return User.objects.filter(id=id)
+    
+    def resolve_temas(root, info):
+        return Tema.objects.all()
 
-schema = graphene.Schema(query=Query)
+
+# Mutations
+
+
+class CadastrarOuEditarUsuario(DjangoModelFormMutation):
+    class Meta:
+        form_class = NewUserForm
+    
+    def mutate(self, info, **kwargs):
+        return 'Success'
+    
+
+class Mutation(graphene.ObjectType):
+    cadastrar_ou_editar_usuario = CadastrarOuEditarUsuario.Field()
+    #recuperar_senha = UpdatePergunta.Field()
+    #cadastrar_ou_editar_pergunta = DeletePergunta.Field()
+
+
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
