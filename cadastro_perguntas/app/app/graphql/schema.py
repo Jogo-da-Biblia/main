@@ -68,7 +68,7 @@ class CadastrarUsuarioMutation(graphene.Mutation):
     user = graphene.Field(UserType)
     
     def mutate(self, info, username, email, password, is_staff=False):
-        if info.context.user.is_superuser is False:
+        if info.context.user.is_superuser is False and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
             raise Exception('Somente admins podem adicionar novos usuarios')
         user = User(username=username, email=email, is_staff=is_staff)
         user.set_password(password)
@@ -87,8 +87,8 @@ class EditarUsuarioMutation(graphene.Mutation):
     user = graphene.Field(UserType)
     
     def mutate(self, info, id, new_username=None, new_email=None, new_password=None, new_is_staff=None):
-        if info.context.user.is_superuser is False and info.context.user.id != id:
-            raise Exception('Somente o proprio usuario e admins podem editar dados de usuarios')
+        if info.context.user.is_superuser is False and info.context.user.id != id and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+            raise Exception('Somente o proprio usuario e administradores podem editar dados de usuarios')
         user = User.objects.get(id=id)
 
         if new_username is not None:
