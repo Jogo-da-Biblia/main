@@ -93,10 +93,21 @@
             newPassword: "newpassword"
         ){
             user{
-                    id
-            username
+                id
+                username
             }
         }
     }
     ```
 
+- recuperarSenha
+    ```graphql
+    mutation{
+        recuperarSenha(userId:1){
+            user{
+                id
+                email
+            }
+        }
+    }
+    ```

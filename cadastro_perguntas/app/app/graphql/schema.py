@@ -123,10 +123,24 @@ class EditarUsuarioMutation(graphene.Mutation):
         return EditarUsuarioMutation(user=user)
 
 
+class RecuperarSenhaMutation(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.Int(required=True)
+
+    user = graphene.Field(UserType)
+    
+    def mutate(self, info, user_id):
+        if info.context.user.is_superuser is False and info.context.user.id != id and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+            raise Exception('Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
+        
+        user = User.objects.get(id=user_id)
+
+        return RecuperarSenhaMutation(user=user)
+
 class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
-    #recuperar_senha = UpdatePergunta.Field()
+    recuperar_senha = RecuperarSenhaMutation.Field()
     #cadastrar_ou_editar_pergunta = DeletePergunta.Field()
 
 
