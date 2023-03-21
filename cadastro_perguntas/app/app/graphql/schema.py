@@ -57,20 +57,31 @@ class Query(graphene.ObjectType):
 # # Mutations
 
 
-# class CadastrarOuEditarUsuario(DjangoModelFormMutation):
-#     class Meta:
-#         form_class = NewUserForm
+class CadastrarUsuarioMutation(graphene.Mutation):
     
-#     def mutate(self, info, **kwargs):
-#         return 'Success'
+    class Arguments:
+        username = graphene.String(required=True)
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+        is_staff = graphene.Boolean(required=True)
     
+    user = graphene.Field(UserType)
+    
+    def mutate(self, info, username, email, password, is_staff):
+        if info.context.user.is_superuser is False:
+            raise Exception('Somente admins podem adicionar novos usuarios')
+        user = User(username=username, email=email, is_staff=is_staff, password=password)
+        user.save()
+        return CadastrarUsuarioMutation(user=user)
 
-# class Mutation(graphene.ObjectType):
-#     cadastrar_ou_editar_usuario = CadastrarOuEditarUsuario.Field()
-#     #recuperar_senha = UpdatePergunta.Field()
-#     #cadastrar_ou_editar_pergunta = DeletePergunta.Field()
+
+class Mutation(graphene.ObjectType):
+    cadastrar_usuario = CadastrarUsuarioMutation.Field()
+    #editar_usuario = EditarUsuarioMutation.Field()
+    #recuperar_senha = UpdatePergunta.Field()
+    #cadastrar_ou_editar_pergunta = DeletePergunta.Field()
 
 
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
