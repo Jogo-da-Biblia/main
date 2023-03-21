@@ -57,3 +57,21 @@
     }
     ```
 
+- editarUsuario
+    ```graphql
+    mutation{
+        editarUsuario(
+            id: 12
+            newUsername:"newusername"
+            newEmail: "newemai1l@.com"
+            newIsStaff: true
+            newPassword: "newpassword"
+        ){
+            user{
+                    id
+            username
+            }
+        }
+    }
+    ```
+

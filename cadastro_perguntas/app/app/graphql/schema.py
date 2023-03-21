@@ -63,11 +63,11 @@ class CadastrarUsuarioMutation(graphene.Mutation):
         username = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
-        is_staff = graphene.Boolean(required=False, default_value=False)
+        is_staff = graphene.Boolean()
     
     user = graphene.Field(UserType)
     
-    def mutate(self, info, username, email, password, is_staff):
+    def mutate(self, info, username, email, password, is_staff=False):
         if info.context.user.is_superuser is False:
             raise Exception('Somente admins podem adicionar novos usuarios')
         user = User(username=username, email=email, is_staff=is_staff)
@@ -79,28 +79,28 @@ class CadastrarUsuarioMutation(graphene.Mutation):
 class EditarUsuarioMutation(graphene.Mutation):
     class Arguments:
         id = graphene.Int(required=True)
-        username = graphene.String()
-        email = graphene.String()
-        password = graphene.String()
-        is_staff = graphene.Boolean()
+        new_username = graphene.String()
+        new_email = graphene.String()
+        new_password = graphene.String()
+        new_is_staff = graphene.Boolean()
     
     user = graphene.Field(UserType)
     
-    def mutate(self, info, id, username=None, email=None, password=None, is_staff=None):
+    def mutate(self, info, id, new_username=None, new_email=None, new_password=None, new_is_staff=None):
         if info.context.user.is_superuser is False and info.context.user.id != id:
             raise Exception('Somente o proprio usuario e admins podem editar dados de usuarios')
         user = User.objects.get(id=id)
 
-        if username is not None:
-            user.username = username
-        if email is not None:
-            user.email = email
-        if password is not None:
-            user.set_password(password)
+        if new_username is not None:
+            user.username = new_username
+        if new_email is not None:
+            user.email = new_email
+        if new_password is not None:
+            user.set_password(new_password)
         
         if info.context.user.is_superuser:
-            if is_staff is not None:
-                user.is_staff = is_staff
+            if new_is_staff is not None:
+                user.is_staff = new_is_staff
         user.save()
         return EditarUsuarioMutation(user=user)
 
