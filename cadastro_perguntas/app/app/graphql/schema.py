@@ -75,9 +75,30 @@ class CadastrarUsuarioMutation(graphene.Mutation):
         return CadastrarUsuarioMutation(user=user)
 
 
+class EditarUsuarioMutation(graphene.Mutation):
+    
+    class Arguments:
+        id = graphene.Int(required=True)
+        username = graphene.String(required=True)
+        email = graphene.String(required=True)
+        is_staff = graphene.Boolean(required=True)
+    
+    user = graphene.Field(UserType)
+    
+    def mutate(self, info, id, username, email, is_staff):
+        if info.context.user.is_superuser is False:
+            raise Exception('Somente admins podem editar usuarios')
+        user = User.objects.get(id=id)
+        user.username = username
+        user.email = email
+        user.is_staff = is_staff
+        user.save()
+        return EditarUsuarioMutation(user=user)
+
+
 class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
-    #editar_usuario = EditarUsuarioMutation.Field()
+    editar_usuario = EditarUsuarioMutation.Field()
     #recuperar_senha = UpdatePergunta.Field()
     #cadastrar_ou_editar_pergunta = DeletePergunta.Field()
 
