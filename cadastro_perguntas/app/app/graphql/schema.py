@@ -31,11 +31,20 @@ class UserType(DjangoObjectType):
         fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
 
 
+class UserWithQuestionsType(graphene.ObjectType):
+    perguntas = graphene.List(PerguntasType)
+    user = graphene.Field(UserType)
+
+    # class Meta:
+    #     model = User
+    #     fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
+
+
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(PerguntasType)
     pergunta = DjangoListField(PerguntasType, tema=graphene.String())
     users = DjangoListField(UserType)
-    user = DjangoListField(UserType, id=graphene.Int())
+    user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
 
     # def resolve_perguntas(root, info):
@@ -47,15 +56,24 @@ class Query(graphene.ObjectType):
     # def resolve_users(root, info):
     #     return User.objects.all()
 
-    def resolve_user(root, info, id):
-        return User.objects.filter(id=id)
+    def resolve_user(root, info, id=None):
+        if info.context.user.id != id:
+            if info.context.user.is_superuser is False and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+                raise Exception('Somente o proprio usuario ou admins podem ver os dados de outros usuarios')
+        
+        if id is None:
+            user = info.context.user
+        else:    
+            user = User.objects.get(id=id)
+
+        perguntas = Pergunta.objects.filter(criado_por=User.objects.get(id=user.id))
+        return UserWithQuestionsType(perguntas=perguntas, user=user)
     
     # def resolve_temas(root, info):
     #     return Tema.objects.all()
 
 
 # # Mutations
-
 
 class CadastrarUsuarioMutation(graphene.Mutation):
     

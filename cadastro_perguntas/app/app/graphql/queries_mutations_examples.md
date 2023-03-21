@@ -3,8 +3,33 @@
     ```graphql
     query{
         user(id:1){
-            id
-            username
+            user{
+                id
+                username
+                email
+            }
+            perguntas {
+                id
+                enunciado
+                status
+            }
+        }
+    }
+    ```
+    Tambem pode ser sem especificar o id, nesse caso ele retorna os dados do usuario logado
+    ```graphql
+    query{
+        user{
+            user{
+                id
+                username
+                email
+            }
+            perguntas {
+                id
+                enunciado
+                status
+            }
         }
     }
     ```
