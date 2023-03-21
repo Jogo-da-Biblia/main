@@ -10,6 +10,13 @@ from django.contrib.auth.models import Group
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from app.core.forms import NewUserForm
 
+# utils
+
+def is_user_superuser_or_admin(user):
+    if user.is_superuser is False and any([user.groups.filter(name='administradores').exists(), user.groups.filter(name='revisores').exists(), user.groups.filter(name='publicadores').exists()]) is False:
+        return False
+    return True
+
 # Queries
 
 class PerguntasType(DjangoObjectType):
@@ -58,7 +65,7 @@ class Query(graphene.ObjectType):
 
     def resolve_user(root, info, id=None):
         if info.context.user.id != id:
-            if info.context.user.is_superuser is False and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+            if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
                 raise Exception('Somente o proprio usuario ou admins podem ver os dados de outros usuarios')
         
         if id is None:
@@ -86,7 +93,7 @@ class CadastrarUsuarioMutation(graphene.Mutation):
     user = graphene.Field(UserType)
     
     def mutate(self, info, username, email, password, is_staff=False):
-        if info.context.user.is_superuser is False and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+        if is_user_superuser_or_admin(info.context.user) is False:
             raise Exception('Somente admins podem adicionar novos usuarios')
         user = User(username=username, email=email, is_staff=is_staff)
         user.set_password(password)
@@ -105,7 +112,7 @@ class EditarUsuarioMutation(graphene.Mutation):
     user = graphene.Field(UserType)
     
     def mutate(self, info, id, new_username=None, new_email=None, new_password=None, new_is_staff=None):
-        if info.context.user.is_superuser is False and info.context.user.id != id and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+        if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
             raise Exception('Somente o proprio usuario e administradores podem editar dados de usuarios')
         user = User.objects.get(id=id)
 
@@ -130,7 +137,7 @@ class RecuperarSenhaMutation(graphene.Mutation):
     user = graphene.Field(UserType)
     
     def mutate(self, info, user_id):
-        if info.context.user.is_superuser is False and info.context.user.id != id and any([info.context.user.groups.filter(name='administradores').exists(), info.context.user.groups.filter(name='revisores').exists(), info.context.user.groups.filter(name='publicadores').exists()]) is False:
+        if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != user_id:
             raise Exception('Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
         
         user = User.objects.get(id=user_id)
