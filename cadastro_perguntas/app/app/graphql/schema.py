@@ -107,11 +107,12 @@ class EditarUsuarioMutation(graphene.Mutation):
         new_username = graphene.String()
         new_email = graphene.String()
         new_password = graphene.String()
+        confirm_new_passowrd = graphene.String()
         new_is_staff = graphene.Boolean()
     
     user = graphene.Field(UserType)
     
-    def mutate(self, info, id, new_username=None, new_email=None, new_password=None, new_is_staff=None):
+    def mutate(self, info, id, new_username=None, new_email=None, new_password=None, confirm_new_passowrd=None, new_is_staff=None):
         if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
             raise Exception('Somente o proprio usuario e administradores podem editar dados de usuarios')
         user = User.objects.get(id=id)
@@ -121,6 +122,8 @@ class EditarUsuarioMutation(graphene.Mutation):
         if new_email is not None:
             user.email = new_email
         if new_password is not None:
+            if new_password != confirm_new_passowrd:
+                raise Exception('As senhas devem ser iguais')
             user.set_password(new_password)
         
         if info.context.user.is_superuser:
@@ -157,22 +160,52 @@ class CadastrarPerguntaMutation(graphene.Mutation):
     
     def mutate(self, info, tema_id, enunciado, tipo_resposta, refencia_resposta_id=None, outras_referencias=None):
         if not info.context.user.is_authenticated:
-                raise Exception('Voce precisa estar logado para cadastrar uma pergunta')
-        # raise Exception('chegou aqui')
-        #raise Exception(str(info.context.user))
+            raise Exception('Voce precisa estar logado para cadastrar uma pergunta')
+
         tema = Tema.objects.get(id=tema_id)
         refencia_resposta = Referencia.objects.get(id=refencia_resposta_id)
-        #user = User.objects.get(id=info.context.user.id)
         pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta, refencia_resposta=refencia_resposta, outras_referencias=outras_referencias, criado_por=info.context.user)
         pergunta.save()
         return CadastrarPerguntaMutation(pergunta=pergunta)
+
+
+class EditarPerguntaMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int(required=True)
+        tema_id = graphene.Int()
+        enunciado = graphene.String()
+        tipo_resposta = graphene.String()
+        refencia_resposta_id = graphene.Int()
+        outras_referencias = graphene.String()
+    
+    pergunta = graphene.Field(PerguntasType)
+    
+    def mutate(self, info, id, tema_id=None, enunciado=None, tipo_resposta=None, refencia_resposta_id=None, outras_referencias=None):
+        if not info.context.user.is_authenticated:
+            raise Exception('Voce precisa estar logado para cadastrar uma pergunta')
+
+        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
+
+        pergunta = Pergunta.objects.get(id=id)
+
+        for key, value in new_fields.items():
+            if value is not None:
+                if key == 'tema':
+                    value = Tema.objects.get(id=value)
+                elif key == 'refencia_resposta':
+                    value = Referencia.objects.get(id=value)
+                setattr(pergunta, key, value)
+        
+        pergunta.save()
+        return CadastrarPerguntaMutation(pergunta=pergunta)
+
 
 class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
     cadastrarPergunta = CadastrarPerguntaMutation.Field()
-    # cadastrar_ou_editar_pergunta = DeletePergunta.Field()
+    editarPergunta = EditarPerguntaMutation.Field()
 
 
 
