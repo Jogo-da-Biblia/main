@@ -145,31 +145,33 @@ class RecuperarSenhaMutation(graphene.Mutation):
         return RecuperarSenhaMutation(user=user)
 
 
-# class CadastrarPerguntaMutation(graphene.Mutation):
+class CadastrarPerguntaMutation(graphene.Mutation):
+    class Arguments:
+        tema_id = graphene.Int(required=True)
+        enunciado = graphene.String(required=True)
+        tipo_resposta = graphene.String(required=True)
+        refencia_resposta_id = graphene.Int()
+        outras_referencias = graphene.String()
     
-#     class Arguments:
-#         tema_id = graphene.Int(required=True)
-#         enunciado = graphene.String(required=True)
-#         tipo_resposta = graphene.String(required=True)
-#         refencia_resposta_id = graphene.Int()
-#         outras_referencias = graphene.String()
-#         publicado = graphene.Boolean()
+    pergunta = graphene.Field(PerguntasType)
     
-#     user = graphene.Field(UserType)
-    
-#     def mutate(self, info, username, email, password, is_staff=False):
-#         if is_user_superuser_or_admin(info.context.user) is False:
-#             raise Exception('Somente admins podem adicionar novos usuarios')
-#         user = User(username=username, email=email, is_staff=is_staff)
-#         user.set_password(password)
-#         user.save()
-#         return CadastrarUsuarioMutation(user=user)
+    def mutate(self, info, tema_id, enunciado, tipo_resposta, refencia_resposta_id=None, outras_referencias=None):
+        if not info.context.user.is_authenticated:
+                raise Exception('Voce precisa estar logado para cadastrar uma pergunta')
+        # raise Exception('chegou aqui')
+        #raise Exception(str(info.context.user))
+        tema = Tema.objects.get(id=tema_id)
+        refencia_resposta = Referencia.objects.get(id=refencia_resposta_id)
+        #user = User.objects.get(id=info.context.user.id)
+        pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta, refencia_resposta=refencia_resposta, outras_referencias=outras_referencias, criado_por=info.context.user)
+        pergunta.save()
+        return CadastrarPerguntaMutation(pergunta=pergunta)
 
 class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
-    # cadastrarPergunta = CadastrarPerguntaMutation.Field()
+    cadastrarPergunta = CadastrarPerguntaMutation.Field()
     # cadastrar_ou_editar_pergunta = DeletePergunta.Field()
 
 
