@@ -52,6 +52,12 @@ class TemaType(DjangoObjectType):
         fields = ("nome", "cor")
 
 
+class FuncoesType(DjangoObjectType):
+    class Meta:
+        model = Group
+        fields = ("name", )
+
+
 class UserType(DjangoObjectType):
 
     class Meta:
@@ -74,9 +80,6 @@ class UserWithQuestionsType(graphene.ObjectType):
     perguntas = graphene.List(PerguntasType)
     user = graphene.Field(UserType)
 
-    # class Meta:
-    #     model = User
-    #     fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
 
 
 class Query(graphene.ObjectType):
@@ -85,9 +88,8 @@ class Query(graphene.ObjectType):
     users = graphene.Field(UserWithScoreType)
     user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
+    funcoes = DjangoListField(FuncoesType)
 
-    # def resolve_perguntas(root, info):
-    #     return Pergunta.objects.all()
 
     def resolve_pergunta(root, info, tema):
         return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
@@ -107,9 +109,6 @@ class Query(graphene.ObjectType):
 
         perguntas = Pergunta.objects.filter(criado_por=User.objects.get(id=user.id))
         return UserWithQuestionsType(perguntas=perguntas, user=user)
-    
-    # def resolve_temas(root, info):
-    #     return Tema.objects.all()
 
 
 # # Mutations
