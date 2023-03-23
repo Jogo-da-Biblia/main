@@ -1,4 +1,5 @@
 import random
+import smtplib
 
 import graphene
 from graphene_django import DjangoObjectType
@@ -6,9 +7,12 @@ from graphene_django import DjangoListField
 
 from app.perguntas.models import Pergunta, Tema, Referencia
 from app.core.models import User
+from app.settings import DEFAULT_FROM_EMAIL
 from django.contrib.auth.models import Group
+from django.core.mail import send_mail
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from app.core.forms import NewUserForm
+
 
 # utils
 
@@ -164,16 +168,34 @@ class EditarUsuarioMutation(graphene.Mutation):
 class RecuperarSenhaMutation(graphene.Mutation):
     class Arguments:
         user_id = graphene.Int(required=True)
+        email = graphene.String(required=True)
 
-    user = graphene.Field(UserType)
-    
-    def mutate(self, info, user_id):
+    message = graphene.String()
+
+    def mutate(self, info, user_id, email):
         if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != user_id:
             raise Exception('Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
         
         user = User.objects.get(id=user_id)
+        
+        if email != user.email:
+            raise Exception('O email informado não corresponde ao email do usuario')
 
-        return RecuperarSenhaMutation(user=user)
+        new_password = User.objects.make_random_password(length=10)
+        user.set_password(new_password)
+
+        try:
+            send_mail(
+                subject='Recuperacao de Senha - Jogo da Biblia',
+                message='Recebemos seu pedido de recuperação de senha, esta é a sua nova senha de acesso: ' + new_password,
+                from_email=DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+        except smtplib.SMTPException:
+            raise Exception('Senha alterada com sucesso\nErro durante o envio do email')
+
+        return RecuperarSenhaMutation(message='Senha alterada e email enviado com sucesso')
 
 
 class CadastrarPerguntaMutation(graphene.Mutation):

@@ -38,8 +38,11 @@
     ```graphql
     query{
         users{
-            id
-            username
+            user{
+                id
+                username
+                score
+            }
         }
     }
     ```
@@ -103,11 +106,11 @@
 - recuperarSenha
     ```graphql
     mutation{
-        recuperarSenha(userId:1){
-            user{
-                id
-                email
-            }
+        recuperarSenha(
+            userId:2, 
+            email:"user@email.com"
+        ){
+            message
         }
     }
     ```
