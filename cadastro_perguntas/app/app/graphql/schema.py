@@ -17,6 +17,23 @@ def is_user_superuser_or_admin(user):
         return False
     return True
 
+def get_user_score(user):
+    score = 0
+    perguntas = Pergunta.objects.filter(criado_por=User.objects.get(id=user.id))
+    for pergunta in perguntas:
+        score += 1 # Question sended
+        if pergunta.status is True:
+            # reviewed and published question
+            score += 2
+        else:
+            if pergunta.revisado_status is True:
+                # reviewed question
+                score += 1
+                if pergunta.status is False:
+                    # reviewed question but not accepted
+                    score -= 1
+    return score
+
 # Queries
 
 class PerguntasType(DjangoObjectType):
@@ -36,6 +53,17 @@ class UserType(DjangoObjectType):
     class Meta:
         model = User
         fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
+    
+    score = graphene.Int()
+
+    def resolve_score(self, info):
+        if self is not None:
+            return get_user_score(self)
+        return None
+
+
+class UserWithScoreType(graphene.ObjectType):
+    user = graphene.List(UserType)
 
 
 class UserWithQuestionsType(graphene.ObjectType):
@@ -50,7 +78,7 @@ class UserWithQuestionsType(graphene.ObjectType):
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(PerguntasType)
     pergunta = DjangoListField(PerguntasType, tema=graphene.String())
-    users = DjangoListField(UserType)
+    users = graphene.Field(UserWithScoreType)
     user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
 
@@ -60,8 +88,8 @@ class Query(graphene.ObjectType):
     def resolve_pergunta(root, info, tema):
         return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
     
-    # def resolve_users(root, info):
-    #     return User.objects.all()
+    def resolve_users(root, info):
+        return UserWithScoreType(user=User.objects.all())
 
     def resolve_user(root, info, id=None):
         if info.context.user.id != id:
@@ -181,8 +209,8 @@ class EditarPerguntaMutation(graphene.Mutation):
     pergunta = graphene.Field(PerguntasType)
     
     def mutate(self, info, id, tema_id=None, enunciado=None, tipo_resposta=None, refencia_resposta_id=None, outras_referencias=None):
-        if not info.context.user.is_authenticated:
-            raise Exception('Voce precisa estar logado para cadastrar uma pergunta')
+        if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
+            raise Exception('Somente admins e o proprio usuario podem editar perguntas')
 
         new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
 
