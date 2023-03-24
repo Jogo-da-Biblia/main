@@ -8,6 +8,7 @@ from graphene_django import DjangoListField
 
 from app.perguntas.models import Pergunta, Tema, Referencia
 from app.core.models import User
+from app.biblia.models import Livro, Versiculo
 from app.settings import DEFAULT_FROM_EMAIL
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
@@ -43,6 +44,16 @@ def get_user_score(user):
                     score -= 1
     return score
 
+def get_textos_biblicos(text_info:dict):
+    texts = []
+    book = Livro.objects.get(nome=text_info['book'])
+    for verse in text_info['verses']:
+        print(verse)
+        texts.append(Versiculo.objects.get(livro_id=book, versiculo=verse, capitulo=int(text_info['chapter'])).texto)
+        print(texts)
+
+    return texts
+
 # Queries
 
 class PerguntasType(DjangoObjectType):
@@ -58,9 +69,7 @@ class TemaType(DjangoObjectType):
 
 
 class TextoBiblicoType(graphene.ObjectType):
-    livro = graphene.String()
-    capitulo = graphene.String()
-    versiculo = graphene.List(graphene.String)
+    textos = graphene.List(graphene.String)
 
 
 class FuncoesType(DjangoObjectType):
@@ -129,18 +138,20 @@ class Query(graphene.ObjectType):
 
         versiculos_list = []
         if match:
-            livro = match.group(1)
-            capitulo = match.group(2)
-            versiculos = match.group(3)
+            book = match.group(1)
+            chapter = match.group(2)
+            verses = match.group(3)
 
-            for versiculo in versiculos.split(','):
-                if '-' in versiculo:
-                    versiculo = range(int(versiculo.split('-')[0]), int(versiculo.split('-')[1])+1)
-                    versiculos_list.extend(versiculo)
+            for verse in verses.split(','):
+                if '-' in verse:
+                    verse = range(int(verse.split('-')[0]), int(verse.split('-')[1])+1)
+                    versiculos_list.extend(verse)
                 else:
-                    versiculos_list.append(versiculo)
+                    versiculos_list.append(verse)
+
+            all_texts = get_textos_biblicos(text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list})
         
-            return TextoBiblicoType(livro=livro, capitulo=capitulo,versiculo=versiculos_list)
+            return TextoBiblicoType(textos=all_texts)
         else:
             raise Exception('Texto biblico no formato invalido')
 
