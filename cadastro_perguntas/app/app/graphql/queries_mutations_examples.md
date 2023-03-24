@@ -67,6 +67,17 @@
     }
     ```
 
+- textoBiblico
+    ```graphql
+    query{
+        textoBiblico(
+            texto: "Gn 1:26,27-30"
+        ){
+            textos
+        }
+    }
+    ```
+
 ## Mutations
 - cadastrarUsuario
     ```graphql
