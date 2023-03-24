@@ -19,7 +19,6 @@ from app.core.forms import NewUserForm
 TXT_BIBLICO_REGEX = r'^(\w+)\s+(\d+):(.*)$'
 
 
-
 # utils
 
 def is_user_superuser_or_admin(user):
@@ -61,7 +60,7 @@ class TemaType(DjangoObjectType):
 class TextoBiblicoType(graphene.ObjectType):
     livro = graphene.String()
     capitulo = graphene.String()
-    versiculo = graphene.String()
+    versiculo = graphene.List(graphene.String)
 
 
 class FuncoesType(DjangoObjectType):
@@ -128,17 +127,20 @@ class Query(graphene.ObjectType):
         match = re.match(TXT_BIBLICO_REGEX, texto)
         print(texto)
 
-        versiculos = []
+        versiculos_list = []
         if match:
             livro = match.group(1)
             capitulo = match.group(2)
             versiculos = match.group(3)
-            print("Livro:", livro)
-            print("Capítulo:", capitulo)
-            print("Versículos:", versiculos)
+
+            for versiculo in versiculos.split(','):
+                if '-' in versiculo:
+                    versiculo = range(int(versiculo.split('-')[0]), int(versiculo.split('-')[1])+1)
+                    versiculos_list.extend(versiculo)
+                else:
+                    versiculos_list.append(versiculo)
         
-        
-            return TextoBiblicoType(livro=livro, capitulo=capitulo,versiculo=str(versiculos))
+            return TextoBiblicoType(livro=livro, capitulo=capitulo,versiculo=versiculos_list)
         else:
             raise Exception('Texto biblico no formato invalido')
 
