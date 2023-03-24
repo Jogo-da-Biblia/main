@@ -1,5 +1,6 @@
 import random
 import smtplib
+import re
 
 import graphene
 from graphene_django import DjangoObjectType
@@ -12,6 +13,11 @@ from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from app.core.forms import NewUserForm
+
+# Constants
+
+TXT_BIBLICO_REGEX = r'^(\w+)\s+(\d+):(.*)$'
+
 
 
 # utils
@@ -52,6 +58,12 @@ class TemaType(DjangoObjectType):
         fields = ("nome", "cor")
 
 
+class TextoBiblicoType(graphene.ObjectType):
+    livro = graphene.String()
+    capitulo = graphene.String()
+    versiculo = graphene.String()
+
+
 class FuncoesType(DjangoObjectType):
     class Meta:
         model = Group
@@ -89,6 +101,7 @@ class Query(graphene.ObjectType):
     user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
+    texto_biblico = graphene.Field(TextoBiblicoType, texto=graphene.String(required=True))
 
 
     def resolve_pergunta(root, info, tema):
@@ -109,6 +122,25 @@ class Query(graphene.ObjectType):
 
         perguntas = Pergunta.objects.filter(criado_por=User.objects.get(id=user.id))
         return UserWithQuestionsType(perguntas=perguntas, user=user)
+
+    def resolve_texto_biblico(root, info, texto):
+        #match = re.match(TXT_BIBLICO_REGEX, texto)
+        match = re.match(TXT_BIBLICO_REGEX, texto)
+        print(texto)
+
+        versiculos = []
+        if match:
+            livro = match.group(1)
+            capitulo = match.group(2)
+            versiculos = match.group(3)
+            print("Livro:", livro)
+            print("Capítulo:", capitulo)
+            print("Versículos:", versiculos)
+        
+        
+            return TextoBiblicoType(livro=livro, capitulo=capitulo,versiculo=str(versiculos))
+        else:
+            raise Exception('Texto biblico no formato invalido')
 
 
 # # Mutations
