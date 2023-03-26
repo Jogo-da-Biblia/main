@@ -144,28 +144,33 @@ class Query(graphene.ObjectType):
 
     def resolve_texto_biblico(root, info, referencia):
         # match = re.match(TXT_BIBLICO_REGEX, texto)
-        match = re.match(TXT_BIBLICO_REGEX, referencia)
 
-        versiculos_list = []
-        if match:
-            book = match.group(1)
-            chapter = match.group(2)
-            verses = match.group(3)
+        all_texts = []
+        for ref in referencia.split(';'):
+            if ref.strip() == '':
+                continue
+            match = re.match(TXT_BIBLICO_REGEX, ref.strip())
+            versiculos_list = []
+            if match:
+                book = match.group(1)
+                chapter = match.group(2)
+                verses = match.group(3)
 
-            for verse in verses.split(','):
-                if '-' in verse:
-                    verse = range(
-                        int(verse.split('-')[0]), int(verse.split('-')[1])+1)
-                    versiculos_list.extend(verse)
-                else:
-                    versiculos_list.append(verse)
+                for verse in verses.split(','):
+                    if '-' in verse:
+                        verse = range(
+                            int(verse.split('-')[0]), int(verse.split('-')[1])+1)
+                        versiculos_list.extend(verse)
+                    else:
+                        versiculos_list.append(verse)
 
-            all_texts = get_textos_biblicos(
-                text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list})
+                all_texts.extend(get_textos_biblicos(
+                    text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list}))
 
-            return TextoBiblicoType(textos=all_texts)
-        else:
-            raise Exception('Texto biblico no formato invalido')
+            else:
+                raise Exception('Texto biblico no formato invalido')
+
+        return TextoBiblicoType(textos=all_texts)
 
 
 """
