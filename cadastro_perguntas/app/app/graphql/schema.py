@@ -44,12 +44,10 @@ def get_user_score(user):
 
 def get_textos_biblicos(text_info: dict):
     texts = []
-    book = Livro.objects.get(nome=text_info['book'])
+    book = Livro.objects.get(sigla=text_info['book'])
     for verse in text_info['verses']:
-        print(verse)
-        texts.append(Versiculo.objects.get(
-            livro_id=book, versiculo=verse, capitulo=int(text_info['chapter'])).texto)
-        print(texts)
+        current_versiculo = Versiculo.objects.filter(livro_id=book, versiculo=verse, capitulo=int(text_info['chapter']))[0]
+        texts.append(VersiculoType(livro=current_versiculo.livro.nome, capitulo=current_versiculo.capitulo, versiculo=current_versiculo.versiculo, texto=current_versiculo.texto))
 
     return texts
 
@@ -70,8 +68,17 @@ class TemaType(DjangoObjectType):
         fields = ("nome", "cor")
 
 
+class VersiculoType(DjangoObjectType):
+
+    livro = graphene.String()
+
+    class Meta:
+        model = Versiculo
+        fields = ("capitulo", "versiculo", "texto")
+
+
 class TextoBiblicoType(graphene.ObjectType):
-    textos = graphene.List(graphene.String)
+    textos = graphene.List(VersiculoType)
 
 
 class FuncoesType(DjangoObjectType):
@@ -138,7 +145,6 @@ class Query(graphene.ObjectType):
     def resolve_texto_biblico(root, info, referencia):
         # match = re.match(TXT_BIBLICO_REGEX, texto)
         match = re.match(TXT_BIBLICO_REGEX, referencia)
-        print(referencia)
 
         versiculos_list = []
         if match:
