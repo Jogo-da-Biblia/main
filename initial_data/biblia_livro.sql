@@ -26,6 +26,7 @@ CREATE TABLE `biblia_livro` (
   `id` int NOT NULL AUTO_INCREMENT,
   `posicao` int NOT NULL,
   `nome` varchar(20) NOT NULL,
+  `sigla` varchar(3) NOT NULL,
   `testamento_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `biblia_livro_testamento_id_2dbf5a66_fk_biblia_testamento_id` (`testamento_id`),

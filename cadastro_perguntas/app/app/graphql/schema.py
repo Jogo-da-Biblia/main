@@ -15,23 +15,20 @@ from django.core.mail import send_mail
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from app.core.forms import NewUserForm
 
-# Constants
-
 TXT_BIBLICO_REGEX = r'^(\w+)\s+(\d+):(.*)$'
-
-
-# utils
 
 def is_user_superuser_or_admin(user):
     if user.is_superuser is False and any([user.groups.filter(name='administradores').exists(), user.groups.filter(name='revisores').exists(), user.groups.filter(name='publicadores').exists()]) is False:
         return False
     return True
 
+
 def get_user_score(user):
     score = 0
-    perguntas = Pergunta.objects.filter(criado_por=User.objects.get(id=user.id))
+    perguntas = Pergunta.objects.filter(
+        criado_por=User.objects.get(id=user.id))
     for pergunta in perguntas:
-        score += 1 # Question sended
+        score += 1  # Question sended
         if pergunta.status is True:
             # reviewed and published question
             score += 2
@@ -44,22 +41,27 @@ def get_user_score(user):
                     score -= 1
     return score
 
-def get_textos_biblicos(text_info:dict):
+
+def get_textos_biblicos(text_info: dict):
     texts = []
     book = Livro.objects.get(nome=text_info['book'])
     for verse in text_info['verses']:
         print(verse)
-        texts.append(Versiculo.objects.get(livro_id=book, versiculo=verse, capitulo=int(text_info['chapter'])).texto)
+        texts.append(Versiculo.objects.get(
+            livro_id=book, versiculo=verse, capitulo=int(text_info['chapter'])).texto)
         print(texts)
 
     return texts
 
-# Queries
+"""
+========== Queries ==========
+"""
 
 class PerguntasType(DjangoObjectType):
     class Meta:
         model = Pergunta
-        fields = ("id", "enunciado", "tipo_resposta", "refencia_resposta","status", "revisado_por", "tema")
+        fields = ("id", "enunciado", "tipo_resposta",
+                  "refencia_resposta", "status", "revisado_por", "tema")
 
 
 class TemaType(DjangoObjectType):
@@ -82,8 +84,9 @@ class UserType(DjangoObjectType):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
-    
+        fields = ("id", "username", "email", "is_staff",
+                  "is_active", "is_superuser")
+
     score = graphene.Int()
 
     def resolve_score(self, info):
@@ -101,7 +104,6 @@ class UserWithQuestionsType(graphene.ObjectType):
     user = graphene.Field(UserType)
 
 
-
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(PerguntasType)
     pergunta = DjangoListField(PerguntasType, tema=graphene.String())
@@ -109,32 +111,34 @@ class Query(graphene.ObjectType):
     user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
-    texto_biblico = graphene.Field(TextoBiblicoType, texto=graphene.String(required=True))
-
+    texto_biblico = graphene.Field(
+        TextoBiblicoType, referencia=graphene.String(required=True))
 
     def resolve_pergunta(root, info, tema):
         return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
-    
+
     def resolve_users(root, info):
         return UserWithScoreType(user=User.objects.all())
 
     def resolve_user(root, info, id=None):
         if info.context.user.id != id:
             if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
-                raise Exception('Somente o proprio usuario ou admins podem ver os dados de outros usuarios')
-        
+                raise Exception(
+                    'Somente o proprio usuario ou admins podem ver os dados de outros usuarios')
+
         if id is None:
             user = info.context.user
-        else:    
+        else:
             user = User.objects.get(id=id)
 
-        perguntas = Pergunta.objects.filter(criado_por=User.objects.get(id=user.id))
+        perguntas = Pergunta.objects.filter(
+            criado_por=User.objects.get(id=user.id))
         return UserWithQuestionsType(perguntas=perguntas, user=user)
 
-    def resolve_texto_biblico(root, info, texto):
-        #match = re.match(TXT_BIBLICO_REGEX, texto)
-        match = re.match(TXT_BIBLICO_REGEX, texto)
-        print(texto)
+    def resolve_texto_biblico(root, info, referencia):
+        # match = re.match(TXT_BIBLICO_REGEX, texto)
+        match = re.match(TXT_BIBLICO_REGEX, referencia)
+        print(referencia)
 
         versiculos_list = []
         if match:
@@ -144,30 +148,34 @@ class Query(graphene.ObjectType):
 
             for verse in verses.split(','):
                 if '-' in verse:
-                    verse = range(int(verse.split('-')[0]), int(verse.split('-')[1])+1)
+                    verse = range(
+                        int(verse.split('-')[0]), int(verse.split('-')[1])+1)
                     versiculos_list.extend(verse)
                 else:
                     versiculos_list.append(verse)
 
-            all_texts = get_textos_biblicos(text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list})
-        
+            all_texts = get_textos_biblicos(
+                text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list})
+
             return TextoBiblicoType(textos=all_texts)
         else:
             raise Exception('Texto biblico no formato invalido')
 
 
-# # Mutations
+"""
+========== Mutations ==========
+"""
 
 class CadastrarUsuarioMutation(graphene.Mutation):
-    
+
     class Arguments:
         username = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
         is_staff = graphene.Boolean()
-    
+
     user = graphene.Field(UserType)
-    
+
     def mutate(self, info, username, email, password, is_staff=False):
         if is_user_superuser_or_admin(info.context.user) is False:
             raise Exception('Somente admins podem adicionar novos usuarios')
@@ -185,12 +193,13 @@ class EditarUsuarioMutation(graphene.Mutation):
         new_password = graphene.String()
         confirm_new_passowrd = graphene.String()
         new_is_staff = graphene.Boolean()
-    
+
     user = graphene.Field(UserType)
-    
+
     def mutate(self, info, id, new_username=None, new_email=None, new_password=None, confirm_new_passowrd=None, new_is_staff=None):
         if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
-            raise Exception('Somente o proprio usuario e administradores podem editar dados de usuarios')
+            raise Exception(
+                'Somente o proprio usuario e administradores podem editar dados de usuarios')
         user = User.objects.get(id=id)
 
         if new_username is not None:
@@ -201,7 +210,7 @@ class EditarUsuarioMutation(graphene.Mutation):
             if new_password != confirm_new_passowrd:
                 raise Exception('As senhas devem ser iguais')
             user.set_password(new_password)
-        
+
         if info.context.user.is_superuser:
             if new_is_staff is not None:
                 user.is_staff = new_is_staff
@@ -218,12 +227,14 @@ class RecuperarSenhaMutation(graphene.Mutation):
 
     def mutate(self, info, user_id, email):
         if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != user_id:
-            raise Exception('Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
-        
+            raise Exception(
+                'Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
+
         user = User.objects.get(id=user_id)
-        
+
         if email != user.email:
-            raise Exception('O email informado não corresponde ao email do usuario')
+            raise Exception(
+                'O email informado não corresponde ao email do usuario')
 
         new_password = User.objects.make_random_password(length=10)
         user.set_password(new_password)
@@ -237,7 +248,8 @@ class RecuperarSenhaMutation(graphene.Mutation):
                 fail_silently=False,
             )
         except smtplib.SMTPException:
-            raise Exception('Senha alterada com sucesso\nErro durante o envio do email')
+            raise Exception(
+                'Senha alterada com sucesso\nErro durante o envio do email')
 
         return RecuperarSenhaMutation(message='Senha alterada e email enviado com sucesso')
 
@@ -249,16 +261,18 @@ class CadastrarPerguntaMutation(graphene.Mutation):
         tipo_resposta = graphene.String(required=True)
         refencia_resposta_id = graphene.Int()
         outras_referencias = graphene.String()
-    
+
     pergunta = graphene.Field(PerguntasType)
-    
+
     def mutate(self, info, tema_id, enunciado, tipo_resposta, refencia_resposta_id=None, outras_referencias=None):
         if not info.context.user.is_authenticated:
-            raise Exception('Voce precisa estar logado para cadastrar uma pergunta')
+            raise Exception(
+                'Voce precisa estar logado para cadastrar uma pergunta')
 
         tema = Tema.objects.get(id=tema_id)
         refencia_resposta = Referencia.objects.get(id=refencia_resposta_id)
-        pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta, refencia_resposta=refencia_resposta, outras_referencias=outras_referencias, criado_por=info.context.user)
+        pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta,
+                            refencia_resposta=refencia_resposta, outras_referencias=outras_referencias, criado_por=info.context.user)
         pergunta.save()
         return CadastrarPerguntaMutation(pergunta=pergunta)
 
@@ -271,14 +285,16 @@ class EditarPerguntaMutation(graphene.Mutation):
         tipo_resposta = graphene.String()
         refencia_resposta_id = graphene.Int()
         outras_referencias = graphene.String()
-    
+
     pergunta = graphene.Field(PerguntasType)
-    
+
     def mutate(self, info, id, tema_id=None, enunciado=None, tipo_resposta=None, refencia_resposta_id=None, outras_referencias=None):
         if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
-            raise Exception('Somente admins e o proprio usuario podem editar perguntas')
+            raise Exception(
+                'Somente admins e o proprio usuario podem editar perguntas')
 
-        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
+        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta,
+                      'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
 
         pergunta = Pergunta.objects.get(id=id)
 
@@ -289,7 +305,7 @@ class EditarPerguntaMutation(graphene.Mutation):
                 elif key == 'refencia_resposta':
                     value = Referencia.objects.get(id=value)
                 setattr(pergunta, key, value)
-        
+
         pergunta.save()
         return CadastrarPerguntaMutation(pergunta=pergunta)
 
@@ -300,8 +316,6 @@ class Mutation(graphene.ObjectType):
     recuperar_senha = RecuperarSenhaMutation.Field()
     cadastrarPergunta = CadastrarPerguntaMutation.Field()
     editarPergunta = EditarPerguntaMutation.Field()
-
-
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
