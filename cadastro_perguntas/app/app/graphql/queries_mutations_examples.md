@@ -71,9 +71,14 @@
     ```graphql
     query{
         textoBiblico(
-            texto: "Gn 1:26,27-30"
+            referencia: "Gn 1:26; Ex 10:5"
         ){
-            textos
+            textos{
+            livro
+            capitulo
+            versiculo
+            texto
+            }
         }
     }
     ```

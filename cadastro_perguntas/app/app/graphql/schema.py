@@ -8,7 +8,7 @@ from graphene_django import DjangoListField
 
 from app.perguntas.models import Pergunta, Tema, Referencia
 from app.core.models import User
-from app.biblia.models import Livro, Versiculo
+from app.biblia.models import Livro, Versiculo, Versao
 from app.settings import DEFAULT_FROM_EMAIL
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
@@ -42,12 +42,12 @@ def get_user_score(user):
     return score
 
 
-def get_textos_biblicos(text_info: dict):
+def get_textos_biblicos(text_info: dict, version: Versao):
     texts = []
     book = Livro.objects.get(sigla=text_info['book'])
     for verse in text_info['verses']:
-        current_versiculo = Versiculo.objects.filter(livro_id=book, versiculo=verse, capitulo=int(text_info['chapter']))[0]
-        texts.append(VersiculoType(livro=current_versiculo.livro.nome, capitulo=current_versiculo.capitulo, versiculo=current_versiculo.versiculo, texto=current_versiculo.texto))
+        current_versiculo = Versiculo.objects.filter(livro_id=book, versao_id=version, versiculo=verse, capitulo=int(text_info['chapter']))[0]
+        texts.append(VersiculoType(livro=book.nome, livro_abreviado=book.sigla, versao=version.nome, versao_abreviada=version.sigla, capitulo=current_versiculo.capitulo, versiculo=current_versiculo.versiculo, texto=current_versiculo.texto))
 
     return texts
 
@@ -71,6 +71,9 @@ class TemaType(DjangoObjectType):
 class VersiculoType(DjangoObjectType):
 
     livro = graphene.String()
+    livro_abreviado = graphene.String()
+    versao = graphene.String()
+    versao_abreviada = graphene.String()
 
     class Meta:
         model = Versiculo
@@ -119,7 +122,7 @@ class Query(graphene.ObjectType):
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
     texto_biblico = graphene.Field(
-        TextoBiblicoType, referencia=graphene.String(required=True))
+        TextoBiblicoType, referencia=graphene.String(required=True), versao=graphene.String())
 
     def resolve_pergunta(root, info, tema):
         return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
@@ -142,8 +145,8 @@ class Query(graphene.ObjectType):
             criado_por=User.objects.get(id=user.id))
         return UserWithQuestionsType(perguntas=perguntas, user=user)
 
-    def resolve_texto_biblico(root, info, referencia):
-        # match = re.match(TXT_BIBLICO_REGEX, texto)
+    def resolve_texto_biblico(root, info, referencia, versao='ara'):
+        version =  Versao.objects.get(sigla=str(versao).upper())
 
         all_texts = []
         for ref in referencia.split(';'):
@@ -165,7 +168,7 @@ class Query(graphene.ObjectType):
                         versiculos_list.append(verse)
 
                 all_texts.extend(get_textos_biblicos(
-                    text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list}))
+                    text_info={'book': book, 'chapter': chapter, 'verses': versiculos_list}, version=version))
 
             else:
                 raise Exception('Texto biblico no formato invalido')
@@ -304,8 +307,7 @@ class EditarPerguntaMutation(graphene.Mutation):
             raise Exception(
                 'Somente admins e o proprio usuario podem editar perguntas')
 
-        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta,
-                      'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
+        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
 
         pergunta = Pergunta.objects.get(id=id)
 
