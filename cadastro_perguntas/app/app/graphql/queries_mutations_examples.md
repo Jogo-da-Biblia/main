@@ -72,9 +72,13 @@
     query{
         textoBiblico(
             referencia: "Gn 1:26; Ex 10:5"
+            versao: "acf"
         ){
             textos{
             livro
+            livroAbreviado
+            versao
+            versaoAbreviada
             capitulo
             versiculo
             texto
@@ -82,6 +86,25 @@
         }
     }
     ```
+    O campo `versao` tem como padrão o valor "ara", logo, pode ser vazio
+    ```graphql
+    query{
+        textoBiblico(
+            referencia: "Gn 1:26; Ex 10:5"
+        ){
+            textos{
+            livro
+            livroAbreviado
+            versao
+            versaoAbreviada
+            capitulo
+            versiculo
+            texto
+            }
+        }
+    }
+    ```
+
 
 ## Mutations
 - cadastrarUsuario
