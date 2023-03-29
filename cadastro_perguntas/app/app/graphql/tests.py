@@ -12,8 +12,9 @@ from app.biblia.models import Livro, Versiculo, Testamento, Versao
 from app.perguntas.models import Pergunta, Tema, Referencia
 from django.core.exceptions import ObjectDoesNotExist
 from .schema import schema
+from .test_queries import user_query, users_query, random_pergunta_query, all_perguntas_query, empty_user_query, texto_biblico_query, new_user_mutation, edit_user_mutation, add_new_pergunta_mutation, edit_pergunta_mutation, resend_password_mutation
 
-
+# User send in graphql context
 class UserInContext:
     def __init__(self, user):
         self.user = user
@@ -40,7 +41,6 @@ def perguntas_count():
 def get_all_perguntas():
     return Pergunta.objects.all()
 
-
 @pytest.fixture
 def delete_all_items():
     Pergunta.objects.all().delete()
@@ -50,7 +50,6 @@ def delete_all_items():
     Versao.objects.all().delete()
     Livro.objects.all().delete()
     Referencia.objects.all().delete()
-
 
 @pytest.fixture
 def create_test_data(admin_user, delete_all_items):
@@ -104,22 +103,7 @@ def create_test_data(admin_user, delete_all_items):
 def test_admin_should_get_user_info_by_id(client, admin_user):
     test_user = User.objects.create(username='Get user', email='getuser@example.com', password='123456')
 
-    query = '''
-        query{
-            user(id:user_id){
-                user{
-                    id
-                    username
-                    email
-                }
-                perguntas {
-                    id
-                    enunciado
-                    status
-                }
-            }
-        }
-    '''.replace('user_id', str(test_user.id))
+    query = user_query.replace('user_id', str(test_user.id))
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     assert result == {'data': {'user': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email)}, 'perguntas': []}}}
@@ -128,22 +112,7 @@ def test_admin_should_get_user_info_by_id(client, admin_user):
 
 @pytest.mark.django_db
 def test_admin_should_get_own_user_info_if_user_is_null(client, admin_user):
-    query = '''
-        query{
-            user{
-                user{
-                    id
-                    username
-                    email
-                }
-                perguntas {
-                    id
-                    enunciado
-                    status
-                }
-            }
-        }
-    '''.replace('user_id', str(admin_user.id))
+    query = empty_user_query.replace('user_id', str(admin_user.id))
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     assert result == {'data': {'user': {'user': {'id': str(admin_user.id), 'username': str(admin_user.username), 'email': str(admin_user.email)}, 'perguntas': []}}}
@@ -156,17 +125,7 @@ def test_admin_should_list_all_users(client, admin_user):
     User.objects.create(username='two user', email='twouser@example.com', password='123456')
     User.objects.create(username='three user', email='threeuser@example.com', password='123456')
 
-    query = '''
-        query{
-            users{
-                user{
-                    id
-                    username
-                    score
-                }
-        }
-    }
-    '''
+    query = users_query
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
 
@@ -177,14 +136,7 @@ def test_admin_should_list_all_users(client, admin_user):
 
 @pytest.mark.django_db
 def test_should_return_random_pergunta(client, create_test_data, admin_user):
-    query = '''
-        query{
-        pergunta(temaId:1){
-            id
-            enunciado
-        }
-    }
-    '''
+    query = random_pergunta_query
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     assert result == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
@@ -193,14 +145,7 @@ def test_should_return_random_pergunta(client, create_test_data, admin_user):
 
 @pytest.mark.django_db
 def test_should_return_all_perguntas(client, create_test_data, admin_user, get_all_perguntas):
-    query = '''
-        query{
-        perguntas{
-            id
-            enunciado
-        }
-    }
-    '''
+    query = all_perguntas_query
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     
@@ -210,24 +155,7 @@ def test_should_return_all_perguntas(client, create_test_data, admin_user, get_a
 
 @pytest.mark.django_db
 def test_should_get_texto_biblico(client, admin_user, create_test_data):
-    query = '''
-        query{
-        textoBiblico(
-            referencia: "te1 1:21"
-            versao: "ver1"
-        ){
-            textos{
-                livro
-                livroAbreviado
-                versao
-                versaoAbreviada
-                capitulo
-                versiculo
-                texto
-            }
-        }
-    }
-    '''
+    query = texto_biblico_query
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     assert result == {'data': {'textoBiblico': {'textos': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}}
@@ -236,21 +164,7 @@ def test_should_get_texto_biblico(client, admin_user, create_test_data):
 
 @pytest.mark.django_db
 def test_should_create_new_user(client, admin_user):
-    query = '''
-        mutation{
-        cadastrarUsuario(
-            email: "teste1@email.com"
-            username: "ususaroteste1"
-            isStaff: false
-            password: "1938y"
-        ){
-            user{
-            id
-            email
-            }
-        }	
-    }
-    '''
+    query = new_user_mutation
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
 
@@ -270,21 +184,7 @@ def test_should_edit_new_user(client, admin_user, create_test_data):
     assert new_user.username == 'donoteditthis'
     assert new_user.email == 'edit@email.com'
 
-    query = '''
-        mutation{
-        editarUsuario(
-            id: user_id
-            newUsername:"newusername"
-            newEmail: "newemai1l@.com"
-        ){
-            user{
-                id
-                username
-                email
-            }
-        }
-    }
-    '''.replace('user_id', str(user_id))
+    query = edit_user_mutation.replace('user_id', str(user_id))
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     
@@ -303,16 +203,7 @@ def test_should_send_newpassword_email(client, admin_user):
     new_user = User.objects.create(email='user@email.com', username='donoteditthis', is_staff=False)
     user_id = new_user.id
 
-    query = '''
-        mutation{
-        recuperarSenha(
-            userId:user_id, 
-            email:"user@email.com"
-        ){
-            message
-        }
-    }
-    '''.replace('user_id', str(user_id))
+    query = resend_password_mutation.replace('user_id', str(user_id))
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     
@@ -325,32 +216,7 @@ def test_should_add_new_pergunta(client, admin_user, create_test_data):
     tema_id = Tema.objects.get(nome='tema1').id
     referencia_id = Referencia.objects.all()[0].id
     
-    query = '''
-        mutation{
-            cadastrarPergunta(
-                enunciado:"Enunciaod da pergunta",
-                outrasReferencias: "outras ref",
-                referenciaRespostaId: referencia_id,
-                temaId: tema_id,
-                tipoResposta: "MES",
-            ){
-                pergunta{
-                    id
-                    tema{
-                        nome
-                    }
-                    enunciado
-                    tipoResposta
-                    status
-                    revisadoPor {
-                        id
-                        username
-                        email
-                    }
-                }
-            }
-        }
-    '''.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
+    query = add_new_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     newest_pergunta = Pergunta.objects.last()
@@ -376,32 +242,7 @@ def test_should_edit_new_pergunta(client, admin_user, create_test_data):
     tema_id = Tema.objects.get(nome='tema1').id
     referencia_id = Referencia.objects.all()[0].id
 
-    query = '''
-        mutation{
-            editarPergunta(
-                id:pergunta_id, 
-                enunciado:"Novo enunciado",
-                outrasReferencias: "novaOUtraRefe",
-                referenciaRespostaId: referencia_id,
-                temaId: tema_id,
-                tipoResposta: "MES",
-                status: true
-            ){
-                pergunta{
-                    id
-                    enunciado
-                    revisadoPor{
-                        id
-                        username
-                    }
-                    status
-                    revisadoPor {
-                        id
-                    }
-                }
-            }
-        }
-    '''.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
+    query = edit_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     new_pergunta.refresh_from_db()
