@@ -50,7 +50,7 @@
 - pergunta
     ```graphql
     query{
-        pergunta(tema:"1"){
+        pergunta(temaId:1){
             id
             enunciado
         }

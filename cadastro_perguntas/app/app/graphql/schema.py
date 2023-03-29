@@ -114,15 +114,15 @@ class UserWithQuestionsType(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(PerguntasType)
-    pergunta = DjangoListField(PerguntasType, tema=graphene.String())
+    pergunta = DjangoListField(PerguntasType, tema_id=graphene.Int())
     users = graphene.Field(UserWithScoreType)
     user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
     texto_biblico = graphene.Field(TextoBiblicoType, referencia=graphene.String(required=True), versao=graphene.String())
 
-    def resolve_pergunta(root, info, tema):
-        return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
+    def resolve_pergunta(root, info, tema_id):
+        return random.sample(tuple(Pergunta.objects.filter(tema=Tema.objects.get(id=tema_id))), 1)
 
     def resolve_users(root, info):
         return UserWithScoreType(user=User.objects.all())
