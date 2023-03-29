@@ -153,3 +153,35 @@
         }
     }
     ```
+
+- cadastrarPergunta
+    ```graphql
+    mutation{
+        cadastrarPergunta(
+          enunciado:"Enunciaod da pergunta",
+          outrasReferencias: "outras ref",
+          refenciaRespostaId: 1,
+          temaId: 1,
+          tipoResposta: "MES",
+        ){
+            pergunta{
+                id
+                tema{
+                    nome
+                }
+                enunciado
+                tipoResposta
+                status
+                revisadoPor {
+                    id
+                    username
+                    email
+                }
+            }
+        }
+    }
+    ```
+
+- editarPergunta
+    ```graphql
+    ```

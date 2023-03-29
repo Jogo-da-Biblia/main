@@ -5,6 +5,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 django.setup()
 
 import pytest
+from collections import OrderedDict
 from graphene.test import Client as GrapheneClient
 from app.core.models import User
 from app.biblia.models import Livro, Versiculo, Testamento, Versao
@@ -31,6 +32,14 @@ def client():
     graphene_client = GrapheneClient(schema)
     return graphene_client
 
+@pytest.fixture
+def perguntas_count():
+    return Pergunta.objects.count()
+
+@pytest.fixture
+def get_all_perguntas():
+    return Pergunta.objects.all()
+
 
 @pytest.fixture
 def new_perguntas_livros(admin_user):
@@ -42,9 +51,12 @@ def new_perguntas_livros(admin_user):
     Versiculo.objects.all().delete()
     Versao.objects.all().delete()
     Livro.objects.all().delete()
+    Referencia.objects.all().delete()
+
 
     Tema.objects.create(nome='tema1', cor='rosa')
     Tema.objects.create(nome='tema2', cor='dois')
+    
 
     test_livro = Livro(
         testamento=Testamento.objects.create(nome='testamento1'),
@@ -54,17 +66,21 @@ def new_perguntas_livros(admin_user):
     )
     test_livro.save()
 
-    Versiculo.objects.create(
+    test_versiculo = Versiculo.objects.create(
         versao=Versao.objects.create(nome='versaonome1', sigla='VER1'),
         livro=test_livro,
         capitulo=1,
         versiculo=21,
         texto='Versiculo texto'
     )
+    test_versiculo.save()
 
+    Referencia.objects.create(
+        livro = test_livro,
+        versiculo = test_versiculo
+    )
 
     new_pergunta = Pergunta.objects.create(
-        id = 1,
         tema = Tema.objects.get(nome='tema1'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
@@ -72,7 +88,6 @@ def new_perguntas_livros(admin_user):
     )
 
     another_pergunta = Pergunta.objects.create(
-        id = 2,
         tema = Tema.objects.get(nome='tema2'),
         enunciado = 'enunciado2a',
         tipo_resposta = 'MES',
@@ -176,7 +191,7 @@ def test_should_return_random_pergunta(client, new_perguntas_livros, admin_user)
 
 
 @pytest.mark.django_db
-def test_should_return_all_perguntas(client, new_perguntas_livros, admin_user):
+def test_should_return_all_perguntas(client, new_perguntas_livros, admin_user, get_all_perguntas):
     query = '''
         query{
         perguntas{
@@ -187,7 +202,8 @@ def test_should_return_all_perguntas(client, new_perguntas_livros, admin_user):
     '''
 
     result = client.execute(query, context_value=UserInContext(user=admin_user))
-    assert result == {'data': {'perguntas': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}, {'id': '2', 'enunciado': 'enunciado2a'}]}}
+    
+    assert result == {'data': {'perguntas': [{'id': f'{get_all_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}, {'id': f'{get_all_perguntas[1].id}', 'enunciado': 'enunciado2a'}]}}
     assert 'errors' not in result
 
 
@@ -216,4 +232,128 @@ def test_should_get_texto_biblico(client, admin_user, new_perguntas_livros):
     assert result == {'data': {'textoBiblico': {'textos': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}}
     assert 'errors' not in result
 
+
+@pytest.mark.django_db
+def test_should_create_new_user(client, admin_user):
+    query = '''
+        mutation{
+        cadastrarUsuario(
+            email: "teste1@email.com"
+            username: "ususaroteste1"
+            isStaff: false
+            password: "1938y"
+        ){
+            user{
+            id
+            email
+            }
+        }	
+    }
+    '''
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+
+    assert User.objects.filter(email='teste1@email.com').exists() == True
+    
+    new_user = User.objects.get(username='ususaroteste1')
+
+    assert result == {'data': OrderedDict([('cadastrarUsuario', {'user': {'id': str(new_user.id), 'email': str(new_user.email)}})])}
+    assert 'errors' not in result
+
+
+@pytest.mark.django_db
+def test_should_edit_new_user(client, admin_user, new_perguntas_livros):
+    new_user = User.objects.create(email='edit@email.com', username='donoteditthis', is_staff=False)
+    user_id = new_user.id
+
+    assert new_user.username == 'donoteditthis'
+    assert new_user.email == 'edit@email.com'
+
+    query = '''
+        mutation{
+        editarUsuario(
+            id: user_id
+            newUsername:"newusername"
+            newEmail: "newemai1l@.com"
+        ){
+            user{
+                id
+                username
+                email
+            }
+        }
+    }
+    '''.replace('user_id', str(user_id))
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    
+    assert User.objects.filter(id=user_id).exists() == True
+
+    edited_user = User.objects.get(id=user_id)
+    
+    assert result == {'data': OrderedDict([('editarUsuario', {'user': {'id': f'{edited_user.id}', 'username': 'newusername', 'email': 'newemai1l@.com'}})])}
+    assert edited_user.username == 'newusername'
+    assert edited_user.email == 'newemai1l@.com'
+    assert 'errors' not in result
+
+
+@pytest.mark.django_db
+def test_should_send_newpassword_email(client, admin_user):
+    new_user = User.objects.create(email='user@email.com', username='donoteditthis', is_staff=False)
+    user_id = new_user.id
+
+    query = '''
+        mutation{
+        recuperarSenha(
+            userId:user_id, 
+            email:"user@email.com"
+        ){
+            message
+        }
+    }
+    '''.replace('user_id', str(user_id))
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    
+    assert result == {'data': OrderedDict([('recuperarSenha', {'message': 'Senha alterada e email enviado com sucesso'})])}
+    assert 'errors' not in result
+
+
+@pytest.mark.django_db
+def test_should_add_new_pergunta(client, admin_user, new_perguntas_livros):
+    tema_id = Tema.objects.get(nome='tema1').id
+    referencia_id = Referencia.objects.all()[0].id
+    
+    query = '''
+        mutation{
+            cadastrarPergunta(
+                enunciado:"Enunciaod da pergunta",
+                outrasReferencias: "outras ref",
+                refenciaRespostaId: referencia_id,
+                temaId: tema_id,
+                tipoResposta: "MES",
+            ){
+                pergunta{
+                    id
+                    tema{
+                        nome
+                    }
+                    enunciado
+                    tipoResposta
+                    status
+                    revisadoPor {
+                        id
+                        username
+                        email
+                    }
+                }
+            }
+        }
+    '''.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    newest_pergunta = Pergunta.objects.last()
+    assert result == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{newest_pergunta.id}', 'tema': {'nome': 'tema1'}, 'enunciado': 'Enunciaod da pergunta', 'tipoResposta': 'MES', 'status': False, 'revisadoPor': None}})])}
+    assert len(Pergunta.objects.all()) == 3
+    assert 'errors' not in result
 
