@@ -33,7 +33,16 @@ def client():
 
 
 @pytest.fixture
-def new_pergunta(admin_user):
+def new_perguntas_livros(admin_user):
+
+    # Delete all itens
+    Pergunta.objects.all().delete()
+    Tema.objects.all().delete()
+    Testamento.objects.all().delete()
+    Versiculo.objects.all().delete()
+    Versao.objects.all().delete()
+    Livro.objects.all().delete()
+
     Tema.objects.create(nome='tema1', cor='rosa')
     Tema.objects.create(nome='tema2', cor='dois')
 
@@ -41,30 +50,39 @@ def new_pergunta(admin_user):
         testamento=Testamento.objects.create(nome='testamento1'),
         posicao=1,
         nome='livro1',
-        sigla='123'
+        sigla='te1'
     )
     test_livro.save()
 
-    # test_referencia = Referencia.objects.create(
-    #     livro=test_livro, 
-    #     versiculo=Versiculo.objects.create(
-    #         versao = Versao.objects.create(nome='versao1', sigla='123'),
-    #         livro = test_livro,
-    #         capitulo=2,
-    #         versiculo=1,
-    #         texto='texto1'
-    #     )
-    # )
-    # test_referencia.save()
+    Versiculo.objects.create(
+        versao=Versao.objects.create(nome='versaonome1', sigla='VER1'),
+        livro=test_livro,
+        capitulo=1,
+        versiculo=21,
+        texto='Versiculo texto'
+    )
+
 
     new_pergunta = Pergunta.objects.create(
+        id = 1,
         tema = Tema.objects.get(nome='tema1'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
         criado_por = admin_user
     )
+
+    another_pergunta = Pergunta.objects.create(
+        id = 2,
+        tema = Tema.objects.get(nome='tema2'),
+        enunciado = 'enunciado2a',
+        tipo_resposta = 'MES',
+        criado_por = admin_user
+    )
+    
     new_pergunta.save()
+    another_pergunta.save()
     return new_pergunta
+
 
 @pytest.mark.django_db
 def test_admin_should_get_user_info_by_id(client, admin_user):
@@ -142,8 +160,7 @@ def test_admin_should_list_all_users(client, admin_user):
 
 
 @pytest.mark.django_db
-def test_should_return_random_pergunta(client, new_pergunta):
-
+def test_should_return_random_pergunta(client, new_perguntas_livros, admin_user):
     query = '''
         query{
         pergunta(temaId:1){
@@ -156,3 +173,47 @@ def test_should_return_random_pergunta(client, new_pergunta):
     result = client.execute(query, context_value=UserInContext(user=admin_user))
     assert result == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
     assert 'errors' not in result
+
+
+@pytest.mark.django_db
+def test_should_return_all_perguntas(client, new_perguntas_livros, admin_user):
+    query = '''
+        query{
+        perguntas{
+            id
+            enunciado
+        }
+    }
+    '''
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    assert result == {'data': {'perguntas': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}, {'id': '2', 'enunciado': 'enunciado2a'}]}}
+    assert 'errors' not in result
+
+
+@pytest.mark.django_db
+def test_should_get_texto_biblico(client, admin_user, new_perguntas_livros):
+    query = '''
+        query{
+        textoBiblico(
+            referencia: "te1 1:21"
+            versao: "ver1"
+        ){
+            textos{
+                livro
+                livroAbreviado
+                versao
+                versaoAbreviada
+                capitulo
+                versiculo
+                texto
+            }
+        }
+    }
+    '''
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    assert result == {'data': {'textoBiblico': {'textos': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}}
+    assert 'errors' not in result
+
+

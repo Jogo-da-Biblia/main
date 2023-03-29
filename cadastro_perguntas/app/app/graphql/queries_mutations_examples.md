@@ -75,13 +75,13 @@
             versao: "acf"
         ){
             textos{
-            livro
-            livroAbreviado
-            versao
-            versaoAbreviada
-            capitulo
-            versiculo
-            texto
+                livro
+                livroAbreviado
+                versao
+                versaoAbreviada
+                capitulo
+                versiculo
+                texto
             }
         }
     }
