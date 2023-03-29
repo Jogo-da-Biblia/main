@@ -270,18 +270,18 @@ class CadastrarPerguntaMutation(graphene.Mutation):
         tema_id = graphene.Int(required=True)
         enunciado = graphene.String(required=True)
         tipo_resposta = graphene.String(required=True)
-        refencia_resposta_id = graphene.Int()
+        referencia_resposta_id = graphene.Int()
         outras_referencias = graphene.String()
 
     pergunta = graphene.Field(PerguntasType)
 
-    def mutate(self, info, tema_id, enunciado, tipo_resposta, refencia_resposta_id=None, outras_referencias=None):
+    def mutate(self, info, tema_id, enunciado, tipo_resposta, referencia_resposta_id=None, outras_referencias=None):
         if not info.context.user.is_authenticated:
             raise Exception(
                 'Voce precisa estar logado para cadastrar uma pergunta')
 
         tema = Tema.objects.get(id=tema_id)
-        refencia_resposta = Referencia.objects.get(id=refencia_resposta_id)
+        refencia_resposta = Referencia.objects.get(id=referencia_resposta_id)
         pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta,
                             refencia_resposta=refencia_resposta, outras_referencias=outras_referencias, criado_por=info.context.user)
         pergunta.save()
@@ -294,17 +294,18 @@ class EditarPerguntaMutation(graphene.Mutation):
         tema_id = graphene.Int()
         enunciado = graphene.String()
         tipo_resposta = graphene.String()
-        refencia_resposta_id = graphene.Int()
+        referencia_resposta_id = graphene.Int()
         outras_referencias = graphene.String()
+        status = graphene.Boolean()
 
     pergunta = graphene.Field(PerguntasType)
 
-    def mutate(self, info, id, tema_id=None, enunciado=None, tipo_resposta=None, refencia_resposta_id=None, outras_referencias=None):
+    def mutate(self, info, id, tema_id=None, enunciado=None, tipo_resposta=None, referencia_resposta_id=None, outras_referencias=None, status=None):
         if is_user_superuser_or_admin(info.context.user) is False and info.context.user.id != id:
             raise Exception(
                 'Somente admins e o proprio usuario podem editar perguntas')
 
-        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'refencia_resposta': refencia_resposta_id, 'outras_referencias': outras_referencias}
+        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'referencia_resposta': referencia_resposta_id, 'outras_referencias': outras_referencias, 'status': status}
 
         pergunta = Pergunta.objects.get(id=id)
 
@@ -312,7 +313,7 @@ class EditarPerguntaMutation(graphene.Mutation):
             if value is not None:
                 if key == 'tema':
                     value = Tema.objects.get(id=value)
-                elif key == 'refencia_resposta':
+                elif key == 'referencia_resposta':
                     value = Referencia.objects.get(id=value)
                 setattr(pergunta, key, value)
 

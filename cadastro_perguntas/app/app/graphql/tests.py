@@ -42,9 +42,7 @@ def get_all_perguntas():
 
 
 @pytest.fixture
-def new_perguntas_livros(admin_user):
-
-    # Delete all itens
+def delete_all_items():
     Pergunta.objects.all().delete()
     Tema.objects.all().delete()
     Testamento.objects.all().delete()
@@ -53,6 +51,9 @@ def new_perguntas_livros(admin_user):
     Livro.objects.all().delete()
     Referencia.objects.all().delete()
 
+
+@pytest.fixture
+def create_test_data(admin_user, delete_all_items):
 
     Tema.objects.create(nome='tema1', cor='rosa')
     Tema.objects.create(nome='tema2', cor='dois')
@@ -175,7 +176,7 @@ def test_admin_should_list_all_users(client, admin_user):
 
 
 @pytest.mark.django_db
-def test_should_return_random_pergunta(client, new_perguntas_livros, admin_user):
+def test_should_return_random_pergunta(client, create_test_data, admin_user):
     query = '''
         query{
         pergunta(temaId:1){
@@ -191,7 +192,7 @@ def test_should_return_random_pergunta(client, new_perguntas_livros, admin_user)
 
 
 @pytest.mark.django_db
-def test_should_return_all_perguntas(client, new_perguntas_livros, admin_user, get_all_perguntas):
+def test_should_return_all_perguntas(client, create_test_data, admin_user, get_all_perguntas):
     query = '''
         query{
         perguntas{
@@ -208,7 +209,7 @@ def test_should_return_all_perguntas(client, new_perguntas_livros, admin_user, g
 
 
 @pytest.mark.django_db
-def test_should_get_texto_biblico(client, admin_user, new_perguntas_livros):
+def test_should_get_texto_biblico(client, admin_user, create_test_data):
     query = '''
         query{
         textoBiblico(
@@ -262,7 +263,7 @@ def test_should_create_new_user(client, admin_user):
 
 
 @pytest.mark.django_db
-def test_should_edit_new_user(client, admin_user, new_perguntas_livros):
+def test_should_edit_new_user(client, admin_user, create_test_data):
     new_user = User.objects.create(email='edit@email.com', username='donoteditthis', is_staff=False)
     user_id = new_user.id
 
@@ -289,11 +290,11 @@ def test_should_edit_new_user(client, admin_user, new_perguntas_livros):
     
     assert User.objects.filter(id=user_id).exists() == True
 
-    edited_user = User.objects.get(id=user_id)
+    new_user.refresh_from_db()
     
-    assert result == {'data': OrderedDict([('editarUsuario', {'user': {'id': f'{edited_user.id}', 'username': 'newusername', 'email': 'newemai1l@.com'}})])}
-    assert edited_user.username == 'newusername'
-    assert edited_user.email == 'newemai1l@.com'
+    assert result == {'data': OrderedDict([('editarUsuario', {'user': {'id': f'{new_user.id}', 'username': 'newusername', 'email': 'newemai1l@.com'}})])}
+    assert new_user.username == 'newusername'
+    assert new_user.email == 'newemai1l@.com'
     assert 'errors' not in result
 
 
@@ -320,7 +321,7 @@ def test_should_send_newpassword_email(client, admin_user):
 
 
 @pytest.mark.django_db
-def test_should_add_new_pergunta(client, admin_user, new_perguntas_livros):
+def test_should_add_new_pergunta(client, admin_user, create_test_data):
     tema_id = Tema.objects.get(nome='tema1').id
     referencia_id = Referencia.objects.all()[0].id
     
@@ -329,7 +330,7 @@ def test_should_add_new_pergunta(client, admin_user, new_perguntas_livros):
             cadastrarPergunta(
                 enunciado:"Enunciaod da pergunta",
                 outrasReferencias: "outras ref",
-                refenciaRespostaId: referencia_id,
+                referenciaRespostaId: referencia_id,
                 temaId: tema_id,
                 tipoResposta: "MES",
             ){
@@ -357,3 +358,55 @@ def test_should_add_new_pergunta(client, admin_user, new_perguntas_livros):
     assert len(Pergunta.objects.all()) == 3
     assert 'errors' not in result
 
+
+@pytest.mark.django_db
+def test_should_edit_new_pergunta(client, admin_user, create_test_data):
+    new_pergunta = Pergunta.objects.create(
+        tema = Tema.objects.get(nome='tema1'),
+        enunciado = 'enunciado1adadasdasda',
+        tipo_resposta = 'MES',
+        criado_por = admin_user,
+        status=False
+    )
+    pergunta_id = new_pergunta.id
+
+    assert new_pergunta.enunciado == 'enunciado1adadasdasda'
+    assert new_pergunta.status == False
+
+    tema_id = Tema.objects.get(nome='tema1').id
+    referencia_id = Referencia.objects.all()[0].id
+
+    query = '''
+        mutation{
+            editarPergunta(
+                id:pergunta_id, 
+                enunciado:"Novo enunciado",
+                outrasReferencias: "novaOUtraRefe",
+                referenciaRespostaId: referencia_id,
+                temaId: tema_id,
+                tipoResposta: "MES",
+                status: true
+            ){
+                pergunta{
+                    id
+                    enunciado
+                    revisadoPor{
+                        id
+                        username
+                    }
+                    status
+                    revisadoPor {
+                        id
+                    }
+                }
+            }
+        }
+    '''.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
+
+    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    new_pergunta.refresh_from_db()
+
+    assert result == {'data': OrderedDict([('editarPergunta', {'pergunta': {'id': f'{new_pergunta.id}', 'enunciado': 'Novo enunciado', 'revisadoPor': None, 'status': True}})])}
+    assert new_pergunta.enunciado == 'Novo enunciado'
+    assert new_pergunta.status == True
+    assert 'errors' not in result

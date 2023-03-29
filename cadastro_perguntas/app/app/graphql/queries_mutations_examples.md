@@ -158,11 +158,11 @@
     ```graphql
     mutation{
         cadastrarPergunta(
-          enunciado:"Enunciaod da pergunta",
-          outrasReferencias: "outras ref",
-          refenciaRespostaId: 1,
-          temaId: 1,
-          tipoResposta: "MES",
+            enunciado:"Enunciaod da pergunta",
+            outrasReferencias: "outras ref",
+            referenciaRespostaId: 1,
+            temaId: 1,
+            tipoResposta: "MES",
         ){
             pergunta{
                 id
@@ -184,4 +184,29 @@
 
 - editarPergunta
     ```graphql
+    mutation{
+        editarPergunta(
+            id:1, 
+            enunciado:"Novo enunciado",
+            outrasReferencias: "novaOUtraRefe",
+            referenciaRespostaId: 1,
+            temaId: 1,
+            tipoResposta: "MES",
+            status: true
+        ){
+            pergunta{
+                id
+                enunciado
+                revisadoPor{
+                    id
+                    username
+                }
+                status
+                revisadoPor {
+                    id
+                }
+            
+            }
+        }
+    }
     ```
