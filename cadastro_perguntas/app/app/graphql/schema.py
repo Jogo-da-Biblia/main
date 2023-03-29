@@ -58,8 +58,7 @@ def get_textos_biblicos(text_info: dict, version: Versao):
 class PerguntasType(DjangoObjectType):
     class Meta:
         model = Pergunta
-        fields = ("id", "enunciado", "tipo_resposta",
-                  "refencia_resposta", "status", "revisado_por", "tema")
+        fields = ("id", "enunciado", "tipo_resposta", "refencia_resposta", "status", "revisado_por", "tema")
 
 
 class TemaType(DjangoObjectType):
@@ -94,8 +93,7 @@ class UserType(DjangoObjectType):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "is_staff",
-                  "is_active", "is_superuser")
+        fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
 
     score = graphene.Int()
 
@@ -121,8 +119,7 @@ class Query(graphene.ObjectType):
     user = graphene.Field(UserWithQuestionsType, id=graphene.Int())
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
-    texto_biblico = graphene.Field(
-        TextoBiblicoType, referencia=graphene.String(required=True), versao=graphene.String())
+    texto_biblico = graphene.Field(TextoBiblicoType, referencia=graphene.String(required=True), versao=graphene.String())
 
     def resolve_pergunta(root, info, tema):
         return random.sample(tuple(Pergunta.objects.filter(tema=tema)), 1)
