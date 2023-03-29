@@ -108,6 +108,11 @@ DB_TABLE=biblia_livro sh dump_table.sh
 cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root DATABASE
 ```
 
+## Run Tests
+Go to directory /usr/src/app/app
+
+Run `pytest app/graphql/tests.py`
+
 ## Known Issues
 
 - "Can't connect to MySQL server on 'db' ([Errno 111] Connection refused)") | Execute novamente `make run`
