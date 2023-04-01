@@ -79,10 +79,6 @@ class VersiculoType(DjangoObjectType):
         fields = ("capitulo", "versiculo", "texto")
 
 
-class TextoBiblicoType(graphene.ObjectType):
-    textos = graphene.List(VersiculoType)
-
-
 class FuncoesType(DjangoObjectType):
     class Meta:
         model = Group
@@ -90,42 +86,37 @@ class FuncoesType(DjangoObjectType):
 
 
 class UsuarioType(DjangoObjectType):
-
     class Meta:
         model = User
         fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
 
     pontuacao = graphene.Int()
+    perguntas = graphene.List(PerguntasType)
 
     def resolve_pontuacao(self, info):
         if self is not None:
             return receber_pontuacao_usuario(self)
         return None
 
+    def resolve_perguntas(self, info):
+        if self is not None:
+            return Pergunta.objects.filter(criado_por=self)
+        return None
 
-class UsuarioComPontuacaoType(graphene.ObjectType):
-    usuario = graphene.List(UsuarioType)
-
-
-class UsuarioComQuestionsType(graphene.ObjectType):
-    perguntas = graphene.List(PerguntasType)
-    usuario = graphene.Field(UsuarioType)
 
 
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(PerguntasType)
     pergunta = DjangoListField(PerguntasType, tema_id=graphene.Int())
-    users = graphene.Field(UsuarioComPontuacaoType)
-    user = graphene.Field(UsuarioComQuestionsType, id=graphene.Int())
+    users = DjangoListField(UsuarioType)
+    user = graphene.Field(UsuarioType, id=graphene.Int())
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
-    texto_biblico = graphene.Field(TextoBiblicoType, referencia=graphene.String(required=True), versao=graphene.String())
+    texto_biblico = graphene.List(VersiculoType, referencia=graphene.String(required=True), versao=graphene.String())
 
     def resolve_pergunta(root, info, tema_id):
         return random.sample(tuple(Pergunta.objects.filter(tema=Tema.objects.get(id=tema_id))), 1)
 
-    def resolve_users(root, info):
-        return UsuarioComPontuacaoType(usuario=User.objects.all())
 
     def resolve_user(root, info, id=None):
         if info.context.user.id != id:
@@ -138,9 +129,7 @@ class Query(graphene.ObjectType):
         else:
             usuario = User.objects.get(id=id)
 
-        perguntas = Pergunta.objects.filter(
-            criado_por=User.objects.get(id=usuario.id))
-        return UsuarioComQuestionsType(perguntas=perguntas, usuario=usuario)
+        return usuario
 
     def resolve_texto_biblico(root, info, referencia, versao='ara'):
         version =  Versao.objects.get(sigla=str(versao).upper())
@@ -170,7 +159,7 @@ class Query(graphene.ObjectType):
             else:
                 raise Exception('Texto biblico no formato invalido')
 
-        return TextoBiblicoType(textos=todos_os_textos)
+        return todos_os_textos
 
 
 """
