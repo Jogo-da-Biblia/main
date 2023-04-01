@@ -217,3 +217,27 @@
         }
     }
     ```
+
+- adicionarComentario, lembrando que se o usuario estiver logado será utilizado o email cadastrado
+    ```graphql
+    mutation{
+        adicionarComentario(
+            email: "algumemail@email.com"
+            mensagem: "mensagem",
+            perguntaId: 1,
+            phone: "12345678911",
+            isWhatsapp: true
+            ){
+            comentario{
+                phone
+                isWhatsapp
+                email
+                mensagem
+                pergunta{
+                    id
+                    enunciado
+                }
+            }
+        }
+    }
+    ```

@@ -10,9 +10,10 @@ from graphene.test import Client as GrapheneClient
 from app.core.models import User
 from app.biblia.models import Livro, Versiculo, Testamento, Versao
 from app.perguntas.models import Pergunta, Tema, Referencia
+from app.comentarios.models import Comentario
 from django.core.exceptions import ObjectDoesNotExist
 from .schema import schema
-from .test_queries import querie_usuario, querie_usuarios, pergunta_aleatoria_querie, todas_perguntas_querie, usuario_vazio_querie, texto_biblico_querie, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation
+from .test_queries import querie_usuario, querie_usuarios, pergunta_aleatoria_querie, todas_perguntas_querie, usuario_vazio_querie, texto_biblico_querie, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_querie, adicionar_comentario_mutation
 
 # Usuario enviado no context graphql
 class UsuarioEmContexto:
@@ -42,6 +43,10 @@ def todas_perguntas():
     return Pergunta.objects.all()
 
 @pytest.fixture
+def todos_comentarios():
+    return Comentario.objects.all()
+
+@pytest.fixture
 def delete_todos_items():
     Pergunta.objects.all().delete()
     Tema.objects.all().delete()
@@ -50,6 +55,7 @@ def delete_todos_items():
     Versao.objects.all().delete()
     Livro.objects.all().delete()
     Referencia.objects.all().delete()
+    Comentario.objects.all().delete()
 
 @pytest.fixture
 def criar_dados_de_teste(usuario_admin, delete_todos_items):
@@ -79,23 +85,40 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items):
         versiculo = test_versiculo
     )
 
-    new_pergunta = Pergunta.objects.create(
+    nova_pergunta = Pergunta.objects.create(
         tema = Tema.objects.get(nome='tema1'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
         criado_por = usuario_admin
     )
 
-    another_pergunta = Pergunta.objects.create(
+    outra_pergunta = Pergunta.objects.create(
         tema = Tema.objects.get(nome='tema2'),
         enunciado = 'enunciado2a',
         tipo_resposta = 'MES',
         criado_por = usuario_admin
     )
     
-    new_pergunta.save()
-    another_pergunta.save()
-    return new_pergunta
+    nova_pergunta.save()
+    outra_pergunta.save()
+
+    Comentario.objects.create(
+        pergunta = nova_pergunta,
+        email = 'email1@email.com',
+        phone = '12345678911',
+        is_whatsapp = True,
+        mensagem = 'mensagem1'
+    )
+
+    Comentario.objects.create(
+        pergunta = nova_pergunta,
+        email = 'email2@email.com',
+        phone = '12345678911',
+        is_whatsapp = False,
+        mensagem = 'mensagem2'
+    )
+
+    return nova_pergunta
 
 
 @pytest.mark.django_db
@@ -149,6 +172,14 @@ def test_deve_retornar_todas_as_perguntas(client, criar_dados_de_teste, usuario_
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
     assert resultado == {'data': {'perguntas': [{'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}, {'id': f'{todas_perguntas[1].id}', 'enunciado': 'enunciado2a'}]}}
+    assert 'errors' not in resultado
+
+@pytest.mark.django_db
+def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuario_admin, todos_comentarios, todas_perguntas):
+    query = todos_comentarios_querie
+
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': 'mensagem1', 'email': 'email1@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': 'mensagem2', 'email': 'email2@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}]}}
     assert 'errors' not in resultado
 
 
@@ -218,25 +249,25 @@ def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_test
     query = adicionar_nova_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    newest_pergunta = Pergunta.objects.last()
-    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{newest_pergunta.id}', 'tema': {'nome': 'tema1'}, 'enunciado': 'Enunciaod da pergunta', 'tipoResposta': 'MES', 'status': False, 'revisadoPor': None}})])}
+    pergunta_mais_nova = Pergunta.objects.last()
+    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': 'tema1'}, 'enunciado': 'Enunciaod da pergunta', 'tipoResposta': 'MES', 'status': False, 'revisadoPor': None}})])}
     assert len(Pergunta.objects.all()) == 3
     assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
 def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
-    new_pergunta = Pergunta.objects.create(
+    nova_pergunta = Pergunta.objects.create(
         tema = Tema.objects.get(nome='tema1'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
         criado_por = usuario_admin,
         status=False
     )
-    pergunta_id = new_pergunta.id
+    pergunta_id = nova_pergunta.id
 
-    assert new_pergunta.enunciado == 'enunciado1adadasdasda'
-    assert new_pergunta.status == False
+    assert nova_pergunta.enunciado == 'enunciado1adadasdasda'
+    assert nova_pergunta.status == False
 
     tema_id = Tema.objects.get(nome='tema1').id
     referencia_id = Referencia.objects.all()[0].id
@@ -244,9 +275,23 @@ def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
     query = editar_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    new_pergunta.refresh_from_db()
+    nova_pergunta.refresh_from_db()
 
-    assert resultado == {'data': OrderedDict([('editarPergunta', {'pergunta': {'id': f'{new_pergunta.id}', 'enunciado': 'Novo enunciado', 'revisadoPor': None, 'status': True}})])}
-    assert new_pergunta.enunciado == 'Novo enunciado'
-    assert new_pergunta.status == True
+    assert resultado == {'data': OrderedDict([('editarPergunta', {'pergunta': {'id': f'{nova_pergunta.id}', 'enunciado': 'Novo enunciado', 'revisadoPor': None, 'status': True}})])}
+    assert nova_pergunta.enunciado == 'Novo enunciado'
+    assert nova_pergunta.status == True
+    assert 'errors' not in resultado
+
+
+@pytest.mark.django_db
+def test_deve_adicionar_novo_comentario(client, usuario_admin, criar_dados_de_teste, todas_perguntas):
+    pergunta_id = todas_perguntas[0].id
+    
+    query = adicionar_comentario_mutation.replace('pergunta_id', str(pergunta_id))
+
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    comentario_mais_novo = Comentario.objects.last()
+    print(resultado)
+    assert resultado == {'data': OrderedDict([('adicionarComentario', {'comentario': {'phone': '12345678911', 'isWhatsapp': True, 'email': 'admin@admin.com', 'mensagem': 'mensagem', 'pergunta': {'id': '1', 'enunciado': 'enunciado1adadasdasda'}}})])}
+    assert len(Comentario.objects.all()) == 3
     assert 'errors' not in resultado

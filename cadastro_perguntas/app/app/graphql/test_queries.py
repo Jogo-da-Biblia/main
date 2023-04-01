@@ -59,6 +59,21 @@ todas_perguntas_querie = '''
         }
     '''
 
+todos_comentarios_querie = '''
+    query{
+        comentarios{
+            id
+            mensagem
+            email
+            phone
+            pergunta {
+                id
+                enunciado
+            }
+        }
+    }
+    '''
+
 texto_biblico_querie = '''
         query{
             textoBiblico(
@@ -170,6 +185,28 @@ editar_pergunta_mutation = '''
                     status
                     revisadoPor {
                         id
+                    }
+                }
+            }
+        }
+    '''
+
+adicionar_comentario_mutation = '''
+    mutation{
+            adicionarComentario(
+                mensagem: "mensagem",
+                perguntaId: pergunta_id,
+                phone: "12345678911",
+                isWhatsapp: true
+                ){
+                comentario{
+                    phone
+                    isWhatsapp
+                    email
+                    mensagem
+                    pergunta{
+                        id
+                        enunciado
                     }
                 }
             }
