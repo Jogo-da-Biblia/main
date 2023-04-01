@@ -12,21 +12,21 @@ from app.biblia.models import Livro, Versiculo, Testamento, Versao
 from app.perguntas.models import Pergunta, Tema, Referencia
 from django.core.exceptions import ObjectDoesNotExist
 from .schema import schema
-from .test_queries import user_query, users_query, random_pergunta_query, all_perguntas_query, empty_user_query, texto_biblico_query, new_user_mutation, edit_user_mutation, add_new_pergunta_mutation, edit_pergunta_mutation, resend_password_mutation
+from .test_queries import querie_usuario, querie_usuarios, pergunta_aleatoria_querie, todas_perguntas_querie, usuario_vazio_querie, texto_biblico_querie, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation
 
-# User send in graphql context
-class UserInContext:
-    def __init__(self, user):
-        self.user = user
+# Usuario enviado no context graphql
+class UsuarioEmContexto:
+    def __init__(self, usuario):
+        self.user = usuario
 
 
 @pytest.fixture
-def admin_user():
+def usuario_admin():
     try:
-        user = User.objects.get(username='admin')
+        usuario = User.objects.get(username='admin')
     except ObjectDoesNotExist:
-        user = User.objects.create_superuser(username='admin', password='admin', email='admin@admin.com')
-    return user
+        usuario = User.objects.create_superuser(username='admin', password='admin', email='admin@admin.com')
+    return usuario
 
 @pytest.fixture
 def client():
@@ -38,11 +38,11 @@ def perguntas_count():
     return Pergunta.objects.count()
 
 @pytest.fixture
-def get_all_perguntas():
+def todas_perguntas():
     return Pergunta.objects.all()
 
 @pytest.fixture
-def delete_all_items():
+def delete_todos_items():
     Pergunta.objects.all().delete()
     Tema.objects.all().delete()
     Testamento.objects.all().delete()
@@ -52,8 +52,7 @@ def delete_all_items():
     Referencia.objects.all().delete()
 
 @pytest.fixture
-def create_test_data(admin_user, delete_all_items):
-
+def criar_dados_de_teste(usuario_admin, delete_todos_items):
     Tema.objects.create(nome='tema1', cor='rosa')
     Tema.objects.create(nome='tema2', cor='dois')
     
@@ -84,14 +83,14 @@ def create_test_data(admin_user, delete_all_items):
         tema = Tema.objects.get(nome='tema1'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
-        criado_por = admin_user
+        criado_por = usuario_admin
     )
 
     another_pergunta = Pergunta.objects.create(
         tema = Tema.objects.get(nome='tema2'),
         enunciado = 'enunciado2a',
         tipo_resposta = 'MES',
-        criado_por = admin_user
+        criado_por = usuario_admin
     )
     
     new_pergunta.save()
@@ -100,138 +99,138 @@ def create_test_data(admin_user, delete_all_items):
 
 
 @pytest.mark.django_db
-def test_admin_should_get_user_info_by_id(client, admin_user):
+def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
     test_user = User.objects.create(username='Get user', email='getuser@example.com', password='123456')
 
-    query = user_query.replace('user_id', str(test_user.id))
+    query = querie_usuario.replace('user_id', str(test_user.id))
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
-    assert result == {'data': {'user': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email)}, 'perguntas': []}}}
-    assert 'errors' not in result
-
-
-@pytest.mark.django_db
-def test_admin_should_get_own_user_info_if_user_is_null(client, admin_user):
-    query = empty_user_query.replace('user_id', str(admin_user.id))
-
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
-    assert result == {'data': {'user': {'user': {'id': str(admin_user.id), 'username': str(admin_user.username), 'email': str(admin_user.email)}, 'perguntas': []}}}
-    assert 'errors' not in result
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    assert resultado == {'data': {'user': {'usuario': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email)}, 'perguntas': []}}}
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_admin_should_list_all_users(client, admin_user):
+def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuario_admin):
+    query = usuario_vazio_querie.replace('user_id', str(usuario_admin.id))
+
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    assert resultado == {'data': {'user': {'usuario': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email)}, 'perguntas': []}}}
+    assert 'errors' not in resultado
+
+
+@pytest.mark.django_db
+def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
     User.objects.create(username='one user', email='oneuser@example.com', password='123456')
     User.objects.create(username='two user', email='twouser@example.com', password='123456')
     User.objects.create(username='three user', email='threeuser@example.com', password='123456')
 
-    query = users_query
+    query = querie_usuarios
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    assert result == {'data': {'users': {'user': [{'id': '4', 'username': 'admin', 'score': 0}, {'id': '5', 'username': 'one user', 'score': 0}, {'id': '6', 'username': 'two user', 'score': 0}, {'id': '7', 'username': 'three user', 'score': 0}]}}}
-    assert len(result['data']['users']['user']) == len(User.objects.all())
-    assert 'errors' not in result
-
-
-@pytest.mark.django_db
-def test_should_return_random_pergunta(client, create_test_data, admin_user):
-    query = random_pergunta_query
-
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
-    assert result == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
-    assert 'errors' not in result
+    assert resultado == {'data': {'users': {'usuario': [{'id': '4', 'username': 'admin', 'pontuacao': 0}, {'id': '5', 'username': 'one user', 'pontuacao': 0}, {'id': '6', 'username': 'two user', 'pontuacao': 0}, {'id': '7', 'username': 'three user', 'pontuacao': 0}]}}}
+    assert len(resultado['data']['users']['usuario']) == len(User.objects.all())
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_return_all_perguntas(client, create_test_data, admin_user, get_all_perguntas):
-    query = all_perguntas_query
+def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_admin):
+    query = pergunta_aleatoria_querie
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    assert resultado == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
+    assert 'errors' not in resultado
+
+
+@pytest.mark.django_db
+def test_deve_retornar_todas_as_perguntas(client, criar_dados_de_teste, usuario_admin, todas_perguntas):
+    query = todas_perguntas_querie
+
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
-    assert result == {'data': {'perguntas': [{'id': f'{get_all_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}, {'id': f'{get_all_perguntas[1].id}', 'enunciado': 'enunciado2a'}]}}
-    assert 'errors' not in result
+    assert resultado == {'data': {'perguntas': [{'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}, {'id': f'{todas_perguntas[1].id}', 'enunciado': 'enunciado2a'}]}}
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_get_texto_biblico(client, admin_user, create_test_data):
-    query = texto_biblico_query
+def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste):
+    query = texto_biblico_querie
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
-    assert result == {'data': {'textoBiblico': {'textos': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}}
-    assert 'errors' not in result
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    assert resultado == {'data': {'textoBiblico': {'textos': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}}
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_create_new_user(client, admin_user):
-    query = new_user_mutation
+def test_deve_criar_novo_usuario(client, usuario_admin):
+    query = novo_usuario_mutation
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
     assert User.objects.filter(email='teste1@email.com').exists() == True
     
     new_user = User.objects.get(username='ususaroteste1')
 
-    assert result == {'data': OrderedDict([('cadastrarUsuario', {'user': {'id': str(new_user.id), 'email': str(new_user.email)}})])}
-    assert 'errors' not in result
+    assert resultado == {'data': OrderedDict([('cadastrarUsuario', {'usuario': {'id': str(new_user.id), 'email': str(new_user.email)}})])}
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_edit_new_user(client, admin_user, create_test_data):
+def test_deve_editar_novo_usuario(client, usuario_admin, criar_dados_de_teste):
     new_user = User.objects.create(email='edit@email.com', username='donoteditthis', is_staff=False)
     user_id = new_user.id
 
     assert new_user.username == 'donoteditthis'
     assert new_user.email == 'edit@email.com'
 
-    query = edit_user_mutation.replace('user_id', str(user_id))
+    query = editar_usuario_mutation.replace('user_id', str(user_id))
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
     assert User.objects.filter(id=user_id).exists() == True
 
     new_user.refresh_from_db()
     
-    assert result == {'data': OrderedDict([('editarUsuario', {'user': {'id': f'{new_user.id}', 'username': 'newusername', 'email': 'newemai1l@.com'}})])}
+    assert resultado == {'data': OrderedDict([('editarUsuario', {'usuario': {'id': f'{new_user.id}', 'username': 'newusername', 'email': 'newemai1l@.com'}})])}
     assert new_user.username == 'newusername'
     assert new_user.email == 'newemai1l@.com'
-    assert 'errors' not in result
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_send_newpassword_email(client, admin_user):
+def test_deve_enviar_email_com_nova_senha(client, usuario_admin):
     new_user = User.objects.create(email='user@email.com', username='donoteditthis', is_staff=False)
     user_id = new_user.id
 
-    query = resend_password_mutation.replace('user_id', str(user_id))
+    query = reenviar_senha_mutation.replace('user_id', str(user_id))
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
-    assert result == {'data': OrderedDict([('recuperarSenha', {'message': 'Senha alterada e email enviado com sucesso'})])}
-    assert 'errors' not in result
+    assert resultado == {'data': OrderedDict([('recuperarSenha', {'mensagem': 'Senha alterada e email enviado com sucesso'})])}
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_add_new_pergunta(client, admin_user, create_test_data):
+def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
     tema_id = Tema.objects.get(nome='tema1').id
     referencia_id = Referencia.objects.all()[0].id
     
-    query = add_new_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
+    query = adicionar_nova_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     newest_pergunta = Pergunta.objects.last()
-    assert result == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{newest_pergunta.id}', 'tema': {'nome': 'tema1'}, 'enunciado': 'Enunciaod da pergunta', 'tipoResposta': 'MES', 'status': False, 'revisadoPor': None}})])}
+    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{newest_pergunta.id}', 'tema': {'nome': 'tema1'}, 'enunciado': 'Enunciaod da pergunta', 'tipoResposta': 'MES', 'status': False, 'revisadoPor': None}})])}
     assert len(Pergunta.objects.all()) == 3
-    assert 'errors' not in result
+    assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
-def test_should_edit_new_pergunta(client, admin_user, create_test_data):
+def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
     new_pergunta = Pergunta.objects.create(
         tema = Tema.objects.get(nome='tema1'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
-        criado_por = admin_user,
+        criado_por = usuario_admin,
         status=False
     )
     pergunta_id = new_pergunta.id
@@ -242,12 +241,12 @@ def test_should_edit_new_pergunta(client, admin_user, create_test_data):
     tema_id = Tema.objects.get(nome='tema1').id
     referencia_id = Referencia.objects.all()[0].id
 
-    query = edit_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
+    query = editar_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
 
-    result = client.execute(query, context_value=UserInContext(user=admin_user))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     new_pergunta.refresh_from_db()
 
-    assert result == {'data': OrderedDict([('editarPergunta', {'pergunta': {'id': f'{new_pergunta.id}', 'enunciado': 'Novo enunciado', 'revisadoPor': None, 'status': True}})])}
+    assert resultado == {'data': OrderedDict([('editarPergunta', {'pergunta': {'id': f'{new_pergunta.id}', 'enunciado': 'Novo enunciado', 'revisadoPor': None, 'status': True}})])}
     assert new_pergunta.enunciado == 'Novo enunciado'
     assert new_pergunta.status == True
-    assert 'errors' not in result
+    assert 'errors' not in resultado

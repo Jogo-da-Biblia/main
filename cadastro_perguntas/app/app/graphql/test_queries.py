@@ -1,8 +1,8 @@
 # Querys and Mutations to test
-user_query ='''
+querie_usuario ='''
         query{
             user(id:user_id){
-                user{
+                usuario{
                     id
                     username
                     email
@@ -16,10 +16,10 @@ user_query ='''
         }
     '''
 
-empty_user_query = '''
+usuario_vazio_querie = '''
         query{
             user{
-                user{
+                usuario{
                     id
                     username
                     email
@@ -33,102 +33,102 @@ empty_user_query = '''
         }
     '''
 
-users_query = '''
+querie_usuarios = '''
         query{
             users{
-                user{
+                usuario{
                     id
                     username
-                    score
+                    pontuacao
                 }
-        }
-    }
-    '''
-
-random_pergunta_query = '''
-        query{
-        pergunta(temaId:1){
-            id
-            enunciado
-        }
-    }
-    '''
-
-all_perguntas_query = '''
-        query{
-        perguntas{
-            id
-            enunciado
-        }
-    }
-    '''
-
-texto_biblico_query = '''
-        query{
-        textoBiblico(
-            referencia: "te1 1:21"
-            versao: "ver1"
-        ){
-            textos{
-                livro
-                livroAbreviado
-                versao
-                versaoAbreviada
-                capitulo
-                versiculo
-                texto
             }
         }
-    }
     '''
 
-new_user_mutation = '''
-        mutation{
-        cadastrarUsuario(
-            email: "teste1@email.com"
-            username: "ususaroteste1"
-            isStaff: false
-            password: "1938y"
-        ){
-            user{
-            id
-            email
-            }
-        }	
-    }
-    '''
-
-
-edit_user_mutation = '''
-        mutation{
-        editarUsuario(
-            id: user_id
-            newUsername:"newusername"
-            newEmail: "newemai1l@.com"
-        ){
-            user{
+pergunta_aleatoria_querie = '''
+        query{
+            pergunta(temaId:1){
                 id
-                username
-                email
+                enunciado
             }
         }
-    }
     '''
 
-
-resend_password_mutation = '''
-        mutation{
-        recuperarSenha(
-            userId:user_id, 
-            email:"user@email.com"
-        ){
-            message
+todas_perguntas_querie = '''
+        query{
+            perguntas{
+                id
+                enunciado
+            }
         }
-    }
+    '''
+
+texto_biblico_querie = '''
+        query{
+            textoBiblico(
+                referencia: "te1 1:21"
+                versao: "ver1"
+            ){
+                textos{
+                    livro
+                    livroAbreviado
+                    versao
+                    versaoAbreviada
+                    capitulo
+                    versiculo
+                    texto
+                }
+            }
+        }
+    '''
+
+novo_usuario_mutation = '''
+        mutation{
+            cadastrarUsuario(
+                email: "teste1@email.com"
+                username: "ususaroteste1"
+                isStaff: false
+                password: "1938y"
+            ){
+                usuario{
+                    id
+                    email
+                }
+            }	
+        }
     '''
 
 
-add_new_pergunta_mutation = '''
+editar_usuario_mutation = '''
+        mutation{
+            editarUsuario(
+                id: user_id
+                newUsername:"newusername"
+                newEmail: "newemai1l@.com"
+            ){
+                usuario{
+                    id
+                    username
+                    email
+                }
+            }
+        }
+    '''
+
+
+reenviar_senha_mutation = '''
+        mutation{
+            recuperarSenha(
+                usuarioId:user_id, 
+                email:"user@email.com"
+            ){
+                mensagem
+            }
+        }
+    '''
+
+
+adicionar_nova_pergunta_mutation = '''
         mutation{
             cadastrarPergunta(
                 enunciado:"Enunciaod da pergunta",
@@ -155,7 +155,7 @@ add_new_pergunta_mutation = '''
         }
     '''
 
-edit_pergunta_mutation = '''
+editar_pergunta_mutation = '''
         mutation{
             editarPergunta(
                 id:pergunta_id, 

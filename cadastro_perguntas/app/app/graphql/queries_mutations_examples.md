@@ -3,7 +3,7 @@
     ```graphql
     query{
         user(id:1){
-            user{
+            usuario{
                 id
                 username
                 email
@@ -20,7 +20,7 @@
     ```graphql
     query{
         user{
-            user{
+            usuario{
                 id
                 username
                 email
@@ -38,10 +38,10 @@
     ```graphql
     query{
         users{
-            user{
+            usuario{
                 id
                 username
-                score
+                pontuacao
             }
         }
     }
@@ -116,9 +116,9 @@
             isStaff: false
             password: "1938y"
         ){
-            user{
-            id
-            email
+            usuario{
+                id
+                email
             }
         }	
     }
@@ -134,7 +134,7 @@
             newIsStaff: true
             newPassword: "newpassword"
         ){
-            user{
+            usuario{
                 id
                 username
             }
@@ -146,10 +146,10 @@
     ```graphql
     mutation{
         recuperarSenha(
-            userId:2, 
+            usuarioId:2, 
             email:"user@email.com"
         ){
-            message
+            mensagem
         }
     }
     ```
@@ -205,7 +205,6 @@
                 revisadoPor {
                     id
                 }
-            
             }
         }
     }
