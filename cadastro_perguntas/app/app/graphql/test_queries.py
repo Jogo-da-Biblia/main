@@ -2,11 +2,10 @@
 querie_usuario ='''
         query{
             user(id:user_id){
-                usuario{
-                    id
-                    username
-                    email
-                }
+                id
+                username
+                email
+                pontuacao    
                 perguntas {
                     id
                     enunciado
@@ -19,11 +18,10 @@ querie_usuario ='''
 usuario_vazio_querie = '''
         query{
             user{
-                usuario{
-                    id
-                    username
-                    email
-                }
+                id
+                username
+                email
+                pontuacao    
                 perguntas {
                     id
                     enunciado
@@ -36,11 +34,9 @@ usuario_vazio_querie = '''
 querie_usuarios = '''
         query{
             users{
-                usuario{
-                    id
-                    username
-                    pontuacao
-                }
+                id
+                username
+                pontuacao
             }
         }
     '''
@@ -69,15 +65,13 @@ texto_biblico_querie = '''
                 referencia: "te1 1:21"
                 versao: "ver1"
             ){
-                textos{
-                    livro
-                    livroAbreviado
-                    versao
-                    versaoAbreviada
-                    capitulo
-                    versiculo
-                    texto
-                }
+                livro
+                livroAbreviado
+                versao
+                versaoAbreviada
+                capitulo
+                versiculo
+                texto
             }
         }
     '''

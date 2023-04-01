@@ -105,7 +105,7 @@ def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
     query = querie_usuario.replace('user_id', str(test_user.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'user': {'usuario': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email)}, 'perguntas': []}}}
+    assert resultado == {'data': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email), 'pontuacao': 0,'perguntas': []}}}
     assert 'errors' not in resultado
 
 
@@ -114,7 +114,7 @@ def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuar
     query = usuario_vazio_querie.replace('user_id', str(usuario_admin.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'user': {'usuario': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email)}, 'perguntas': []}}}
+    assert resultado == {'data': {'user': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email), 'pontuacao': 0, 'perguntas': []}}}
     assert 'errors' not in resultado
 
 
@@ -128,8 +128,8 @@ def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    assert resultado == {'data': {'users': {'usuario': [{'id': '4', 'username': 'admin', 'pontuacao': 0}, {'id': '5', 'username': 'one user', 'pontuacao': 0}, {'id': '6', 'username': 'two user', 'pontuacao': 0}, {'id': '7', 'username': 'three user', 'pontuacao': 0}]}}}
-    assert len(resultado['data']['users']['usuario']) == len(User.objects.all())
+    assert resultado == {'data': {'users': [{'id': '4', 'username': 'admin', 'pontuacao': 0}, {'id': '5', 'username': 'one user', 'pontuacao': 0}, {'id': '6', 'username': 'two user', 'pontuacao': 0}, {'id': '7', 'username': 'three user', 'pontuacao': 0}]}}
+    assert len(resultado['data']['users']) == len(User.objects.all())
     assert 'errors' not in resultado
 
 
@@ -157,7 +157,7 @@ def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste):
     query = texto_biblico_querie
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'textoBiblico': {'textos': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}}
+    assert resultado == {'data': {'textoBiblico': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}
     assert 'errors' not in resultado
 
 

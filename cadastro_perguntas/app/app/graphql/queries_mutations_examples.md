@@ -3,11 +3,10 @@
     ```graphql
     query{
         user(id:1){
-            usuario{
-                id
-                username
-                email
-            }
+            id
+            username
+            email
+            pontuacao    
             perguntas {
                 id
                 enunciado
@@ -20,11 +19,10 @@
     ```graphql
     query{
         user{
-            usuario{
-                id
-                username
-                email
-            }
+            id
+            username
+            email
+            pontuacao    
             perguntas {
                 id
                 enunciado
@@ -38,11 +36,9 @@
     ```graphql
     query{
         users{
-            usuario{
-                id
-                username
-                pontuacao
-            }
+            id
+            username
+            pontuacao
         }
     }
     ```
@@ -74,15 +70,13 @@
             referencia: "Gn 1:26; Ex 10:5"
             versao: "acf"
         ){
-            textos{
-                livro
-                livroAbreviado
-                versao
-                versaoAbreviada
-                capitulo
-                versiculo
-                texto
-            }
+            livro
+            livroAbreviado
+            versao
+            versaoAbreviada
+            capitulo
+            versiculo
+            texto
         }
     }
     ```
@@ -92,7 +86,6 @@
         textoBiblico(
             referencia: "Gn 1:26; Ex 10:5"
         ){
-            textos{
             livro
             livroAbreviado
             versao
@@ -100,7 +93,6 @@
             capitulo
             versiculo
             texto
-            }
         }
     }
     ```
