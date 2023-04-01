@@ -7,6 +7,7 @@ from graphene_django import DjangoObjectType
 from graphene_django import DjangoListField
 
 from app.perguntas.models import Pergunta, Tema, Referencia
+from app.comentarios.models import Comentario 
 from app.core.models import User
 from app.biblia.models import Livro, Versiculo, Versao
 from app.settings import DEFAULT_FROM_EMAIL
@@ -61,6 +62,12 @@ class PerguntasType(DjangoObjectType):
         fields = ("id", "enunciado", "tipo_resposta", "refencia_resposta", "status", "revisado_por", "tema")
 
 
+class ComentariosType(DjangoObjectType):
+    class Meta:
+        model = Comentario
+        fields = ("id", 'pergunta', 'email', 'phone', 'is_whatsapp', 'mensagem', "criado_em")
+
+
 class TemaType(DjangoObjectType):
     class Meta:
         model = Tema
@@ -110,13 +117,13 @@ class Query(graphene.ObjectType):
     pergunta = DjangoListField(PerguntasType, tema_id=graphene.Int())
     users = DjangoListField(UsuarioType)
     user = graphene.Field(UsuarioType, id=graphene.Int())
+    comentarios = DjangoListField(ComentariosType)
     temas = DjangoListField(TemaType)
     funcoes = DjangoListField(FuncoesType)
     texto_biblico = graphene.List(VersiculoType, referencia=graphene.String(required=True), versao=graphene.String())
 
     def resolve_pergunta(root, info, tema_id):
         return random.sample(tuple(Pergunta.objects.filter(tema=Tema.objects.get(id=tema_id))), 1)
-
 
     def resolve_user(root, info, id=None):
         if info.context.user.id != id:
@@ -310,12 +317,41 @@ class EditarPerguntaMutation(graphene.Mutation):
         return CadastrarPerguntaMutation(pergunta=pergunta)
 
 
+class AdicionarComentarioMutation(graphene.Mutation):
+    class Arguments:
+        pergunta_id = graphene.Int(required=True)
+        mensagem = graphene.String(required=True)
+        email = graphene.String()
+        phone = graphene.String()
+        is_whatsapp = graphene.Boolean()
+
+    comentario = graphene.Field(ComentariosType)
+
+    def mutate(self, info, pergunta_id, mensagem, email=None, phone=None, is_whatsapp=True):
+
+        if info.context.user.is_authenticated:
+            email = info.context.user.email
+        elif str(email).strip() == '' or email is None:
+            raise Exception('Voce precisa estar logado ou informar um email valido para cadastrar um comentario')
+        
+        mensagem = mensagem.strip()
+        if mensagem == '':
+            raise Exception('A mensagem nao pode ser vazia')
+
+        pergunta = Pergunta.objects.get(id=pergunta_id)
+        comentario = Comentario(pergunta=pergunta, mensagem=mensagem, email=email, phone=phone, is_whatsapp=is_whatsapp)
+        comentario.save()
+
+        return AdicionarComentarioMutation(comentario=comentario)
+    
+
 class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
     cadastrarPergunta = CadastrarPerguntaMutation.Field()
     editarPergunta = EditarPerguntaMutation.Field()
+    adicionarComentario = AdicionarComentarioMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

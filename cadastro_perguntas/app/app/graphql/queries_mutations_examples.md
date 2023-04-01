@@ -63,6 +63,22 @@
     }
     ```
 
+- comentarios
+    ```graphql
+    query{
+        comentarios{
+            id
+            mensagem
+            email
+            phone
+            pergunta {
+                id
+                enunciado
+            }
+        }
+    }
+    ```
+
 - textoBiblico
     ```graphql
     query{
