@@ -250,7 +250,7 @@ def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_test
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     pergunta_mais_nova = Pergunta.objects.last()
-    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': 'tema1'}, 'enunciado': 'Enunciaod da pergunta', 'tipoResposta': 'MES', 'status': False, 'revisadoPor': None}})])}
+    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': 'tema1'}, 'enunciado': f'{pergunta_mais_nova.enunciado}', 'tipoResposta': f'{pergunta_mais_nova.tipo_resposta}', 'status': pergunta_mais_nova.status, 'revisadoPor': None}})])}
     assert len(Pergunta.objects.all()) == 3
     assert 'errors' not in resultado
 
@@ -292,6 +292,6 @@ def test_deve_adicionar_novo_comentario(client, usuario_admin, criar_dados_de_te
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     comentario_mais_novo = Comentario.objects.last()
     print(resultado)
-    assert resultado == {'data': OrderedDict([('adicionarComentario', {'comentario': {'phone': '12345678911', 'isWhatsapp': True, 'email': 'admin@admin.com', 'mensagem': 'mensagem', 'pergunta': {'id': '1', 'enunciado': 'enunciado1adadasdasda'}}})])}
+    assert resultado == {'data': OrderedDict([('adicionarComentario', {'comentario': {'phone': f'{comentario_mais_novo.phone}', 'isWhatsapp': comentario_mais_novo.is_whatsapp, 'email': f'{comentario_mais_novo.email}', 'mensagem': f'{comentario_mais_novo.mensagem}', 'pergunta': {'id': f'{comentario_mais_novo.pergunta.id}', 'enunciado': f'{comentario_mais_novo.pergunta.enunciado}'}}})])}
     assert len(Comentario.objects.all()) == 3
     assert 'errors' not in resultado
