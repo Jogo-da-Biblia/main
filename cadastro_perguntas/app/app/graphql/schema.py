@@ -146,13 +146,13 @@ class Query(graphene.ObjectType):
                 capitulo = match.group(2)
                 versiculos = match.group(3)
 
-                for versi in versiculos.split(','):
-                    if '-' in versi:
-                        versi = range(
-                            int(versi.split('-')[0]), int(versi.split('-')[1])+1)
-                        versiculos_list.extend(versi)
+                for v in versiculos.split(','):
+                    if '-' in v:
+                        v = range(
+                            int(v.split('-')[0]), int(v.split('-')[1])+1)
+                        versiculos_list.extend(v)
                     else:
-                        versiculos_list.append(versi)
+                        versiculos_list.append(v)
 
                 todos_os_textos.extend(get_textos_biblicos(
                     text_info={'livro': livro, 'capitulo': capitulo, 'versiculos': versiculos_list}, version=version))
