@@ -6,10 +6,17 @@ querie_usuario ='''
                 username
                 email
                 pontuacao    
-                perguntas {
+                perguntasCriadas {
+                id
+                enunciado
+                }
+                perguntasRevisadas{
+                id
+                enunciado
+                }
+                perguntasPublicadas{
                     id
                     enunciado
-                    status
                 }
             }
         }
@@ -22,10 +29,17 @@ usuario_vazio_querie = '''
                 username
                 email
                 pontuacao    
-                perguntas {
+                perguntasCriadas {
+                id
+                enunciado
+                }
+                perguntasRevisadas{
+                id
+                enunciado
+                }
+                perguntasPublicadas{
                     id
                     enunciado
-                    status
                 }
             }
         }

@@ -7,11 +7,18 @@
             username
             email
             pontuacao    
-            perguntas {
-                id
-                enunciado
-                status
+          	perguntasCriadas {
+          	  id
+              enunciado
+          	}
+            perguntasRevisadas{
+              id
+              enunciado
             }
+          	perguntasPublicadas{
+            	id
+            	enunciado
+          	}
         }
     }
     ```
@@ -23,11 +30,18 @@
             username
             email
             pontuacao    
-            perguntas {
-                id
-                enunciado
-                status
+          	perguntasCriadas {
+          	  id
+              enunciado
+          	}
+            perguntasRevisadas{
+              id
+              enunciado
             }
+          	perguntasPublicadas{
+            	id
+            	enunciado
+          	}
         }
     }
     ```

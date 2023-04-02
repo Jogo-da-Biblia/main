@@ -128,7 +128,8 @@ def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
     query = querie_usuario.replace('user_id', str(test_user.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email), 'pontuacao': 0,'perguntas': []}}}
+    print(resultado)
+    assert resultado == {'data': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email), 'pontuacao': 0,'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
 
@@ -137,7 +138,8 @@ def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuar
     query = usuario_vazio_querie.replace('user_id', str(usuario_admin.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'user': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email), 'pontuacao': 0, 'perguntas': []}}}
+    print(resultado)
+    assert resultado == {'data': {'user': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email), 'pontuacao': 0, 'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
 
@@ -291,7 +293,6 @@ def test_deve_adicionar_novo_comentario(client, usuario_admin, criar_dados_de_te
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     comentario_mais_novo = Comentario.objects.last()
-    print(resultado)
     assert resultado == {'data': OrderedDict([('adicionarComentario', {'comentario': {'phone': f'{comentario_mais_novo.phone}', 'isWhatsapp': comentario_mais_novo.is_whatsapp, 'email': f'{comentario_mais_novo.email}', 'mensagem': f'{comentario_mais_novo.mensagem}', 'pergunta': {'id': f'{comentario_mais_novo.pergunta.id}', 'enunciado': f'{comentario_mais_novo.pergunta.enunciado}'}}})])}
     assert len(Comentario.objects.all()) == 3
     assert 'errors' not in resultado

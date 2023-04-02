@@ -95,19 +95,13 @@ class FuncoesType(DjangoObjectType):
 class UsuarioType(DjangoObjectType):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser")
+        fields = ("id", "username", "email", "is_staff", "is_active", "is_superuser", "perguntas_criadas", "perguntas_revisadas", "perguntas_publicadas")
 
     pontuacao = graphene.Int()
-    perguntas = graphene.List(PerguntasType)
 
     def resolve_pontuacao(self, info):
         if self is not None:
             return receber_pontuacao_usuario(self)
-        return None
-
-    def resolve_perguntas(self, info):
-        if self is not None:
-            return Pergunta.objects.filter(criado_por=self)
         return None
 
 
