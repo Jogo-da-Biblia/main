@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'app.perguntas',
     'app.core',
     'app.comentarios',
-    'app.pages',
     # graphql
     "graphene_django",
 ]
