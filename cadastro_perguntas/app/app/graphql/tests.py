@@ -22,7 +22,7 @@ class UsuarioEmContexto:
 
 
 @pytest.fixture
-def usuario_admin():
+def usuario_admin(db):
     try:
         usuario = User.objects.get(username='admin')
     except ObjectDoesNotExist:
@@ -30,24 +30,24 @@ def usuario_admin():
     return usuario
 
 @pytest.fixture
-def client():
+def client(db):
     graphene_client = GrapheneClient(schema)
     return graphene_client
 
 @pytest.fixture
-def perguntas_count():
+def perguntas_count(db):
     return Pergunta.objects.count()
 
 @pytest.fixture
-def todas_perguntas():
+def todas_perguntas(db):
     return Pergunta.objects.all()
 
 @pytest.fixture
-def todos_comentarios():
+def todos_comentarios(db):
     return Comentario.objects.all()
 
 @pytest.fixture
-def delete_todos_items():
+def delete_todos_items(db):
     Pergunta.objects.all().delete()
     Tema.objects.all().delete()
     Testamento.objects.all().delete()
@@ -58,7 +58,7 @@ def delete_todos_items():
     Comentario.objects.all().delete()
 
 @pytest.fixture
-def criar_dados_de_teste(usuario_admin, delete_todos_items):
+def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
     Tema.objects.create(nome='tema1', cor='rosa')
     Tema.objects.create(nome='tema2', cor='dois')
     
