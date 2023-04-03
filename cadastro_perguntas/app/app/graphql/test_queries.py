@@ -89,15 +89,22 @@ todos_comentarios_querie = '''
     '''
 
 texto_biblico_querie = '''
-        query{
-            textoBiblico(
+    query{
+        textoBiblico(
                 referencia: "te1 1:21"
                 versao: "ver1"
             ){
-                livro
-                livroAbreviado
-                versao
-                versaoAbreviada
+                livro{
+                    nome
+                    sigla
+                    testamento{
+                        nome
+                    }
+                }
+                versao{
+                    nome	
+                    sigla
+                }
                 capitulo
                 versiculo
                 texto

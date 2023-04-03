@@ -128,7 +128,6 @@ def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
     query = querie_usuario.replace('user_id', str(test_user.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    print(resultado)
     assert resultado == {'data': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email), 'pontuacao': 0,'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
@@ -138,7 +137,6 @@ def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuar
     query = usuario_vazio_querie.replace('user_id', str(usuario_admin.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    print(resultado)
     assert resultado == {'data': {'user': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email), 'pontuacao': 0, 'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
@@ -190,7 +188,7 @@ def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste):
     query = texto_biblico_querie
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'textoBiblico': [{'livro': 'livro1', 'livroAbreviado': 'te1', 'versao': 'versaonome1', 'versaoAbreviada': 'VER1', 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}
+    assert resultado == {'data': {'textoBiblico': [{'livro': {'nome': 'livro1', 'sigla': 'te1', 'testamento': {'nome': 'testamento1'}}, 'versao': {'nome': 'versaonome1', 'sigla': 'VER1'}, 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}
     assert 'errors' not in resultado
 
 

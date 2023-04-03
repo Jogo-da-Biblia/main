@@ -9,7 +9,7 @@ from graphene_django import DjangoListField
 from app.perguntas.models import Pergunta, Tema, Referencia
 from app.comentarios.models import Comentario 
 from app.core.models import User
-from app.biblia.models import Livro, Versiculo, Versao
+from app.biblia.models import Livro, Versiculo, Versao, Testamento  
 from app.settings import DEFAULT_FROM_EMAIL
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
@@ -48,7 +48,7 @@ def get_textos_biblicos(text_info: dict, version: Versao):
     livro = Livro.objects.get(sigla=text_info['livro'])
     for versi in text_info['versiculos']:
         current_versiculo = Versiculo.objects.filter(livro_id=livro, versao_id=version, versiculo=versi, capitulo=int(text_info['capitulo']))[0]
-        textos.append(VersiculoType(livro=livro.nome, livro_abreviado=livro.sigla, versao=version.nome, versao_abreviada=version.sigla, capitulo=current_versiculo.capitulo, versiculo=current_versiculo.versiculo, texto=current_versiculo.texto))
+        textos.append(current_versiculo)
 
     return textos
 
@@ -74,16 +74,27 @@ class TemaType(DjangoObjectType):
         fields = ("nome", "cor")
 
 
+class LivroType(DjangoObjectType):
+    class Meta:
+        model = Livro
+        fields = ("nome", "sigla", "posicao", "testamento")
+
+
+class TestamentoType(DjangoObjectType):
+    class Meta:
+        model = Testamento
+
+
+class VersaoType(DjangoObjectType):
+    class Meta:
+        model = Versao
+        fields = ("nome", "sigla")
+
+
 class VersiculoType(DjangoObjectType):
-
-    livro = graphene.String()
-    livro_abreviado = graphene.String()
-    versao = graphene.String()
-    versao_abreviada = graphene.String()
-
     class Meta:
         model = Versiculo
-        fields = ("capitulo", "versiculo", "texto")
+        fields = ("livro", "versao", "capitulo", "versiculo", "texto")
 
 
 class FuncoesType(DjangoObjectType):

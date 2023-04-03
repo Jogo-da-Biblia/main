@@ -95,36 +95,52 @@
 
 - textoBiblico
     ```graphql
-    query{
-        textoBiblico(
-            referencia: "Gn 1:26; Ex 10:5"
-            versao: "acf"
-        ){
-            livro
-            livroAbreviado
-            versao
-            versaoAbreviada
-            capitulo
-            versiculo
-            texto
+      query{
+          textoBiblico(
+                referencia: "Gn 1:26; Ex 10:5"
+                versao: "ara"
+            ){
+                livro{
+                    nome
+                    sigla
+                    testamento{
+                    id
+                    nome
+                    }
+                }
+                versao{
+                    nome	
+                    sigla
+                }
+                capitulo
+                versiculo
+                texto
+            }
         }
-    }
     ```
     O campo `versao` tem como padrão o valor "ara", logo, pode ser vazio
     ```graphql
-    query{
-        textoBiblico(
-            referencia: "Gn 1:26; Ex 10:5"
-        ){
-            livro
-            livroAbreviado
-            versao
-            versaoAbreviada
-            capitulo
-            versiculo
-            texto
+      query{
+          textoBiblico(
+                referencia: "Gn 1:26; Ex 10:5"
+            ){
+                livro{
+                    nome
+                    sigla
+                    testamento{
+                        id
+                        nome
+                    }
+                }
+                versao{
+                    nome	
+                    sigla
+                }
+                capitulo
+                versiculo
+                texto
+            }
         }
-    }
     ```
 
 
