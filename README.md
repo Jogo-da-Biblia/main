@@ -109,9 +109,9 @@ cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root
 ```
 
 ## Run Tests
-Go to directory /usr/src/app/app
-
-Run `pytest app/graphql/tests.py`
+```sh
+docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest app/graphql/tests.py"
+```
 
 ## Known Issues
 
