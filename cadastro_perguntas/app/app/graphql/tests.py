@@ -223,7 +223,6 @@ def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, 
     print(query)
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    #assert resultado == {'data': {'textoBiblico': [{'livro': {'nome': 'livro1', 'sigla': 'te1', 'testamento': {'nome': 'testamento1'}}, 'versao': {'nome': 'versaonome1', 'sigla': 'VER1'}, 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}
     assert 'errors' not in resultado
     assert 'None' not in resultado
 
