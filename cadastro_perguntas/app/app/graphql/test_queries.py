@@ -91,7 +91,7 @@ todos_comentarios_querie = '''
 texto_biblico_querie = '''
     query{
         textoBiblico(
-                referencia: "te1 1:21"
+                referencia: "texto_biblico_referencia"
                 versao: "ver1"
             ){
                 livro{

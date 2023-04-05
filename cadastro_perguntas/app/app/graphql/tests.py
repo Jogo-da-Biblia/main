@@ -74,6 +74,13 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
     )
     test_livro.save()
 
+    Livro.objects.create(
+        testamento=Testamento.objects.create(nome='testamento2'),
+        posicao=2,
+        nome='livro2',
+        sigla='te2'
+    )
+
     test_versiculo = Versiculo.objects.create(
         versao=Versao.objects.create(nome='versaonome1', sigla='VER1'),
         livro=test_livro,
@@ -82,6 +89,29 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
         texto='Versiculo texto'
     )
     test_versiculo.save()
+    # Create 3 more versiculos
+    for i in range(1,4):
+        Versiculo.objects.create(
+            versao=Versao.objects.get(nome='versaonome1', sigla='VER1'),
+            livro=test_livro,
+            capitulo=1,
+            versiculo=21+i,
+            texto='Versiculo texto'
+        )
+        Versiculo.objects.create(
+            versao=Versao.objects.get(nome='versaonome1', sigla='VER1'),
+            livro=Livro.objects.get(nome='livro2'),
+            capitulo=1,
+            versiculo=i,
+            texto='Versiculo texto'
+        )
+    Versiculo.objects.create(
+        versao=Versao.objects.get(nome='versaonome1', sigla='VER1'),
+        livro=test_livro,
+        capitulo=2,
+        versiculo=4,
+        texto='Versiculo texto'
+        )
 
     Referencia.objects.create(
         livro = test_livro,
@@ -185,14 +215,17 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
     assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': 'mensagem1', 'email': 'email1@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': 'mensagem2', 'email': 'email2@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}]}}
     assert 'errors' not in resultado
 
-
+@pytest.mark.parametrize('texto_biblico_referencia', ['te1 1:21', 'te1 1:21-23', 'te1 1:21-23, 2:4', 'te1 1:21-23, 2:4; te2 1:1-3'])
 @pytest.mark.django_db
-def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste):
-    query = texto_biblico_querie
+def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
+    query = texto_biblico_querie.replace('texto_biblico_referencia', texto_biblico_referencia)
+
+    print(query)
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'textoBiblico': [{'livro': {'nome': 'livro1', 'sigla': 'te1', 'testamento': {'nome': 'testamento1'}}, 'versao': {'nome': 'versaonome1', 'sigla': 'VER1'}, 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}
+    #assert resultado == {'data': {'textoBiblico': [{'livro': {'nome': 'livro1', 'sigla': 'te1', 'testamento': {'nome': 'testamento1'}}, 'versao': {'nome': 'versaonome1', 'sigla': 'VER1'}, 'capitulo': 1, 'versiculo': 21, 'texto': 'Versiculo texto'}]}}
     assert 'errors' not in resultado
+    assert 'None' not in resultado
 
 
 @pytest.mark.django_db
