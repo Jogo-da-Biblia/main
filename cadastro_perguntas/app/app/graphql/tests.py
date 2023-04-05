@@ -15,6 +15,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from .schema import schema
 from .test_queries import querie_usuario, querie_usuarios, pergunta_aleatoria_querie, todas_perguntas_querie, usuario_vazio_querie, texto_biblico_querie, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_querie, adicionar_comentario_mutation
 
+# Prevents pytest from collecting the following classes as tests
+Testamento.__test__ = False
+
 # Usuario enviado no context graphql
 class UsuarioEmContexto:
     def __init__(self, usuario):
