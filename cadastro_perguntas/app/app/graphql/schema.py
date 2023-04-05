@@ -18,6 +18,36 @@ from app.core.forms import NewUserForm
 
 TXT_BIBLICO_REGEX = r'^(\w+)\s+(\d+):(.*)$'
 
+
+def serialize_texto_biblico(referencia, version, todos_os_textos=[]):
+    for ref in referencia.split(';'):
+        if ref.strip() == '':
+            continue
+        match = re.match(TXT_BIBLICO_REGEX, ref.strip())
+        versiculos_list = []
+        if match:
+            livro = match.group(1)
+            capitulo = match.group(2)
+            versiculos = match.group(3)
+            for v in versiculos.split(','):
+                if ':' in v:
+                    todos_os_textos = serialize_texto_biblico(referencia=f'{livro}{v}', version=version, todos_os_textos=todos_os_textos)
+                    continue
+                elif '-' in v:
+                    v = range(
+                        int(v.split('-')[0]), int(v.split('-')[1])+1)
+                    versiculos_list.extend(v)
+                else:
+                    versiculos_list.append(v)
+
+            todos_os_textos.extend(get_textos_biblicos(
+                text_info={'livro': livro, 'capitulo': capitulo, 'versiculos': versiculos_list}, version=version))
+
+        else:
+            raise Exception('Texto biblico no formato invalido')
+    
+    return todos_os_textos
+
 def usuario_superusuario_ou_admin(usuario):
     if usuario.is_superuser is False and any([usuario.groups.filter(name='administradores').exists(), usuario.groups.filter(name='revisores').exists(), usuario.groups.filter(name='publicadores').exists()]) is False:
         return False
@@ -146,30 +176,7 @@ class Query(graphene.ObjectType):
     def resolve_texto_biblico(root, info, referencia, versao='ara'):
         version =  Versao.objects.get(sigla=str(versao).upper())
 
-        todos_os_textos = []
-        for ref in referencia.split(';'):
-            if ref.strip() == '':
-                continue
-            match = re.match(TXT_BIBLICO_REGEX, ref.strip())
-            versiculos_list = []
-            if match:
-                livro = match.group(1)
-                capitulo = match.group(2)
-                versiculos = match.group(3)
-
-                for v in versiculos.split(','):
-                    if '-' in v:
-                        v = range(
-                            int(v.split('-')[0]), int(v.split('-')[1])+1)
-                        versiculos_list.extend(v)
-                    else:
-                        versiculos_list.append(v)
-
-                todos_os_textos.extend(get_textos_biblicos(
-                    text_info={'livro': livro, 'capitulo': capitulo, 'versiculos': versiculos_list}, version=version))
-
-            else:
-                raise Exception('Texto biblico no formato invalido')
+        todos_os_textos = serialize_texto_biblico(referencia, version)
 
         return todos_os_textos
 
