@@ -62,106 +62,139 @@ def delete_todos_items(db):
 
 @pytest.fixture
 def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
-    Tema.objects.create(nome='tema1', cor='rosa')
-    Tema.objects.create(nome='tema2', cor='dois')
+    Tema.objects.create(nome='Conhecimentos Gerais', cor='vermelho')
+    Tema.objects.create(nome='Doutrina', cor='roxo')
+
+    nt = Testamento(nome='Novo Testamento')
+    nt.save()
     
-
-    test_livro = Livro(
-        testamento=Testamento.objects.create(nome='testamento1'),
+    genesis = Livro(
+        testamento=Testamento.objects.create(nome='Antigo Testamento'),
         posicao=1,
-        nome='livro1',
-        sigla='te1'
+        nome='Gênesis',
+        sigla='Gn'
     )
-    test_livro.save()
+    genesis.save()
 
-    Livro.objects.create(
-        testamento=Testamento.objects.create(nome='testamento2'),
-        posicao=2,
-        nome='livro2',
-        sigla='te2'
+    mateus = Livro(
+        testamento=nt,
+        posicao=1,
+        nome='Mateus',
+        sigla='Mt'
     )
+    mateus.save()
 
-    test_versiculo = Versiculo.objects.create(
-        versao=Versao.objects.create(nome='versaonome1', sigla='VER1'),
-        livro=test_livro,
+    galatas = Livro(
+        testamento=nt,
+        posicao=1,
+        nome='Mateus',
+        sigla='Mt'
+    )
+    mateus.save()
+
+    ara = Versao(nome='Almeida Revista e Atualizada', sigla='ARA')
+    ara.save()
+
+    gn126 = Versiculo(
+        versao=ara,
+        livro=genesis,
         capitulo=1,
-        versiculo=21,
-        texto='Versiculo texto'
+        versiculo=26,
+        texto='Também disse Deus: Façamos o homem à nossa imagem, conforme a nossa semelhança; tenha ele domínio sobre os peixes do mar, sobre as aves dos céus, sobre os animais domésticos, sobre toda a terra e sobre todos os répteis que rastejam pela terra.'
     )
-    test_versiculo.save()
-    # Create 3 more versiculos
+    gn126.save()
+
+    gl220 = Versiculo(
+        versao=ara,
+        livro=galatas,
+        capitulo=2,
+        versiculo=20,
+        texto='Já estou crucificado com Cristo; e vivo, não mais eu, mas Cristo vive em mim; e a vida que agora vivo na carne, vivo-a na fé no filho de Deus, o qual me amou, e se entregou a si mesmo por mim.'
+    )
+    gn126.save()
+
+    # Criando 3 versículos mais de cada livro
     for i in range(1,4):
         Versiculo.objects.create(
-            versao=Versao.objects.get(nome='versaonome1', sigla='VER1'),
-            livro=test_livro,
+            versao=ara,
+            livro=genesis,
             capitulo=1,
-            versiculo=21+i,
-            texto='Versiculo texto'
+            versiculo=26+i,
+            texto=f'Versículo de exemplo de Gn 1:{26+i}'
         )
         Versiculo.objects.create(
-            versao=Versao.objects.get(nome='versaonome1', sigla='VER1'),
-            livro=Livro.objects.get(nome='livro2'),
-            capitulo=1,
+            versao=ara,
+            livro=mateus,
+            capitulo=28,
             versiculo=i,
-            texto='Versiculo texto'
+            texto=f'Versículo de exemplo de Mt 28:{i}'
         )
+
     Versiculo.objects.create(
-        versao=Versao.objects.get(nome='versaonome1', sigla='VER1'),
-        livro=test_livro,
+        versao=ara,
+        livro=genesis,
         capitulo=2,
-        versiculo=4,
-        texto='Versiculo texto'
+        versiculo=1,
+        texto='Assim foram acabados os céus e a terra, com todo o seu exército.'
+        )
+    
+    Versiculo.objects.create(
+        versao=ara,
+        livro=genesis,
+        capitulo=1,
+        versiculo=31,
+        texto='E viu Deus tudo quanto fizera, e eis que era muito bom. E foi a tarde e a manhã, o dia sexto.'
         )
 
     Referencia.objects.create(
-        livro = test_livro,
-        versiculo = test_versiculo
+        livro=genesis,
+        versiculo=gn126
     )
 
-    nova_pergunta = Pergunta.objects.create(
-        tema = Tema.objects.get(nome='tema1'),
-        enunciado = 'enunciado1adadasdasda',
+    pergunta1 = Pergunta.objects.create(
+        tema = Tema.objects.get(nome='Conhecimentos Gerais'),
+        enunciado = 'Quem criou o homem?',
         tipo_resposta = 'MES',
         criado_por = usuario_admin
     )
 
-    outra_pergunta = Pergunta.objects.create(
-        tema = Tema.objects.get(nome='tema2'),
-        enunciado = 'enunciado2a',
+    pergunta2 = Pergunta.objects.create(
+        tema = Tema.objects.get(nome='Doutrina'),
+        enunciado = 'O que Jesus nos mandou fazer?',
         tipo_resposta = 'MES',
         criado_por = usuario_admin
     )
     
-    nova_pergunta.save()
-    outra_pergunta.save()
+    pergunta1.save()
+    pergunta2.save()
 
     Comentario.objects.create(
-        pergunta = nova_pergunta,
-        email = 'email1@email.com',
-        phone = '12345678911',
+        pergunta = pergunta1,
+        email = 'comentarista1@email.com',
+        phone = '71992540723',
         is_whatsapp = True,
-        mensagem = 'mensagem1'
+        mensagem = 'Aqui vai o primeiro comentário'
     )
 
     Comentario.objects.create(
-        pergunta = nova_pergunta,
-        email = 'email2@email.com',
+        pergunta = pergunta2,
+        email = 'comentarista2@email.com',
         phone = '12345678911',
         is_whatsapp = False,
-        mensagem = 'mensagem2'
+        mensagem = 'Aqui vai o segundo comentário'
     )
 
-    return nova_pergunta
+    return pergunta2
 
 
 @pytest.mark.django_db
 def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
-    test_user = User.objects.create(username='Get user', email='getuser@example.com', password='123456')
+    usuario_de_teste = User.objects.create(username='user1', email='getuser@example.com', password='123456')
 
-    query = querie_usuario.replace('user_id', str(test_user.id))
+    query = querie_usuario.replace('user_id', str(usuario_de_teste.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'user': {'id': str(test_user.id), 'username': str(test_user.username), 'email': str(test_user.email), 'pontuacao': 0,'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
+    assert resultado == {'data': {'user': {'id': str(usuario_de_teste.id), 'username': str(usuario_de_teste.username), 'email': str(usuario_de_teste.email), 'pontuacao': 0,'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
 
@@ -176,15 +209,15 @@ def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuar
 
 @pytest.mark.django_db
 def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
-    User.objects.create(username='one user', email='oneuser@example.com', password='123456')
-    User.objects.create(username='two user', email='twouser@example.com', password='123456')
-    User.objects.create(username='three user', email='threeuser@example.com', password='123456')
+    User.objects.create(username='user5', email='oneuser@example.com', password='123456')
+    User.objects.create(username='user6', email='twouser@example.com', password='123456')
+    User.objects.create(username='user7', email='threeuser@example.com', password='123456')
 
     query = querie_usuarios
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    assert resultado == {'data': {'users': [{'id': '4', 'username': 'admin', 'pontuacao': 0}, {'id': '5', 'username': 'one user', 'pontuacao': 0}, {'id': '6', 'username': 'two user', 'pontuacao': 0}, {'id': '7', 'username': 'three user', 'pontuacao': 0}]}}
+    assert resultado == {'data': {'users': [{'id': '4', 'username': 'admin', 'pontuacao': 0}, {'id': '5', 'username': 'user5', 'pontuacao': 0}, {'id': '6', 'username': 'user6', 'pontuacao': 0}, {'id': '7', 'username': 'user7', 'pontuacao': 0}]}}
     assert len(resultado['data']['users']) == len(User.objects.all())
     assert 'errors' not in resultado
 
@@ -215,7 +248,7 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
     assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': 'mensagem1', 'email': 'email1@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': 'mensagem2', 'email': 'email2@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}]}}
     assert 'errors' not in resultado
 
-@pytest.mark.parametrize('texto_biblico_referencia', ['te1 1:21', 'te1 1:21-23', 'te1 1:21-23, 2:4', 'te1 1:21-23, 2:4; te2 1:1-3'])
+@pytest.mark.parametrize('texto_biblico_referencia', ['Gn 1:26', 'Gn 1:26-28', 'Gn 1:26,28', 'Gn 1:26-28,31', 'Gn 1:27-29, 2:1', 'Gn 1:27,28,31, 2:1', 'Gn 1:26-28,31, 2:1; Mt 1:1-3', 'Gn 1:26-28,31,2:1; Mt 1:1,2, 1:3', 'Gn 1:26-28,31, 2:1; Mt 1:1-3; Gl 2:20'])
 @pytest.mark.django_db
 def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
     query = texto_biblico_querie.replace('texto_biblico_referencia', texto_biblico_referencia)
