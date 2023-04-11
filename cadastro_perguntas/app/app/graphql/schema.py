@@ -26,7 +26,7 @@ def serialize_texto_biblico(referencia, version, todos_os_textos=None):
         ref = ref.strip()
         if ref == '':
             continue
-        # Add a space after comma
+        # Adicionar um espaco depois de cada virgula
         ref = re.sub(r',\s*', ', ', ref)
         match = re.match(TXT_BIBLICO_REGEX, ref)
         versiculos_list = []
@@ -80,9 +80,7 @@ def receber_pontuacao_usuario(usuario):
 def get_texto_biblico(text_info: dict, version: Versao):
     textos = []
     livro = Livro.objects.get(sigla=text_info['livro'])
-    #for versi in text_info['versiculo']:
     try:
-        # breakpoint()
         current_versiculo = Versiculo.objects.get(livro_id=livro, versao_id=version, versiculo=text_info['versiculo'], capitulo=int(text_info['capitulo']))
         textos.append(current_versiculo)
     except Versiculo.DoesNotExist:

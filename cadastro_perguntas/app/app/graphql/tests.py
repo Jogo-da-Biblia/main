@@ -220,9 +220,7 @@ def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
     User.objects.create(username='user6', email='twouser@example.com', password='123456')
     User.objects.create(username='user7', email='threeuser@example.com', password='123456')
 
-    query = query_usuarios
-
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(query_usuarios, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
     assert resultado == {'data': {'users': [{'id': '4', 'username': 'admin', 'pontuacao': 0}, {'id': '5', 'username': 'user5', 'pontuacao': 0}, {'id': '6', 'username': 'user6', 'pontuacao': 0}, {'id': '7', 'username': 'user7', 'pontuacao': 0}]}}
     assert len(resultado['data']['users']) == len(User.objects.all())
@@ -231,28 +229,29 @@ def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
 
 @pytest.mark.django_db
 def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_admin):
-    query = pergunta_aleatoria_query
+    tema_id = Tema.objects.get(nome='Conhecimentos Gerais').id
+    # So tem uma pergunta no tema Conhecimentos Gerais para testes
+    pergunta_conhecimentos_gerais = Pergunta.objects.get(tema=tema_id)
+    query = pergunta_aleatoria_query.replace('tema_id', str(tema_id))
+    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    resultado = client.execute(pergunta_aleatoria_query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
+    assert resultado == {'data': {'pergunta': [{'id': f'{pergunta_conhecimentos_gerais.id}', 'enunciado': f'{pergunta_conhecimentos_gerais.enunciado}'}]}}
     assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
 def test_deve_retornar_todas_as_perguntas(client, criar_dados_de_teste, usuario_admin, todas_perguntas):
-    query = todas_perguntas_query
-
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(todas_perguntas_query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
-    assert resultado == {'data': {'perguntas': [{'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}, {'id': f'{todas_perguntas[1].id}', 'enunciado': 'enunciado2a'}]}}
+    assert resultado == {'data': {'perguntas': [{'id': f'{todas_perguntas[0].id}', 'enunciado': f'{todas_perguntas[0].enunciado}'}, {'id': f'{todas_perguntas[1].id}', 'enunciado': f'{todas_perguntas[1].enunciado}'}]}}
     assert 'errors' not in resultado
+
 
 @pytest.mark.django_db
 def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuario_admin, todos_comentarios, todas_perguntas):
-    query = todos_comentarios_query
+    resultado = client.execute(todos_comentarios_query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': 'mensagem1', 'email': 'email1@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': 'mensagem2', 'email': 'email2@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}]}}
+    assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': f'{todos_comentarios[0].mensagem}', 'email': f'{todos_comentarios[0].email}', 'phone': f'{todos_comentarios[0].phone}', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': f'{todas_perguntas[0].enunciado}'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': f'{todos_comentarios[1].mensagem}', 'email': f'{todos_comentarios[1].email}', 'phone': f'{todos_comentarios[1].phone}', 'pergunta': {'id': f'{todas_perguntas[1].id}', 'enunciado': f'{todas_perguntas[1].enunciado}'}}]}}
     assert 'errors' not in resultado
 
 
@@ -272,9 +271,8 @@ def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, 
 
 @pytest.mark.django_db
 def test_deve_criar_novo_usuario(client, usuario_admin):
-    query = novo_usuario_mutation
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(novo_usuario_mutation, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
     assert User.objects.filter(email='teste1@email.com').exists() == True
     
@@ -328,7 +326,7 @@ def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_test
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     pergunta_mais_nova = Pergunta.objects.last()
-    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': 'tema1'}, 'enunciado': f'{pergunta_mais_nova.enunciado}', 'tipoResposta': f'{pergunta_mais_nova.tipo_resposta}', 'status': pergunta_mais_nova.status, 'revisadoPor': None}})])}
+    assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': f'{pergunta_mais_nova.tema.nome}'}, 'enunciado': f'{pergunta_mais_nova.enunciado}', 'tipoResposta': f'{pergunta_mais_nova.tipo_resposta}', 'status': pergunta_mais_nova.status, 'revisadoPor': None}})])}
     assert len(Pergunta.objects.all()) == 3
     assert 'errors' not in resultado
 

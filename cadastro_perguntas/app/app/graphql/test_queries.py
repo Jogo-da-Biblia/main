@@ -57,7 +57,7 @@ query_usuarios = '''
 
 pergunta_aleatoria_query = '''
         query{
-            pergunta(temaId:1){
+            pergunta(temaId:tema_id){
                 id
                 enunciado
             }
