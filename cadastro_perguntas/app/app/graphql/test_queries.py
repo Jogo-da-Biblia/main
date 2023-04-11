@@ -165,7 +165,7 @@ adicionar_nova_pergunta_mutation = '''
                 outrasReferencias: "outras ref",
                 referenciaRespostaId: referencia_id,
                 temaId: tema_id,
-                tipoResposta: "MES",
+                tipoResposta: "tipo_resposta",
             ){
                 pergunta{
                     id

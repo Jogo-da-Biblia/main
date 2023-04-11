@@ -242,7 +242,7 @@ def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_
 @pytest.mark.django_db
 def test_deve_retornar_todas_as_perguntas(client, criar_dados_de_teste, usuario_admin, todas_perguntas):
     resultado = client.execute(todas_perguntas_query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    
+
     assert resultado == {'data': {'perguntas': [{'id': f'{todas_perguntas[0].id}', 'enunciado': f'{todas_perguntas[0].enunciado}'}, {'id': f'{todas_perguntas[1].id}', 'enunciado': f'{todas_perguntas[1].enunciado}'}]}}
     assert 'errors' not in resultado
 
@@ -316,15 +316,15 @@ def test_deve_enviar_email_com_nova_senha(client, usuario_admin):
     assert resultado == {'data': OrderedDict([('recuperarSenha', {'mensagem': 'Senha alterada e email enviado com sucesso'})])}
     assert 'errors' not in resultado
 
-
+@pytest.mark.parametrize('tipo_resposta', ['MES', 'RCO', 'RLC', 'RES'])
 @pytest.mark.django_db
-def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
+def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_teste, tipo_resposta):
     tema_id = Tema.objects.get(nome='Doutrina').id
     referencia_id = Referencia.objects.all()[0].id
     
-    query = adicionar_nova_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
-
+    query = adicionar_nova_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('tipo_resposta', tipo_resposta)
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+
     pergunta_mais_nova = Pergunta.objects.last()
     assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': f'{pergunta_mais_nova.tema.nome}'}, 'enunciado': f'{pergunta_mais_nova.enunciado}', 'tipoResposta': f'{pergunta_mais_nova.tipo_resposta}', 'status': pergunta_mais_nova.status, 'revisadoPor': None}})])}
     assert len(Pergunta.objects.all()) == 3
