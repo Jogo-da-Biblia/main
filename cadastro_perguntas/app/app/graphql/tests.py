@@ -62,7 +62,7 @@ def delete_todos_items(db):
 
 @pytest.fixture
 def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
-    Tema.objects.create(nome='Conhecimentos Gerais', cor='vermelho')
+    Tema.objects.create(nome='Conhecimentos Gerais', cor='red')
     Tema.objects.create(nome='Doutrina', cor='roxo')
 
     nt = Testamento(nome='Novo Testamento')
@@ -248,14 +248,18 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
     assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': 'mensagem1', 'email': 'email1@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': 'mensagem2', 'email': 'email2@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}]}}
     assert 'errors' not in resultado
 
-@pytest.mark.parametrize('texto_biblico_referencia', ['Gn 1:26', 'Gn 1:26-28', 'Gn 1:26,28', 'Gn 1:26-28,31', 'Gn 1:27-29, 2:1', 'Gn 1:27,28,31, 2:1', 'Gn 1:26-28,31, 2:1; Mt 1:1-3', 'Gn 1:26-28,31,2:1; Mt 1:1,2, 1:3', 'Gn 1:26-28,31, 2:1; Mt 1:1-3; Gl 2:20'])
+
+@pytest.mark.parametrize('texto_biblico_referencia', [('Gn 1:26', 1), ('Gn 1:26-28', 3), ('Gn 1:26,28', 2), ('Gn 1:26-28,31', 4), ('Gn 1:27-29, 2:1', 4), ('Gn 1:27,28,31, 2:1', 4), ('Gn 1:26-28,31, 2:1; Mt 1:1-3', 8), ('Gn 1:26-28,31,2:1; Mt 1:1,2, 1:3', 8), ('Gn 1:26-28,31, 2:1; Mt 1:1-3; Gl 2:20', 9)])
 @pytest.mark.django_db
 def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
-    query = texto_biblico_query.replace('texto_biblico_referencia', texto_biblico_referencia)
-
-    print(query)
+    # breakpoint()
+    texto_biblico = texto_biblico_referencia[0]
+    quant_esperada_versiculos = texto_biblico_referencia[1]
+    query = texto_biblico_query.replace('texto_biblico_referencia', texto_biblico)
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    breakpoint()
+    assert len(resultado['data']['textoBiblico']) == quant_esperada_versiculos
     assert 'errors' not in resultado
     assert 'None' not in resultado
 
@@ -311,7 +315,7 @@ def test_deve_enviar_email_com_nova_senha(client, usuario_admin):
 
 @pytest.mark.django_db
 def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
-    tema_id = Tema.objects.get(nome='tema1').id
+    tema_id = Tema.objects.get(nome='Doutrina').id
     referencia_id = Referencia.objects.all()[0].id
     
     query = adicionar_nova_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id))
@@ -326,7 +330,7 @@ def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_test
 @pytest.mark.django_db
 def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
     nova_pergunta = Pergunta.objects.create(
-        tema = Tema.objects.get(nome='tema1'),
+        tema = Tema.objects.get(nome='Doutrina'),
         enunciado = 'enunciado1adadasdasda',
         tipo_resposta = 'MES',
         criado_por = usuario_admin,
@@ -337,7 +341,7 @@ def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
     assert nova_pergunta.enunciado == 'enunciado1adadasdasda'
     assert nova_pergunta.status == False
 
-    tema_id = Tema.objects.get(nome='tema1').id
+    tema_id = Tema.objects.get(nome='Doutrina').id
     referencia_id = Referencia.objects.all()[0].id
 
     query = editar_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))

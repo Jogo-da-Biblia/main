@@ -19,11 +19,14 @@ from app.core.forms import NewUserForm
 TXT_BIBLICO_REGEX = r'^(\w+)\s+(\d+):(.*)$'
 
 
-def serialize_texto_biblico(referencia, version, todos_os_textos=[]):
+def serialize_texto_biblico(referencia, version, todos_os_textos=None):
+    if todos_os_textos is None:
+        todos_os_textos = set()
     for ref in referencia.split(';'):
-        if ref.strip() == '':
+        ref = ref.strip()
+        if ref == '':
             continue
-        match = re.match(TXT_BIBLICO_REGEX, ref.strip())
+        match = re.match(TXT_BIBLICO_REGEX, ref)
         versiculos_list = []
         if match:
             livro = match.group(1)
@@ -31,7 +34,7 @@ def serialize_texto_biblico(referencia, version, todos_os_textos=[]):
             versiculos = match.group(3)
             for v in versiculos.split(','):
                 if ':' in v:
-                    todos_os_textos = serialize_texto_biblico(referencia=f'{livro}{v}', version=version, todos_os_textos=todos_os_textos)
+                    todos_os_textos = serialize_texto_biblico(referencia=f'{livro}{v}', version=version, todos_os_textos=set(todos_os_textos))
                     continue
                 elif '-' in v:
                     v = range(
@@ -39,9 +42,11 @@ def serialize_texto_biblico(referencia, version, todos_os_textos=[]):
                     versiculos_list.extend(v)
                 else:
                     versiculos_list.append(v)
-
-            todos_os_textos.extend(get_textos_biblicos(
-                text_info={'livro': livro, 'capitulo': capitulo, 'versiculos': versiculos_list}, version=version))
+            for versiculo in versiculos_list:
+                print(todos_os_textos)
+                todos_os_textos.add((str(livro), str(capitulo), str(versiculo)))
+                # todos_os_textos.append(f'{livro} {capitulo}:{versiculo}')
+            # breakpoint()
 
         else:
             raise Exception('Texto biblico no formato invalido')
@@ -73,12 +78,16 @@ def receber_pontuacao_usuario(usuario):
     return pontuacao
 
 
-def get_textos_biblicos(text_info: dict, version: Versao):
+def get_texto_biblico(text_info: dict, version: Versao):
     textos = []
     livro = Livro.objects.get(sigla=text_info['livro'])
-    for versi in text_info['versiculos']:
-        current_versiculo = Versiculo.objects.filter(livro_id=livro, versao_id=version, versiculo=versi, capitulo=int(text_info['capitulo']))[0]
+    #for versi in text_info['versiculo']:
+    try:
+        # breakpoint()
+        current_versiculo = Versiculo.objects.get(livro_id=livro, versao_id=version, versiculo=text_info['versiculo'], capitulo=int(text_info['capitulo']))
         textos.append(current_versiculo)
+    except Versiculo.DoesNotExist:
+        raise Exception(f'O versiculo {text_info} nao existe na base de dados')
 
     return textos
 
@@ -175,10 +184,18 @@ class Query(graphene.ObjectType):
 
     def resolve_texto_biblico(root, info, referencia, versao='ara'):
         version =  Versao.objects.get(sigla=str(versao).upper())
-
+        # raise Exception('ue')
         todos_os_textos = serialize_texto_biblico(referencia, version)
+        print(todos_os_textos)
+        versiculos = []
+        # breakpoint()
+        for texto in todos_os_textos:
+            versiculos.extend(get_texto_biblico(
+                text_info={'livro': texto[0], 'capitulo': texto[1], 'versiculo': texto[2]}, version=version))
 
-        return todos_os_textos
+        # breakpoint()
+        print(versiculos)
+        return versiculos
 
 
 """

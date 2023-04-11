@@ -92,7 +92,7 @@ texto_biblico_query = '''
     query{
         textoBiblico(
                 referencia: "texto_biblico_referencia"
-                versao: "ver1"
+                versao: "ara"
             ){
                 livro{
                     nome
