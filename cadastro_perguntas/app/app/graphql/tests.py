@@ -13,7 +13,7 @@ from app.perguntas.models import Pergunta, Tema, Referencia
 from app.comentarios.models import Comentario
 from django.core.exceptions import ObjectDoesNotExist
 from .schema import schema
-from .test_queries import querie_usuario, querie_usuarios, pergunta_aleatoria_querie, todas_perguntas_querie, usuario_vazio_querie, texto_biblico_querie, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_querie, adicionar_comentario_mutation
+from .test_queries import query_usuario, query_usuarios, pergunta_aleatoria_query, todas_perguntas_query, usuario_vazio_query, texto_biblico_query, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_query, adicionar_comentario_mutation
 
 # Prevents pytest from collecting the following classes as tests
 Testamento.__test__ = False
@@ -191,7 +191,7 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
 def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
     usuario_de_teste = User.objects.create(username='user1', email='getuser@example.com', password='123456')
 
-    query = querie_usuario.replace('user_id', str(usuario_de_teste.id))
+    query = query_usuario.replace('user_id', str(usuario_de_teste.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'user': {'id': str(usuario_de_teste.id), 'username': str(usuario_de_teste.username), 'email': str(usuario_de_teste.email), 'pontuacao': 0,'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
@@ -200,7 +200,7 @@ def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
 
 @pytest.mark.django_db
 def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuario_admin):
-    query = usuario_vazio_querie.replace('user_id', str(usuario_admin.id))
+    query = usuario_vazio_query.replace('user_id', str(usuario_admin.id))
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'user': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email), 'pontuacao': 0, 'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
@@ -213,7 +213,7 @@ def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
     User.objects.create(username='user6', email='twouser@example.com', password='123456')
     User.objects.create(username='user7', email='threeuser@example.com', password='123456')
 
-    query = querie_usuarios
+    query = query_usuarios
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
@@ -224,7 +224,7 @@ def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
 
 @pytest.mark.django_db
 def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_admin):
-    query = pergunta_aleatoria_querie
+    query = pergunta_aleatoria_query
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
@@ -233,7 +233,7 @@ def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_
 
 @pytest.mark.django_db
 def test_deve_retornar_todas_as_perguntas(client, criar_dados_de_teste, usuario_admin, todas_perguntas):
-    query = todas_perguntas_querie
+    query = todas_perguntas_query
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
@@ -242,7 +242,7 @@ def test_deve_retornar_todas_as_perguntas(client, criar_dados_de_teste, usuario_
 
 @pytest.mark.django_db
 def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuario_admin, todos_comentarios, todas_perguntas):
-    query = todos_comentarios_querie
+    query = todos_comentarios_query
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'comentarios': [{'id': f'{todos_comentarios[0].id}', 'mensagem': 'mensagem1', 'email': 'email1@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}, {'id': f'{todos_comentarios[1].id}', 'mensagem': 'mensagem2', 'email': 'email2@email.com', 'phone': '12345678911', 'pergunta': {'id': f'{todas_perguntas[0].id}', 'enunciado': 'enunciado1adadasdasda'}}]}}
@@ -251,7 +251,7 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
 @pytest.mark.parametrize('texto_biblico_referencia', ['Gn 1:26', 'Gn 1:26-28', 'Gn 1:26,28', 'Gn 1:26-28,31', 'Gn 1:27-29, 2:1', 'Gn 1:27,28,31, 2:1', 'Gn 1:26-28,31, 2:1; Mt 1:1-3', 'Gn 1:26-28,31,2:1; Mt 1:1,2, 1:3', 'Gn 1:26-28,31, 2:1; Mt 1:1-3; Gl 2:20'])
 @pytest.mark.django_db
 def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
-    query = texto_biblico_querie.replace('texto_biblico_referencia', texto_biblico_referencia)
+    query = texto_biblico_query.replace('texto_biblico_referencia', texto_biblico_referencia)
 
     print(query)
 

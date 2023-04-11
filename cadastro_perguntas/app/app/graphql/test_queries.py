@@ -1,5 +1,5 @@
 # Querys and Mutations to test
-querie_usuario ='''
+query_usuario ='''
         query{
             user(id:user_id){
                 id
@@ -22,7 +22,7 @@ querie_usuario ='''
         }
     '''
 
-usuario_vazio_querie = '''
+usuario_vazio_query = '''
         query{
             user{
                 id
@@ -45,7 +45,7 @@ usuario_vazio_querie = '''
         }
     '''
 
-querie_usuarios = '''
+query_usuarios = '''
         query{
             users{
                 id
@@ -55,7 +55,7 @@ querie_usuarios = '''
         }
     '''
 
-pergunta_aleatoria_querie = '''
+pergunta_aleatoria_query = '''
         query{
             pergunta(temaId:1){
                 id
@@ -64,7 +64,7 @@ pergunta_aleatoria_querie = '''
         }
     '''
 
-todas_perguntas_querie = '''
+todas_perguntas_query = '''
         query{
             perguntas{
                 id
@@ -73,7 +73,7 @@ todas_perguntas_querie = '''
         }
     '''
 
-todos_comentarios_querie = '''
+todos_comentarios_query = '''
     query{
         comentarios{
             id
@@ -88,7 +88,7 @@ todos_comentarios_querie = '''
     }
     '''
 
-texto_biblico_querie = '''
+texto_biblico_query = '''
     query{
         textoBiblico(
                 referencia: "texto_biblico_referencia"
