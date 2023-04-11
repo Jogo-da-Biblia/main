@@ -21,11 +21,13 @@ TXT_BIBLICO_REGEX = r'^(\w+)\s+(\d+):(.*)$'
 
 def serialize_texto_biblico(referencia, version, todos_os_textos=None):
     if todos_os_textos is None:
-        todos_os_textos = set()
+        todos_os_textos = []
     for ref in referencia.split(';'):
         ref = ref.strip()
         if ref == '':
             continue
+        # Add a space after comma
+        ref = re.sub(r',\s*', ', ', ref)
         match = re.match(TXT_BIBLICO_REGEX, ref)
         versiculos_list = []
         if match:
@@ -34,7 +36,7 @@ def serialize_texto_biblico(referencia, version, todos_os_textos=None):
             versiculos = match.group(3)
             for v in versiculos.split(','):
                 if ':' in v:
-                    todos_os_textos = serialize_texto_biblico(referencia=f'{livro}{v}', version=version, todos_os_textos=set(todos_os_textos))
+                    todos_os_textos = serialize_texto_biblico(referencia=f'{livro}{v}', version=version, todos_os_textos=todos_os_textos)
                     continue
                 elif '-' in v:
                     v = range(
@@ -43,10 +45,7 @@ def serialize_texto_biblico(referencia, version, todos_os_textos=None):
                 else:
                     versiculos_list.append(v)
             for versiculo in versiculos_list:
-                print(todos_os_textos)
-                todos_os_textos.add((str(livro), str(capitulo), str(versiculo)))
-                # todos_os_textos.append(f'{livro} {capitulo}:{versiculo}')
-            # breakpoint()
+                todos_os_textos.append((str(livro), str(capitulo), str(versiculo)))
 
         else:
             raise Exception('Texto biblico no formato invalido')
@@ -184,17 +183,12 @@ class Query(graphene.ObjectType):
 
     def resolve_texto_biblico(root, info, referencia, versao='ara'):
         version =  Versao.objects.get(sigla=str(versao).upper())
-        # raise Exception('ue')
         todos_os_textos = serialize_texto_biblico(referencia, version)
-        print(todos_os_textos)
         versiculos = []
-        # breakpoint()
         for texto in todos_os_textos:
             versiculos.extend(get_texto_biblico(
                 text_info={'livro': texto[0], 'capitulo': texto[1], 'versiculo': texto[2]}, version=version))
 
-        # breakpoint()
-        print(versiculos)
         return versiculos
 
 

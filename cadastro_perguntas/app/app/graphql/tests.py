@@ -87,10 +87,10 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
     galatas = Livro(
         testamento=nt,
         posicao=1,
-        nome='Mateus',
-        sigla='Mt'
+        nome='Galatas',
+        sigla='Gl'
     )
-    mateus.save()
+    galatas.save()
 
     ara = Versao(nome='Almeida Revista e Atualizada', sigla='ARA')
     ara.save()
@@ -111,7 +111,7 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
         versiculo=20,
         texto='Já estou crucificado com Cristo; e vivo, não mais eu, mas Cristo vive em mim; e a vida que agora vivo na carne, vivo-a na fé no filho de Deus, o qual me amou, e se entregou a si mesmo por mim.'
     )
-    gn126.save()
+    gl220.save()
 
     # Criando 3 versículos mais de cada livro
     for i in range(1,4):
@@ -128,6 +128,13 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
             capitulo=28,
             versiculo=i,
             texto=f'Versículo de exemplo de Mt 28:{i}'
+        )
+        Versiculo.objects.create(
+            versao=ara,
+            livro=mateus,
+            capitulo=1,
+            versiculo=i,
+            texto=f'Versículo de exemplo de Mt 1:{i}'
         )
 
     Versiculo.objects.create(
@@ -226,7 +233,7 @@ def test_admin_deve_listar_todos_usuarios(client, usuario_admin):
 def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_admin):
     query = pergunta_aleatoria_query
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(pergunta_aleatoria_query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'pergunta': [{'id': '1', 'enunciado': 'enunciado1adadasdasda'}]}}
     assert 'errors' not in resultado
 
@@ -252,13 +259,12 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
 @pytest.mark.parametrize('texto_biblico_referencia', [('Gn 1:26', 1), ('Gn 1:26-28', 3), ('Gn 1:26,28', 2), ('Gn 1:26-28,31', 4), ('Gn 1:27-29, 2:1', 4), ('Gn 1:27,28,31, 2:1', 4), ('Gn 1:26-28,31, 2:1; Mt 1:1-3', 8), ('Gn 1:26-28,31,2:1; Mt 1:1,2, 1:3', 8), ('Gn 1:26-28,31, 2:1; Mt 1:1-3; Gl 2:20', 9)])
 @pytest.mark.django_db
 def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
-    # breakpoint()
     texto_biblico = texto_biblico_referencia[0]
     quant_esperada_versiculos = texto_biblico_referencia[1]
     query = texto_biblico_query.replace('texto_biblico_referencia', texto_biblico)
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-    breakpoint()
+
     assert len(resultado['data']['textoBiblico']) == quant_esperada_versiculos
     assert 'errors' not in resultado
     assert 'None' not in resultado
