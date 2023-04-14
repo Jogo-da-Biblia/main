@@ -232,8 +232,7 @@ def test_deve_retornar_pergunta_aleatoria(client, criar_dados_de_teste, usuario_
     tema_id = Tema.objects.get(nome='Conhecimentos Gerais').id
     # So tem uma pergunta no tema Conhecimentos Gerais para testes
     pergunta_conhecimentos_gerais = Pergunta.objects.get(tema=tema_id)
-    query = pergunta_aleatoria_query.replace('tema_id', str(tema_id))
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(pergunta_aleatoria_query, variables={'temaId': tema_id}, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
     assert resultado == {'data': {'pergunta': [{'id': f'{pergunta_conhecimentos_gerais.id}', 'enunciado': f'{pergunta_conhecimentos_gerais.enunciado}'}]}}
     assert 'errors' not in resultado
@@ -258,8 +257,7 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
 @pytest.mark.parametrize('texto_biblico_referencia', [('Gn 1:26', 1), ('Gn 1:26-28', 3), ('Gn 1:26,28', 2), ('Gn 1:26-28,31', 4), ('Gn 1:27-29, 2:1', 4), ('Gn 1:27,28,31, 2:1', 4), ('Gn 1:26-28,31, 2:1; Mt 1:1-3', 8), ('Gn 1:26-28,31,2:1; Mt 1:1,2, 1:3', 8), ('Gn 1:26-28,31, 2:1; Mt 1:1-3; Gl 2:20', 9)])
 @pytest.mark.django_db
 def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
-    texto_biblico = texto_biblico_referencia[0]
-    quant_esperada_versiculos = texto_biblico_referencia[1]
+    texto_biblico, quant_esperada_versiculos = texto_biblico_referencia
     query = texto_biblico_query.replace('texto_biblico_referencia', texto_biblico)
 
     resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
