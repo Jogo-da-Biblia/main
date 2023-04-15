@@ -65,7 +65,7 @@ class Pergunta(models.Model):
 
     criado_por = models.ForeignKey(
         User,
-        related_name='criado_por',
+        related_name='perguntas_criadas',
         on_delete=models.CASCADE
     )
 
@@ -73,7 +73,7 @@ class Pergunta(models.Model):
 
     revisado_por = models.ForeignKey(
         User,
-        related_name='revisado_por',
+        related_name='perguntas_revisadas',
         on_delete=models.CASCADE,
         null=True,
         blank=True
@@ -90,7 +90,7 @@ class Pergunta(models.Model):
 
     publicado_por = models.ForeignKey(
         User,
-        related_name='publicado_por',
+        related_name='perguntas_publicadas',
         on_delete=models.CASCADE,
         null=True,
         blank=True

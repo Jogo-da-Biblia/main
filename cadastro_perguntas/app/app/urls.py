@@ -18,13 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from graphene_django.views import GraphQLView
 
 from app.perguntas.views import tmp_home
+from app.graphql.schema import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('app.pages.urls'), name='pages'),
+    path("graphql", GraphQLView.as_view(graphiql=True, schema=schema), name="graphql"),
 ]
 
 urlpatterns += static(

@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `biblia_versao`;
 CREATE TABLE `biblia_versao` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(33) NOT NULL,
+  `sigla` varchar(4) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

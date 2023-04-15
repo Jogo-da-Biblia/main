@@ -7,7 +7,7 @@ class Comentario(models.Model):
     id = models.AutoField(primary_key=True)
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     email = models.CharField(max_length=126)
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=11, null=True, blank=True)
     is_whatsapp = models.BooleanField('É Whatsapp?', default=True)
     mensagem = models.TextField()
     criado_em = models.DateTimeField(auto_now_add=True)
