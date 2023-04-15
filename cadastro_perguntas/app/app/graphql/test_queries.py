@@ -1,7 +1,7 @@
 # Querys and Mutations to test
 query_usuario ='''
-        query{
-            user(id:user_id){
+        query usuarioQuery($userId: Int!){
+            user(id:$userId){
                 id
                 username
                 email
@@ -89,9 +89,9 @@ todos_comentarios_query = '''
     '''
 
 texto_biblico_query = '''
-    query{
+    query textoBiblicoQuery($textoBiblicoReferencia: String!){
         textoBiblico(
-                referencia: "texto_biblico_referencia"
+                referencia: $textoBiblicoReferencia
                 versao: "ara"
             ){
                 livro{
@@ -130,9 +130,9 @@ novo_usuario_mutation = '''
 
 
 editar_usuario_mutation = '''
-        mutation{
+        mutation editarUsuarioMutation($userId: Int!){
             editarUsuario(
-                id: user_id
+                id: $userId
                 newUsername:"newusername"
                 newEmail: "newemai1l@.com"
             ){
@@ -147,9 +147,9 @@ editar_usuario_mutation = '''
 
 
 reenviar_senha_mutation = '''
-        mutation{
+        mutation reenviarSenhaMutation($userId: Int!){
             recuperarSenha(
-                usuarioId:user_id, 
+                usuarioId: $userId, 
                 email:"user@email.com"
             ){
                 mensagem
@@ -159,13 +159,13 @@ reenviar_senha_mutation = '''
 
 
 adicionar_nova_pergunta_mutation = '''
-        mutation{
+        mutation adicionarNovaPerguntaMutation($temaId: Int!, $referenciaId: Int!, $tipoResposta: String!){
             cadastrarPergunta(
                 enunciado:"Enunciaod da pergunta",
                 outrasReferencias: "outras ref",
-                referenciaRespostaId: referencia_id,
-                temaId: tema_id,
-                tipoResposta: "tipo_resposta",
+                referenciaRespostaId: $referenciaId,
+                temaId: $temaId,
+                tipoResposta: $tipoResposta,
             ){
                 pergunta{
                     id
@@ -186,13 +186,13 @@ adicionar_nova_pergunta_mutation = '''
     '''
 
 editar_pergunta_mutation = '''
-        mutation{
+        mutation editarPerguntaMutation($perguntaId: Int!, $temaId: Int!, $referenciaId: Int!){
             editarPergunta(
-                id:pergunta_id, 
+                id:$perguntaId, 
                 enunciado:"Novo enunciado",
                 outrasReferencias: "novaOUtraRefe",
-                referenciaRespostaId: referencia_id,
-                temaId: tema_id,
+                referenciaRespostaId: $referenciaId,
+                temaId: $temaId,
                 tipoResposta: "MES",
                 status: true
             ){
@@ -213,10 +213,10 @@ editar_pergunta_mutation = '''
     '''
 
 adicionar_comentario_mutation = '''
-    mutation{
+    mutation adicionarComentarioMutation($perguntaId: Int!){
             adicionarComentario(
                 mensagem: "mensagem",
-                perguntaId: pergunta_id,
+                perguntaId: $perguntaId,
                 phone: "12345678911",
                 isWhatsapp: true
                 ){

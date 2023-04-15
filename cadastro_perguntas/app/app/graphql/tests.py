@@ -198,18 +198,16 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
 def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
     usuario_de_teste = User.objects.create(username='user1', email='getuser@example.com', password='123456')
 
-    query = query_usuario.replace('user_id', str(usuario_de_teste.id))
+    resultado = client.execute(query_usuario, variables={'userId': usuario_de_teste.id},context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'user': {'id': str(usuario_de_teste.id), 'username': str(usuario_de_teste.username), 'email': str(usuario_de_teste.email), 'pontuacao': 0,'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
 
 @pytest.mark.django_db
 def test_administrador_deve_receber_info_propria_se_user_for_vazio(client, usuario_admin):
-    query = usuario_vazio_query.replace('user_id', str(usuario_admin.id))
+    resultado = client.execute(usuario_vazio_query, context_value=UsuarioEmContexto(usuario=usuario_admin))
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
     assert resultado == {'data': {'user': {'id': str(usuario_admin.id), 'username': str(usuario_admin.username), 'email': str(usuario_admin.email), 'pontuacao': 0, 'perguntasCriadas': [], 'perguntasRevisadas': [], 'perguntasPublicadas': []}}}
     assert 'errors' not in resultado
 
@@ -258,9 +256,8 @@ def test_deve_retornar_todos_os_comentarios(client, criar_dados_de_teste, usuari
 @pytest.mark.django_db
 def test_deve_buscar_texto_biblico(client, usuario_admin, criar_dados_de_teste, texto_biblico_referencia):
     texto_biblico, quant_esperada_versiculos = texto_biblico_referencia
-    query = texto_biblico_query.replace('texto_biblico_referencia', texto_biblico)
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(texto_biblico_query, variables={'textoBiblicoReferencia': texto_biblico},context_value=UsuarioEmContexto(usuario=usuario_admin))
 
     assert len(resultado['data']['textoBiblico']) == quant_esperada_versiculos
     assert 'errors' not in resultado
@@ -288,9 +285,7 @@ def test_deve_editar_novo_usuario(client, usuario_admin, criar_dados_de_teste):
     assert new_user.username == 'donoteditthis'
     assert new_user.email == 'edit@email.com'
 
-    query = editar_usuario_mutation.replace('user_id', str(user_id))
-
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(editar_usuario_mutation, variables={'userId':user_id}, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
     assert User.objects.filter(id=user_id).exists() == True
 
@@ -307,12 +302,12 @@ def test_deve_enviar_email_com_nova_senha(client, usuario_admin):
     new_user = User.objects.create(email='user@email.com', username='donoteditthis', is_staff=False)
     user_id = new_user.id
 
-    query = reenviar_senha_mutation.replace('user_id', str(user_id))
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(reenviar_senha_mutation, variables={'userId': user_id}, context_value=UsuarioEmContexto(usuario=usuario_admin))
     
     assert resultado == {'data': OrderedDict([('recuperarSenha', {'mensagem': 'Senha alterada e email enviado com sucesso'})])}
     assert 'errors' not in resultado
+
 
 @pytest.mark.parametrize('tipo_resposta', ['MES', 'RCO', 'RLC', 'RES'])
 @pytest.mark.django_db
@@ -320,9 +315,8 @@ def test_deve_adicionar_nova_pergunta(client, usuario_admin, criar_dados_de_test
     tema_id = Tema.objects.get(nome='Doutrina').id
     referencia_id = Referencia.objects.all()[0].id
     
-    query = adicionar_nova_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('tipo_resposta', tipo_resposta)
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
-
+    resultado = client.execute(adicionar_nova_pergunta_mutation, variables={'temaId': tema_id, 'referenciaId': referencia_id, 'tipoResposta': tipo_resposta}, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    
     pergunta_mais_nova = Pergunta.objects.last()
     assert resultado == {'data': OrderedDict([('cadastrarPergunta', {'pergunta': {'id': f'{pergunta_mais_nova.id}', 'tema': {'nome': f'{pergunta_mais_nova.tema.nome}'}, 'enunciado': f'{pergunta_mais_nova.enunciado}', 'tipoResposta': f'{pergunta_mais_nova.tipo_resposta}', 'status': pergunta_mais_nova.status, 'revisadoPor': None}})])}
     assert len(Pergunta.objects.all()) == 3
@@ -346,9 +340,8 @@ def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
     tema_id = Tema.objects.get(nome='Doutrina').id
     referencia_id = Referencia.objects.all()[0].id
 
-    query = editar_pergunta_mutation.replace('tema_id', str(tema_id)).replace('referencia_id', str(referencia_id)).replace('pergunta_id', str(pergunta_id))
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(editar_pergunta_mutation, variables={'temaId': tema_id, 'referenciaId': referencia_id, 'perguntaId': pergunta_id}, context_value=UsuarioEmContexto(usuario=usuario_admin))
     nova_pergunta.refresh_from_db()
 
     assert resultado == {'data': OrderedDict([('editarPergunta', {'pergunta': {'id': f'{nova_pergunta.id}', 'enunciado': 'Novo enunciado', 'revisadoPor': None, 'status': True}})])}
@@ -361,9 +354,8 @@ def test_deve_editar_nova_pergunta(client, usuario_admin, criar_dados_de_teste):
 def test_deve_adicionar_novo_comentario(client, usuario_admin, criar_dados_de_teste, todas_perguntas):
     pergunta_id = todas_perguntas[0].id
     
-    query = adicionar_comentario_mutation.replace('pergunta_id', str(pergunta_id))
 
-    resultado = client.execute(query, context_value=UsuarioEmContexto(usuario=usuario_admin))
+    resultado = client.execute(adicionar_comentario_mutation, variables={'perguntaId': pergunta_id}, context_value=UsuarioEmContexto(usuario=usuario_admin))
     comentario_mais_novo = Comentario.objects.last()
     assert resultado == {'data': OrderedDict([('adicionarComentario', {'comentario': {'phone': f'{comentario_mais_novo.phone}', 'isWhatsapp': comentario_mais_novo.is_whatsapp, 'email': f'{comentario_mais_novo.email}', 'mensagem': f'{comentario_mais_novo.mensagem}', 'pergunta': {'id': f'{comentario_mais_novo.pergunta.id}', 'enunciado': f'{comentario_mais_novo.pergunta.enunciado}'}}})])}
     assert len(Comentario.objects.all()) == 3
