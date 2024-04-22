@@ -2,7 +2,6 @@ from django.db import models
 from django.urls import reverse
 
 from app.core.models import User
-from app.biblia.models import Livro, Versiculo
 
 
 class Tema(models.Model):
