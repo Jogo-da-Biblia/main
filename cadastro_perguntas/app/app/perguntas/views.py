@@ -19,7 +19,7 @@ class CadastrarPerguntaMutation(graphene.Mutation):
         if not info.context.user.is_authenticated:
             raise Exception(
                 'Voce precisa estar logado para cadastrar uma pergunta')
-
+        # TODO Em caso de referência bíblica, deve fazer uma verificação se está correto o formato da referência
         tema = Tema.objects.get(id=tema_id)
         refencia_resposta = Referencia.objects.get(id=referencia_resposta_id)
         pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta,
