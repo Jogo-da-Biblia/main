@@ -1,6 +1,6 @@
 version: "3"
 services:
-  cadastro_perguntas:
+  app:
     container_name: jogodabiblia_cadastro_perguntas
     restart: always
     build:
@@ -42,4 +42,4 @@ services:
     ports:
       - "${NGINX_PORT}:80"
     depends_on:
-      - cadastro_perguntas
+      - app

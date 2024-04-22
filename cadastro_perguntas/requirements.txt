@@ -1,4 +1,4 @@
-Django==3.1.*
+Django==3.2.*
 djangorestframework
 markdown
 django-filter
@@ -7,18 +7,18 @@ Pygments
 python-dotenv
 gunicorn
 autopep8
-django-sass
+django-graphql-jwt==0.4.0
 Pillow
 django-cors-headers
 pyyaml
 uritemplate
 xhtml2pdf
-pymysql
 pytest
 pytest-django
 python-gettext
-graphene-django==2.15.0
+graphene-django==3.2.1
 psycopg2==2.9.3
 django-allauth==0.50.0
 django-crispy-forms==1.14.0
+django-graphiql==0.4.4
 django-widget-tweaks==1.4.12

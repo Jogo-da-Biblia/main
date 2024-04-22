@@ -25,9 +25,9 @@ makemigrations:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations comentarios"
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"		
 seed:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py shell < seed.py"		
+	docker compose exec -it app bash -c "cd /usr/src/app/app && python manage.py shell < seed.py"		
 	echo "Restaurando banco com sqls da pasta initial_data"
-	docker exec -it jogodabiblia_db bash -c "psql -U postgres -d jogodabiblia -f /initial_data/biblia_psql.sql"
+	docker compose exec -it app bash -c "psql -U postgres -d jogodabiblia -f /initial_data/biblia_psql.sql"
 superuser:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py createsuperuser"
 logs:

@@ -1,30 +1,20 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib import messages
+import graphene
+import graphql_jwt
+from . import types as gql_types
+from app.perguntas.views import CadastrarPerguntaMutation, EditarPerguntaMutation
 
+from app.perguntas.models import Pergunta, Tema
+from app.comentarios.models import Comentario 
 from app.core.models import User
 from app.biblia.models import Livro, Versiculo, Versao, Testamento  
 from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
 
 import smtplib
-import graphene
 
-from .forms import NewUserForm
-
-
-def register_user(request):
-    if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect("main:homepage")
-        messages.error(
-            request, "Unsuccessful registration. Invalid information.")
-    form = NewUserForm()
-    return render(request=request, template_name="main/register.html", context={"register_form": form})
+"""
+========== Mutations ==========
+"""
 
 class CadastrarUsuarioMutation(graphene.Mutation):
 
@@ -112,3 +102,44 @@ class RecuperarSenhaMutation(graphene.Mutation):
                 'Senha alterada com sucesso\nErro durante o envio do email')
 
         return RecuperarSenhaMutation(mensagem='Senha alterada e email enviado com sucesso')
+
+
+class AdicionarComentarioMutation(graphene.Mutation):
+    class Arguments:
+        pergunta_id = graphene.Int(required=True)
+        mensagem = graphene.String(required=True)
+        email = graphene.String()
+        phone = graphene.String()
+        is_whatsapp = graphene.Boolean()
+
+    comentario = graphene.Field(gql_types.ComentariosType)
+
+    def mutate(self, info, pergunta_id, mensagem, email=None, phone=None, is_whatsapp=True):
+
+        if info.context.user.is_authenticated:
+            email = info.context.user.email
+        elif str(email).strip() == '' or email is None:
+            raise Exception('Voce precisa estar logado ou informar um email valido para cadastrar um comentario')
+        
+        mensagem = mensagem.strip()
+        if mensagem == '':
+            raise Exception('A mensagem nao pode ser vazia')
+
+        pergunta = Pergunta.objects.get(id=pergunta_id)
+        comentario = Comentario(pergunta=pergunta, mensagem=mensagem, email=email, phone=phone, is_whatsapp=is_whatsapp)
+        comentario.save()
+
+        return AdicionarComentarioMutation(comentario=comentario)
+    
+
+class Mutation(graphene.ObjectType):
+    cadastrar_usuario = CadastrarUsuarioMutation.Field()
+    editar_usuario = EditarUsuarioMutation.Field()
+    recuperar_senha = RecuperarSenhaMutation.Field()
+    cadastrarPergunta = CadastrarPerguntaMutation.Field()
+    editarPergunta = EditarPerguntaMutation.Field()
+    adicionarComentario = AdicionarComentarioMutation.Field()
+    login = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+    logout = graphql_jwt.Revoke.Field()

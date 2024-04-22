@@ -13,7 +13,7 @@ from app.perguntas.models import Pergunta, Tema, Referencia
 from app.comentarios.models import Comentario
 from django.core.exceptions import ObjectDoesNotExist
 from .schema import schema
-from .test_queries import query_usuario, query_usuarios, pergunta_aleatoria_query, todas_perguntas_query, usuario_vazio_query, texto_biblico_query, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_query, adicionar_comentario_mutation
+from .eg import query_usuario, query_usuarios, pergunta_aleatoria_query, todas_perguntas_query, usuario_vazio_query, texto_biblico_query, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_query, adicionar_comentario_mutation
 
 # Prevents pytest from collecting the following classes as tests
 Testamento.__test__ = False

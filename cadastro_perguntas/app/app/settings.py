@@ -28,8 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.100.17',
+    '192.168.100.22',
     '127.0.0.1',
     'djangoapp',
+    'jogodabiblia.com',
     'localhost',
 ]
 
@@ -51,13 +53,13 @@ INSTALLED_APPS = [
     "crispy_forms",
     'widget_tweaks',
     # my apps
-    'django_sass',
     'app.biblia',
     'app.perguntas',
     'app.core',
     'app.comentarios',
     # graphql
     "graphene_django",
+    'django_graphiql',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -168,6 +171,7 @@ AUTH_USER_MODEL = "core.User"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'graphql_jwt.backends.JSONWebTokenBackend',
 ]
 
 SITE_ID = 1
@@ -193,5 +197,13 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # graphql
 GRAPHENE = {
-    "SCHEMA": "app.graphql.schema.schema"
+    "SCHEMA": "app.graphql.schema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+}
+
+# JWT Settings
+GRAPHQL_JWT = {
+    "JWT_AUTH_HEADER_PREFIX": "Bearer"
 }

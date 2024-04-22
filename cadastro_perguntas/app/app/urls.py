@@ -13,14 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from argparse import Namespace
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from graphene_django.views import GraphQLView
 
-from app.perguntas.views import tmp_home
 from app.graphql.schema import schema
 
 urlpatterns = [
