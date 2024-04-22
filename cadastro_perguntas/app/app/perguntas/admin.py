@@ -80,7 +80,8 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     # Garante que publicadores e revisores alterem apenas seus status
     def change_view(self, request, object_id, extra_context=None):
-        initial_readonly_fields = ('revisado_por', 'revisado_em', 'publicado_por', 'publicado_em')
+        initial_readonly_fields = (
+            'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em')
         self.readonly_fields = initial_readonly_fields
         self.readonly_fields += ('status', 'revisado_status')
         if self.valida_supergroup(request):

@@ -6,10 +6,13 @@ from django.contrib.auth.decorators import login_required
 from graphql_jwt.decorators import login_required
 
 # FIXME As perguntas estavam sendo criadas sem alternativas e sem referência
+
+
 class CadastrarPerguntaMutation(graphene.Mutation):
     """ Cadastra uma pergunta, para executar essa ação você deve estar logado"""
     class Arguments:
-        data = gql_inputs.PerguntaInput(required=True, description="Dados de perguntas e alternativas") # TODO: Implementar InputType
+        data = gql_inputs.PerguntaInput(
+            required=True, description="Dados de perguntas e alternativas")  # TODO: Implementar InputType
 
     pergunta = graphene.Field(gql_types.PerguntasType)
 
@@ -26,7 +29,7 @@ class CadastrarPerguntaMutation(graphene.Mutation):
                             referencia=referencia, referencia_biblica=referencia_biblica, criado_por=info.context.user)
         pergunta.save()
         return CadastrarPerguntaMutation(pergunta=pergunta)
-    
+
 
 class EditarPerguntaMutation(graphene.Mutation):
     class Arguments:
@@ -45,7 +48,8 @@ class EditarPerguntaMutation(graphene.Mutation):
             raise Exception(
                 'Somente admins e o proprio usuario podem editar perguntas')
 
-        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta, 'referencia_resposta': referencia_resposta_id, 'outras_referencias': outras_referencias, 'status': status}
+        new_fields = {'tema': tema_id, 'enunciado': enunciado, 'tipo_resposta': tipo_resposta,
+                      'referencia_resposta': referencia_resposta_id, 'outras_referencias': outras_referencias, 'status': status}
 
         pergunta = Pergunta.objects.get(id=id)
 

@@ -15,11 +15,9 @@ def receber_pontuacao_usuario(usuario):
             pontuacao += 2
         else:
             if pergunta.revisado_status is True:
-                # questao revisada 
+                # questao revisada
                 pontuacao += 1
                 if pergunta.status is False:
                     # questao revisada mas nao publicada
                     pontuacao -= 1
     return pontuacao
-
-

@@ -10,6 +10,7 @@ from graphene_django import DjangoListField
 ========== Queries ==========
 """
 
+
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(gql_types.PerguntasType)
     pergunta = DjangoListField(gql_types.PerguntasType, tema_id=graphene.Int())
@@ -18,7 +19,6 @@ class Query(graphene.ObjectType):
     comentarios = DjangoListField(gql_types.ComentariosType)
     temas = DjangoListField(gql_types.TemaType)
     funcoes = DjangoListField(gql_types.FuncoesType)
-    texto_biblico = graphene.List(gql_types.VersiculoType, referencia=graphene.String(required=True), versao=graphene.String())
 
     def resolve_pergunta(root, info, tema_id):
         return random.sample(tuple(Pergunta.objects.filter(tema=Tema.objects.get(id=tema_id))), 1)
@@ -37,7 +37,7 @@ class Query(graphene.ObjectType):
         return usuario
 
     def resolve_texto_biblico(root, info, referencia, versao='ara'):
-        version =  Versao.objects.get(sigla=str(versao).upper())
+        version = Versao.objects.get(sigla=str(versao).upper())
         todos_os_textos = serialize_texto_biblico(referencia, version)
         versiculos = []
         for texto in todos_os_textos:

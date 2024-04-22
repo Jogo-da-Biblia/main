@@ -1,6 +1,7 @@
 import graphene
 from app.graphql import types as gql_types
 
+
 class AdicionarComentarioMutation(graphene.Mutation):
     class Arguments:
         pergunta_id = graphene.Int(required=True)
@@ -16,15 +17,16 @@ class AdicionarComentarioMutation(graphene.Mutation):
         if info.context.user.is_authenticated:
             email = info.context.user.email
         elif str(email).strip() == '' or email is None:
-            raise Exception('Voce precisa estar logado ou informar um email valido para cadastrar um comentario')
-        
+            raise Exception(
+                'Voce precisa estar logado ou informar um email valido para cadastrar um comentario')
+
         mensagem = mensagem.strip()
         if mensagem == '':
             raise Exception('A mensagem nao pode ser vazia')
 
         pergunta = Pergunta.objects.get(id=pergunta_id)
-        comentario = Comentario(pergunta=pergunta, mensagem=mensagem, email=email, phone=phone, is_whatsapp=is_whatsapp)
+        comentario = Comentario(pergunta=pergunta, mensagem=mensagem,
+                                email=email, phone=phone, is_whatsapp=is_whatsapp)
         comentario.save()
 
         return AdicionarComentarioMutation(comentario=comentario)
-    

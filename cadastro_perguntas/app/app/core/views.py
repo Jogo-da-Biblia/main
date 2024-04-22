@@ -3,9 +3,9 @@ from django.contrib.auth import login
 from django.contrib import messages
 
 from app.core.models import User
-from app.biblia.models import Livro, Versiculo, Versao, Testamento  
 from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
+from app.graphql import types as gql_types
 
 import smtplib
 import graphene
@@ -25,6 +25,7 @@ def register_user(request):
             request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(request=request, template_name="main/register.html", context={"register_form": form})
+
 
 class CadastrarUsuarioMutation(graphene.Mutation):
 

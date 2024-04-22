@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     'widget_tweaks',
     # my apps
-    'app.biblia',
     'app.perguntas',
     'app.core',
     'app.comentarios',

@@ -24,7 +24,8 @@ from app.graphql.schema import schema
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path("graphql", GraphQLView.as_view(graphiql=True, schema=schema), name="graphql"),
+    path("graphql", GraphQLView.as_view(
+        graphiql=True, schema=schema), name="graphql"),
 ]
 
 urlpatterns += static(
