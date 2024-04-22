@@ -14,7 +14,6 @@ pyyaml
 uritemplate
 xhtml2pdf
 pytest
-pytest-django
 python-gettext
 graphene-django==3.2.1
 psycopg2==2.9.3

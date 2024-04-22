@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 
-from app.perguntas.models import Pergunta, Alternativa, Referencia
+from app.perguntas.models import Pergunta, Alternativa
 from app.comentarios.models import Comentario
 
 
@@ -53,8 +53,8 @@ class PerguntaAdmin(admin.ModelAdmin):
     list_filter = ('tema', 'tipo_resposta', 'status')
     search_fields = ('tema', 'descricao')
     fields = [
-        'tema', 'enunciado', 'tipo_resposta', 'refencia_resposta',
-        'outras_referencias', 'criado_por',
+        'tema', 'enunciado', 'tipo_resposta', 'referencia',
+        'referencia_biblica', 'criado_por',
         ('revisado_status', 'status'),
         ('revisado_por', 'revisado_em'), ('publicado_por', 'publicado_em')
     ]
@@ -161,4 +161,3 @@ class AlternativaAdmin(admin.ModelAdmin):
 
 admin.site.register(Pergunta, PerguntaAdmin)
 admin.site.register(Alternativa, AlternativaAdmin)
-admin.site.register(Referencia)

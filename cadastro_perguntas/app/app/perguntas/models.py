@@ -13,23 +13,6 @@ class Tema(models.Model):
         return self.nome
 
 
-class Referencia(models.Model):
-    id = models.AutoField(primary_key=True)
-    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
-    versiculo = models.ForeignKey(
-        Versiculo,
-        on_delete=models.CASCADE,
-        verbose_name='Versículo'
-    )
-
-    def __str__(self):
-        return f"{self.livro} {self.versiculo}"
-
-    class Meta:
-        verbose_name = 'Referência'
-        verbose_name_plural = 'Referências'
-
-
 class Pergunta(models.Model):
 
     TIPO_RESPOSTA = [
@@ -49,17 +32,12 @@ class Pergunta(models.Model):
         verbose_name='Tipo de Resposta'
     )
 
-    refencia_resposta = models.ForeignKey(
-        Referencia,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    outras_referencias = models.TextField(
+    referencia = models.TextField(
         null=True,
         blank=True,
     )
+
+    referencia_biblica = models.BooleanField(default=True)
 
     status = models.BooleanField(default=False, verbose_name='Publicado')
 
