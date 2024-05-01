@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^z^69web(oysy-giwu^#^l8tc$+3bo7$6dpm5+qs7q$3(y&_mi'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     '192.168.100.17',
@@ -58,7 +60,7 @@ INSTALLED_APPS = [
     'app.comentarios',
     # graphql
     "graphene_django",
-    'django_graphiql',
+    "django_graphiql"
 ]
 
 MIDDLEWARE = [

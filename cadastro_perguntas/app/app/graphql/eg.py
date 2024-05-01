@@ -113,12 +113,12 @@ texto_biblico_query = '''
     '''
 
 novo_usuario_mutation = '''
-        mutation{
+        mutation cadastrarUsuario($email: String!, $username: String!, $password: String!, $isStaff: Boolean) {
             cadastrarUsuario(
-                email: "teste1@email.com"
-                username: "ususaroteste1"
-                isStaff: false
-                password: "1938y"
+                email: $email
+                username: $username
+                isStaff: $isStaff
+                password: $password
             ){
                 usuario{
                     id

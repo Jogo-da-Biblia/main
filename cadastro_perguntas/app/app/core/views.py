@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 
+from app.core import utils 
 from app.core.models import User
 from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
 from app.graphql import types as gql_types
+from graphql_jwt.decorators import login_required
 
 import smtplib
 import graphene
@@ -37,9 +39,10 @@ class CadastrarUsuarioMutation(graphene.Mutation):
 
     usuario = graphene.Field(gql_types.UsuarioType)
 
+    @login_required
     def mutate(self, info, username, email, password, is_staff=False):
-        if usuario_superusuario_ou_admin(info.context.user) is False:
-            raise Exception('Somente admins podem adicionar novos usuarios')
+        # if utils.usuario_superusuario_ou_admin(info.context.user) is False:
+        #     raise Exception('Somente admins podem adicionar novos usuarios')
         usuario = User(username=username, email=email, is_staff=is_staff)
         usuario.set_password(password)
         usuario.save()
@@ -58,9 +61,9 @@ class EditarUsuarioMutation(graphene.Mutation):
     usuario = graphene.Field(gql_types.UsuarioType)
 
     def mutate(self, info, id, new_username=None, new_email=None, new_password=None, confirm_new_passowrd=None, new_is_staff=None):
-        if usuario_superusuario_ou_admin(info.context.user) is False and info.context.user.id != id:
-            raise Exception(
-                'Somente o proprio usuario e administradores podem editar dados de usuarios')
+        # if usuario_superusuario_ou_admin(info.context.user) is False and info.context.user.id != id:
+        #     raise Exception(
+        #         'Somente o proprio usuario e administradores podem editar dados de usuarios')
         usuario = User.objects.get(id=id)
 
         if new_username is not None:
@@ -87,9 +90,9 @@ class RecuperarSenhaMutation(graphene.Mutation):
     mensagem = graphene.String()
 
     def mutate(self, info, usuario_id, email):
-        if usuario_superusuario_ou_admin(info.context.user) is False and info.context.user.id != usuario_id:
-            raise Exception(
-                'Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
+        # if usuario_superusuario_ou_admin(info.context.user) is False and info.context.user.id != usuario_id:
+        #     raise Exception(
+        #         'Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
 
         usuario = User.objects.get(id=usuario_id)
 

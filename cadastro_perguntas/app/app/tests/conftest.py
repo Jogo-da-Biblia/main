@@ -1,0 +1,136 @@
+# from app.graphql.eg import query_usuario, query_usuarios, pergunta_aleatoria_query, todas_perguntas_query, usuario_vazio_query, texto_biblico_query, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_query, adicionar_comentario_mutation
+from django.core.exceptions import ObjectDoesNotExist
+from app.comentarios.models import Comentario
+from app.perguntas.models import Pergunta, Tema
+from app.core.models import User
+from graphene_django.utils.testing import graphql_query
+import pytest
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
+django.setup()
+
+
+# Usuario enviado no context graphql
+class UsuarioEmContexto:
+    def __init__(self, usuario):
+        self.user = usuario
+
+
+@pytest.fixture
+def usuario_admin(db):
+    try:
+        usuario = User.objects.get(username="admin")
+    except ObjectDoesNotExist:
+        usuario = User.objects.create_superuser(
+            username="admin", password="admin", email="admin@admin.com"
+        )
+    return usuario
+
+
+# @pytest.fixture
+# def client(db):
+#     graphene_client = GrapheneClient(schema)
+#     return graphene_client
+
+
+@pytest.fixture
+def perguntas_count(db):
+    return Pergunta.objects.count()
+
+
+@pytest.fixture
+def todas_perguntas(db):
+    return Pergunta.objects.all()
+
+
+@pytest.fixture
+def todos_comentarios(db):
+    return Comentario.objects.all()
+
+
+@pytest.fixture
+def delete_todos_items(db):
+    Pergunta.objects.all().delete()
+    Tema.objects.all().delete()
+    Comentario.objects.all().delete()
+
+
+@pytest.fixture
+def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
+    Tema.objects.create(nome="Conhecimentos Gerais", cor="red")
+    Tema.objects.create(nome="Doutrina", cor="roxo")
+
+    pergunta1 = Pergunta.objects.create(
+        tema=Tema.objects.get(nome="Conhecimentos Gerais"),
+        enunciado="Quem criou o homem?",
+        tipo_resposta="MES",
+        criado_por=usuario_admin,
+    )
+
+    pergunta2 = Pergunta.objects.create(
+        tema=Tema.objects.get(nome="Doutrina"),
+        enunciado="O que Jesus nos mandou fazer?",
+        tipo_resposta="MES",
+        criado_por=usuario_admin,
+    )
+
+    pergunta1.save()
+    pergunta2.save()
+
+    Comentario.objects.create(
+        pergunta=pergunta1,
+        email="comentarista1@email.com",
+        phone="71992540723",
+        is_whatsapp=True,
+        mensagem="Aqui vai o primeiro comentário",
+    )
+
+    Comentario.objects.create(
+        pergunta=pergunta2,
+        email="comentarista2@email.com",
+        phone="12345678911",
+        is_whatsapp=False,
+        mensagem="Aqui vai o segundo comentário",
+    )
+
+    return pergunta2
+
+
+@pytest.fixture
+def staff_user():
+    return User.objects.create(email="admin@admin.com", is_staff=True)
+
+
+@pytest.fixture
+def staff_client_with_login(client, staff_user):
+    client.force_login(staff_user)
+    return client
+
+
+@pytest.fixture
+def staff_client_graphql(staff_client_with_login):
+    def func(*args, **kwargs):
+        return graphql_query(*args, **kwargs, client=staff_client_with_login)
+
+    return func
+
+
+@pytest.fixture
+def user():
+    return User.objects.create(email="user@user.com", is_staff=False)
+
+
+@pytest.fixture
+def client_with_login(client, user):
+    client.force_login(user)
+    return client
+
+
+@pytest.fixture
+def client_graphql(client_with_login):
+    def func(*args, **kwargs):
+        return graphql_query(*args, **kwargs, client=client_with_login)
+
+    return func

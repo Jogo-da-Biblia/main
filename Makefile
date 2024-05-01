@@ -36,3 +36,5 @@ db_terminal:
 	docker exec -it jogodabiblia_db bash
 sass:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py sass /usr/src/app/app/static/scss/ /usr/src/app/app/static/css/ --watch"
+test:
+	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest ./app/tests/"

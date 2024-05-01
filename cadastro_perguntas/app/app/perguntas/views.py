@@ -24,7 +24,6 @@ class CadastrarPerguntaMutation(graphene.Mutation):
                 'Voce precisa estar logado para cadastrar uma pergunta')
         # TODO Em caso de referência bíblica, deve fazer uma verificação se está correto o formato da referência
         tema = Tema.objects.get(id=tema_id)
-        refencia_resposta = Referencia.objects.get(id=referencia_resposta_id)
         pergunta = Pergunta(tema=tema, enunciado=enunciado, tipo_resposta=tipo_resposta,
                             referencia=referencia, referencia_biblica=referencia_biblica, criado_por=info.context.user)
         pergunta.save()
@@ -57,8 +56,6 @@ class EditarPerguntaMutation(graphene.Mutation):
             if value is not None:
                 if key == 'tema':
                     value = Tema.objects.get(id=value)
-                elif key == 'referencia_resposta':
-                    value = Referencia.objects.get(id=value)
                 setattr(pergunta, key, value)
 
         pergunta.save()
