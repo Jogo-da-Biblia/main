@@ -16,6 +16,7 @@ xhtml2pdf
 pytest
 pytest-django
 python-decouple
+pytest-mock
 python-gettext
 graphene-django==3.2.1
 psycopg2-binary

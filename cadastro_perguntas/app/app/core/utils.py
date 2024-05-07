@@ -1,8 +1,23 @@
 def usuario_superusuario_ou_admin(usuario):
-    if usuario.is_superuser is False and any([usuario.groups.filter(name='administradores').exists(), usuario.groups.filter(name='revisores').exists(), usuario.groups.filter(name='publicadores').exists()]) is False:
-        return False
-    return True
+    if usuario.is_superuser is True or usuario.groups.filter(name='administradores').exists() is True:
+        return True
+    return False
 
+
+def check_if_user_is_admin_or_has_permission(info, user_id):
+    if (
+            any(
+                (
+                    usuario_superusuario_ou_admin(info.context.user),
+                    user_id == info.context.user.id,
+                )
+            )
+            is False
+        ):
+            raise Exception(
+                "Somente o proprio usuario e administradores podem efetuar esta ação"
+            )
+    return True
 
 # def receber_pontuacao_usuario(usuario):
 #     pontuacao = 0

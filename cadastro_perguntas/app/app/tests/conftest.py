@@ -1,5 +1,5 @@
-# from app.graphql.eg import query_usuario, query_usuarios, pergunta_aleatoria_query, todas_perguntas_query, usuario_vazio_query, texto_biblico_query, novo_usuario_mutation, editar_usuario_mutation, adicionar_nova_pergunta_mutation, editar_pergunta_mutation, reenviar_senha_mutation, todos_comentarios_query, adicionar_comentario_mutation
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import Group
 from app.comentarios.models import Comentario
 from app.perguntas.models import Pergunta, Tema
 from app.core.models import User
@@ -99,13 +99,16 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
 
 
 @pytest.fixture
-def staff_user():
-    return User.objects.create(email="admin@admin.com", is_staff=True)
+def admin_user():
+    user =  User.objects.create(email="admin@admin.com")
+    admin_group, _ = Group.objects.get_or_create(name="administradores")
+    user.groups.add(admin_group)
+    return user
 
 
 @pytest.fixture
-def staff_client_with_login(client, staff_user):
-    client.force_login(staff_user)
+def admin_client_with_login(client, admin_user):
+    client.force_login(admin_user)
     return client
 
 
@@ -119,7 +122,7 @@ def staff_client_graphql(staff_client_with_login):
 
 @pytest.fixture
 def user():
-    return User.objects.create(email="user@user.com", is_staff=False)
+    return User.objects.create(email="user@user.com")
 
 
 @pytest.fixture
@@ -129,8 +132,16 @@ def client_with_login(client, user):
 
 
 @pytest.fixture
-def client_graphql(client_with_login):
+def client_graphql_with_login(client_with_login):
     def func(*args, **kwargs):
         return graphql_query(*args, **kwargs, client=client_with_login)
+
+    return func
+
+
+@pytest.fixture
+def client_graphql_without_login(client):
+    def func(*args, **kwargs):
+        return graphql_query(*args, **kwargs, client=client)
 
     return func

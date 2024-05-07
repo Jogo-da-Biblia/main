@@ -113,12 +113,14 @@ texto_biblico_query = '''
     '''
 
 novo_usuario_mutation = '''
-        mutation cadastrarUsuario($email: String!, $username: String!, $password: String!, $isStaff: Boolean) {
+        mutation cadastrarUsuario($email: String!, $username: String!, $password: String!, $name: String!, $phone: String!, $isWhatsapp: Boolean) {
             cadastrarUsuario(
                 email: $email
                 username: $username
-                isStaff: $isStaff
                 password: $password
+                name: $name
+                phone: $phone
+                isWhatsapp: $isWhatsapp
             ){
                 usuario{
                     id
@@ -130,11 +132,15 @@ novo_usuario_mutation = '''
 
 
 editar_usuario_mutation = '''
-        mutation editarUsuarioMutation($userId: Int!){
+        mutation editarUsuario($userId: Int!, $email: String, $username: String, $password: String, $name: String, $phone: String, $isWhatsapp: Boolean){
             editarUsuario(
-                id: $userId
-                newUsername:"newusername"
-                newEmail: "newemai1l@.com"
+                userId: $userId
+                email: $email
+                username: $username
+                password: $password
+                name: $name
+                phone: $phone
+                isWhatsapp: $isWhatsapp
             ){
                 usuario{
                     id
@@ -146,11 +152,11 @@ editar_usuario_mutation = '''
     '''
 
 
-reenviar_senha_mutation = '''
-        mutation reenviarSenhaMutation($userId: Int!){
+recuperar_senha_mutation = '''
+        mutation recuperarSenha($userId: Int!, $email: String!){
             recuperarSenha(
-                usuarioId: $userId, 
-                email:"user@email.com"
+                userId: $userId, 
+                email: $email,
             ){
                 mensagem
             }
