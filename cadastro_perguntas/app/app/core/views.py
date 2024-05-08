@@ -103,7 +103,7 @@ class RecuperarSenhaMutation(graphene.Mutation):
         user = User.objects.get(id=user_id)
 
         if email != user.email:
-            raise Exception("O email informado não corresponde ao email cadastrado")
+            raise Exception("O email informado nao corresponde ao email cadastrado")
 
         new_password = User.objects.make_random_password(length=10)
         user.set_password(new_password)

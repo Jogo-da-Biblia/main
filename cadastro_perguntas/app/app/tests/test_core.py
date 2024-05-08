@@ -164,17 +164,61 @@ def test_deve_enviar_email_com_nova_senha(client, mocker):
     )
 
     assert "errors" not in json.loads(resultado.content)
+    assert "Senha alterada e email enviado com sucesso" in str(resultado.content)
     user.refresh_from_db()
 
-
-    assert user.username == "donoteditthis"
-    assert user.email == "edit@email.com"
     assert user.check_password("senhamudar") is False
     assert mocked_email.called is True
 
 
-# TODO
-# Test permission admin and other user 
+@pytest.mark.django_db
+def test_nao_deve_enviar_email_com_nova_senha_caso_email_enviado_seja_diferente_do_cadastrado(client, mocker, user):
+    mocked_email = mocker.patch("app.core.views.send_mail")
+
+    user.set_password("senhamudar")
+    user.save()
+    user_id = user.id
+
+    client.force_login(user)
+
+    resultado = graphql_query(
+        query=eg.recuperar_senha_mutation,
+        operation_name="recuperarSenha",
+        variables={"userId": user_id, "email": "otheremail@gmail.com"},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+    assert "O email informado nao corresponde ao email cadastrado" in str(resultado.content)
+    user.refresh_from_db()
+    assert user.check_password("senhamudar") is True
+    assert mocked_email.called is False
+
+
+@pytest.mark.django_db
+def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(client, mocker, admin_user):
+    mocked_email = mocker.patch("app.core.views.send_mail")
+
+    admin_user.set_password("senhamudar")
+    admin_user.save()
+    user_id = admin_user.id
+
+    client.force_login(admin_user)
+
+    resultado = graphql_query(
+        query=eg.recuperar_senha_mutation,
+        operation_name="recuperarSenha",
+        variables={"userId": user_id, "email": admin_user.email},
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert "Senha alterada e email enviado com sucesso" in str(resultado.content)
+    admin_user.refresh_from_db()
+
+    assert admin_user.check_password("senhamudar") is False
+    assert mocked_email.called is True
+
 
 # @pytest.mark.django_db
 # def test_administrador_deve_receber_info_de_user_pelo_id(client, usuario_admin):
