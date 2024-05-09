@@ -1,5 +1,7 @@
 import graphene
 from app.graphql import types as gql_types
+from app.comentarios.models import Comentario
+from app.perguntas.models import Pergunta
 
 
 class AdicionarComentarioMutation(graphene.Mutation):

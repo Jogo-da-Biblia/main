@@ -206,5 +206,6 @@ GRAPHENE = {
 
 # JWT Settings
 GRAPHQL_JWT = {
+    "JWT_AUTH_HEADER_NAME": "Authorization",
     "JWT_AUTH_HEADER_PREFIX": "Bearer"
 }

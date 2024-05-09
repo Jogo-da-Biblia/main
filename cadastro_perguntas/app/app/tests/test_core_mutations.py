@@ -172,7 +172,9 @@ def test_deve_enviar_email_com_nova_senha(client, mocker):
 
 
 @pytest.mark.django_db
-def test_nao_deve_enviar_email_com_nova_senha_caso_email_enviado_seja_diferente_do_cadastrado(client, mocker, user):
+def test_nao_deve_enviar_email_com_nova_senha_caso_email_enviado_seja_diferente_do_cadastrado(
+    client, mocker, user
+):
     mocked_email = mocker.patch("app.core.views.send_mail")
 
     user.set_password("senhamudar")
@@ -189,14 +191,18 @@ def test_nao_deve_enviar_email_com_nova_senha_caso_email_enviado_seja_diferente_
     )
 
     assert "errors" in json.loads(resultado.content)
-    assert "O email informado nao corresponde ao email cadastrado" in str(resultado.content)
+    assert "O email informado nao corresponde ao email cadastrado" in str(
+        resultado.content
+    )
     user.refresh_from_db()
     assert user.check_password("senhamudar") is True
     assert mocked_email.called is False
 
 
 @pytest.mark.django_db
-def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(client, mocker, admin_user):
+def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(
+    client, mocker, admin_user
+):
     mocked_email = mocker.patch("app.core.views.send_mail")
 
     admin_user.set_password("senhamudar")

@@ -29,3 +29,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         verbose_name = 'Usuário'
+
+    @property
+    def pontuacao(self):
+        # TODO
+        pass

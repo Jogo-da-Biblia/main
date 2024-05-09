@@ -1,7 +1,3 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib import messages
-
 from app.core import utils
 from app.core.models import User
 from app.settings import DEFAULT_FROM_EMAIL

@@ -29,12 +29,6 @@ def usuario_admin(db):
     return usuario
 
 
-# @pytest.fixture
-# def client(db):
-#     graphene_client = GrapheneClient(schema)
-#     return graphene_client
-
-
 @pytest.fixture
 def perguntas_count(db):
     return Pergunta.objects.count()
