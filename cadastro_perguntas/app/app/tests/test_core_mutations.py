@@ -1,8 +1,8 @@
-import pytest
 import json
+
+import pytest
 from app.core.models import User
 from app.graphql import eg
-
 from graphene_django.utils.testing import graphql_query
 
 
@@ -34,25 +34,17 @@ def test_deve_criar_novo_usuario(client_graphql_without_login):
 
 
 @pytest.mark.django_db
-def test_deve_editar_usuario(client):
-    new_user = User.objects.create(
-        email="edit@email.com",
-        username="donoteditthis",
-        name="outro nome",
-        phone="12345678",
-        is_whatsapp=False,
-    )
-    new_user.set_password("senhamudar")
-    new_user.save()
-    user_id = new_user.id
+def test_deve_editar_usuario(client, user):
+    user.set_password("senhamudar")
+    user.save()
 
-    client.force_login(new_user)
+    client.force_login(user)
 
     resultado = graphql_query(
         query=eg.editar_usuario_mutation,
         operation_name="editarUsuario",
         variables={
-            "userId": user_id,
+            "userId": user.id,
             "email": "novo@email.com",
             "password": "senhateste123",
             "username": "ususaroteste1",
@@ -60,18 +52,18 @@ def test_deve_editar_usuario(client):
             "phone": "12345678",
             "isWhatsapp": True,
         },
-        client=client,
+        client=client
     )
 
     assert "errors" not in json.loads(resultado.content)
-    new_user.refresh_from_db()
+    user.refresh_from_db()
 
-    assert new_user.username == "ususaroteste1"
-    assert new_user.email == "novo@email.com"
-    assert new_user.name == "nome teste"
-    assert new_user.phone == "12345678"
-    assert new_user.is_whatsapp is True
-    assert new_user.check_password("senhateste123")
+    assert user.username == "ususaroteste1"
+    assert user.email == "novo@email.com"
+    assert user.name == "nome teste"
+    assert user.phone == "12345678"
+    assert user.is_whatsapp is True
+    assert user.check_password("senhateste123")
 
 
 @pytest.mark.django_db
@@ -140,16 +132,9 @@ def test_outro_usuario_nao_deve_editar_outro_usuario(client_graphql_with_login):
 
 
 @pytest.mark.django_db
-def test_deve_enviar_email_com_nova_senha(client, mocker):
+def test_deve_enviar_email_com_nova_senha(client, mocker, user):
     mocked_email = mocker.patch("app.core.views.send_mail")
 
-    user = User.objects.create(
-        email="edit@email.com",
-        username="donoteditthis",
-        name="outro nome",
-        phone="12345678",
-        is_whatsapp=False,
-    )
     user.set_password("senhamudar")
     user.save()
     user_id = user.id
@@ -201,28 +186,26 @@ def test_nao_deve_enviar_email_com_nova_senha_caso_email_enviado_seja_diferente_
 
 @pytest.mark.django_db
 def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(
-    client, mocker, admin_user
+    mocker, admin_client_with_login, user
 ):
     mocked_email = mocker.patch("app.core.views.send_mail")
 
-    admin_user.set_password("senhamudar")
-    admin_user.save()
-    user_id = admin_user.id
-
-    client.force_login(admin_user)
+    user.set_password("senhamudar")
+    user.save()
+    user_id = user.id
 
     resultado = graphql_query(
         query=eg.recuperar_senha_mutation,
         operation_name="recuperarSenha",
-        variables={"userId": user_id, "email": admin_user.email},
-        client=client,
+        variables={"userId": user_id, "email": user.email},
+        client=admin_client_with_login,
     )
 
     assert "errors" not in json.loads(resultado.content)
     assert "Senha alterada e email enviado com sucesso" in str(resultado.content)
-    admin_user.refresh_from_db()
+    user.refresh_from_db()
 
-    assert admin_user.check_password("senhamudar") is False
+    assert user.check_password("senhamudar") is False
     assert mocked_email.called is True
 
 

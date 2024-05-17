@@ -1,12 +1,14 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import Group
-from app.comentarios.models import Comentario
-from app.perguntas.models import Pergunta, Tema
-from app.core.models import User
-from graphene_django.utils.testing import graphql_query
-import pytest
 import os
+
 import django
+import pytest
+from app.comentarios.models import Comentario
+from app.core.models import User
+from app.perguntas.models import Pergunta, Tema
+from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
+from graphene_django.utils.testing import graphql_query
+from model_bakery import baker
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 django.setup()
@@ -94,7 +96,7 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
 
 @pytest.fixture
 def admin_user():
-    user =  User.objects.create(email="admin@admin.com")
+    user = baker.make("core.User", _fill_optional=True)
     admin_group, _ = Group.objects.get_or_create(name="administradores")
     user.groups.add(admin_group)
     return user
@@ -116,7 +118,7 @@ def staff_client_graphql(staff_client_with_login):
 
 @pytest.fixture
 def user():
-    return User.objects.create(email="user@user.com")
+    return baker.make("core.User", _fill_optional=True)
 
 
 @pytest.fixture

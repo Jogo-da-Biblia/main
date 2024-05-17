@@ -12,7 +12,7 @@ class PerguntasType(DjangoObjectType):
             "id",
             "enunciado",
             "tipo_resposta",
-            "refencia_resposta",
+            "referencia",
             "status",
             "revisado_por",
             "tema",
