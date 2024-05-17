@@ -13,6 +13,7 @@ class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
+    # TODO tests
     cadastrar_pergunta = CadastrarPerguntaMutation.Field()
     editar_pergunta = EditarPerguntaMutation.Field()
     adicionar_comentario = AdicionarComentarioMutation.Field()

@@ -1,10 +1,15 @@
-def usuario_superusuario_ou_admin(usuario):
+def usuario_superusuario_ou_admin(usuario, raise_exception=False):
     if usuario.is_superuser is True or usuario.groups.filter(name='administradores').exists() is True:
         return True
+    
+    if raise_exception is True:
+        raise Exception(
+                "Somente administradores podem efetuar esta ação"
+            )
     return False
 
 
-def check_if_user_is_admin_or_has_permission(info, user_id):
+def check_if_user_is_admin_or_himself(info, user_id):
     if (
             any(
                 (

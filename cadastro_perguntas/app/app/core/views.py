@@ -61,7 +61,7 @@ class EditarUsuarioMutation(graphene.Mutation):
         name=None,
         password=None,
     ):
-        assert utils.check_if_user_is_admin_or_has_permission(info=info, user_id=user_id)
+        assert utils.check_if_user_is_admin_or_himself(info=info, user_id=user_id)
 
         usuario = User.objects.get(id=user_id)
 
@@ -94,7 +94,7 @@ class RecuperarSenhaMutation(graphene.Mutation):
     mensagem = graphene.String()
 
     def mutate(self, info, user_id, email):
-        assert utils.check_if_user_is_admin_or_has_permission(info=info, user_id=user_id)
+        assert utils.check_if_user_is_admin_or_himself(info=info, user_id=user_id)
 
         user = User.objects.get(id=user_id)
 

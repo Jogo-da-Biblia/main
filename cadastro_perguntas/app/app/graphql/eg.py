@@ -5,19 +5,21 @@ query_usuario ='''
                 id
                 username
                 email
-                pontuacao    
+                isSuperuser
+                isActive
                 perguntasCriadas {
-                id
-                enunciado
+                    id
+                    enunciado
                 }
                 perguntasRevisadas{
-                id
-                enunciado
+                    id
+                    enunciado
                 }
                 perguntasPublicadas{
                     id
                     enunciado
                 }
+                pontuacao    
             }
         }
     '''
@@ -50,7 +52,7 @@ query_usuarios = '''
             users{
                 id
                 username
-                pontuacao
+                email
             }
         }
     '''

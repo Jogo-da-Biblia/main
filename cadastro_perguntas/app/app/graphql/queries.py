@@ -3,7 +3,7 @@ import random
 from django.shortcuts import get_object_or_404
 
 from app.core.utils import (
-    check_if_user_is_admin_or_has_permission,
+    check_if_user_is_admin_or_himself,
     usuario_superusuario_ou_admin,
 )
 from app.core.models import User
@@ -39,18 +39,16 @@ class Query(graphene.ObjectType):
 
     @login_required
     def resolve_user(root, info, id=None):
-        assert check_if_user_is_admin_or_has_permission(info, id)
+        assert check_if_user_is_admin_or_himself(info, id)
 
         if id is None:
-            usuario = info.context.user
-        else:
-            usuario = User.objects.get(id=id)
+            return info.context.user
+        return User.objects.get(id=id)
 
-        return usuario
 
     @login_required
     def resolve_users(root, info):
-        assert usuario_superusuario_ou_admin(info.context.user)
+        assert usuario_superusuario_ou_admin(info.context.user, raise_exception=True)
 
         return User.objects.all()
 
