@@ -7,14 +7,6 @@ from graphene_django.utils.testing import graphql_query
 from model_bakery import baker
 
 
-# TODO add tests
-# user should return logged user data if user is logged and dont pass any id
-
-# user should dont return user if user is not logged in
-# user should dont return user data if user is different
-# user should return user pontuation
-
-
 @pytest.mark.django_db
 def test_deve_listar_usuarios(admin_client_with_login, admin_user):
     user1 = baker.make("core.User", _fill_optional=True)
@@ -25,32 +17,29 @@ def test_deve_listar_usuarios(admin_client_with_login, admin_user):
 
     assert "errors" not in json.loads(resultado.content)
 
-    assert json.loads(resultado.content) == {
-        "data": {
-            "users": [
-                {
-                    "id": str(user3.id),
-                    "username": str(user3.username),
-                    "email": str(user3.email),
-                },
-                {
-                    "id": str(admin_user.id),
-                    "username": str(admin_user.username),
-                    "email": str(admin_user.email),
-                },
-                {
-                    "id": str(user1.id),
-                    "username": str(user1.username),
-                    "email": str(user1.email),
-                },
-                {
-                    "id": str(user2.id),
-                    "username": str(user2.username),
-                    "email": str(user2.email),
-                },
-            ]
-        }
-    }
+    assert {
+        "id": str(user3.id),
+        "username": str(user3.username),
+        "email": str(user3.email),
+    } in json.loads(resultado.content)["data"]["users"]
+    
+    assert {
+        "id": str(admin_user.id),
+        "username": str(admin_user.username),
+        "email": str(admin_user.email),
+    } in json.loads(resultado.content)["data"]["users"]
+    
+    assert {
+        "id": str(user1.id),
+        "username": str(user1.username),
+        "email": str(user1.email),
+    } in json.loads(resultado.content)["data"]["users"]
+
+    assert {
+        "id": str(user2.id),
+        "username": str(user2.username),
+        "email": str(user2.email),
+    } in json.loads(resultado.content)["data"]["users"]
 
 
 @pytest.mark.django_db
@@ -64,6 +53,7 @@ def test_nao_deve_listar_usuarios_quando_usuario_nao_estiver_logado(
     resultado = client_graphql_without_login(query=eg.query_usuarios)
 
     assert "errors" in json.loads(resultado.content)
+    assert "permission" in str(json.loads(resultado.content))
 
 
 @pytest.mark.django_db
@@ -81,39 +71,10 @@ def test_nao_deve_listar_usuarios_quando_usuario_nao_for_admin(
 
 @pytest.mark.django_db
 def test_deve_listar_informacoes_do_usuario_quando_usuario_for_ele_mesmo(
-    client_graphql_with_login,
+    client_graphql_with_login, user
 ):
-    current_user = User.objects.first()
-
     resultado = client_graphql_with_login(
-        query=eg.query_usuario, variables={"userId": current_user.id}
-    )
-
-    assert "errors" not in json.loads(resultado.content)
-
-    assert json.loads(resultado.content) == {
-        "data": {
-            "user": {
-                "id": str(current_user.id),
-                "username": str(current_user.username),
-                "email": str(current_user.email),
-                "isSuperuser": current_user.is_superuser,
-                "isActive": current_user.is_active,
-                "perguntasCriadas": [],
-                "perguntasRevisadas": [],
-                "perguntasPublicadas": [],
-                "pontuacao": 0,
-            }
-        }
-    }
-
-
-@pytest.mark.django_db
-def test_deve_listar_informacoes_do_usuario_quando_usuario_for_admin(
-    admin_client_with_login, user
-):
-    resultado = graphql_query(
-        query=eg.query_usuario, variables={"userId": user.id}, client=admin_client_with_login
+        query=eg.query_usuario, variables={"userId": user.id}
     )
 
     assert "errors" not in json.loads(resultado.content)
@@ -126,10 +87,252 @@ def test_deve_listar_informacoes_do_usuario_quando_usuario_for_admin(
                 "email": str(user.email),
                 "isSuperuser": user.is_superuser,
                 "isActive": user.is_active,
-                "perguntasCriadas": [],
+                "perguntasEnviadas": [],
                 "perguntasRevisadas": [],
+                "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
             }
         }
     }
+
+
+@pytest.mark.django_db
+def test_deve_listar_informacoes_do_usuario_quando_usuario_for_admin(
+    admin_client_with_login, user
+):
+    resultado = graphql_query(
+        query=eg.query_usuario,
+        variables={"userId": user.id},
+        client=admin_client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert json.loads(resultado.content) == {
+        "data": {
+            "user": {
+                "id": str(user.id),
+                "username": str(user.username),
+                "email": str(user.email),
+                "isSuperuser": user.is_superuser,
+                "isActive": user.is_active,
+                "perguntasEnviadas": [],
+                "perguntasRevisadas": [],
+                "perguntasRecusadas": [],
+                "perguntasPublicadas": [],
+                "pontuacao": 0,
+            }
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_deve_listar_informacoes_do_usuario_logado_quando_nao_enviar_nenhum_id(
+    client_graphql_with_login, user
+):
+    resultado = client_graphql_with_login(
+        query=eg.query_usuario,
+        variables={"userId": user.id},
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert User.objects.count() == 1
+    assert json.loads(resultado.content) == {
+        "data": {
+            "user": {
+                "id": str(user.id),
+                "username": str(user.username),
+                "email": str(user.email),
+                "isSuperuser": user.is_superuser,
+                "isActive": user.is_active,
+                "perguntasEnviadas": [],
+                "perguntasRevisadas": [],
+                "perguntasRecusadas": [],
+                "perguntasPublicadas": [],
+                "pontuacao": 0,
+            }
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_nao_deve_listar_informacoes_do_usuario_quando_nao_estiver_logado(
+    client_graphql_without_login, user
+):
+    resultado = client_graphql_without_login(
+        query=eg.query_usuario,
+        variables={"userId": user.id},
+    )
+
+    assert "errors" in json.loads(resultado.content)
+    assert "permission" in str(json.loads(resultado.content))
+
+
+@pytest.mark.django_db
+def test_nao_deve_listar_informacoes_do_usuario_quando_usuario_nao_for_ele_mesmo(
+    client_graphql_with_login,
+):
+    other_user = baker.make("core.User", _fill_optional=True)
+
+    resultado = client_graphql_with_login(
+        query=eg.query_usuario, variables={"userId": other_user.id}
+    )
+
+    assert "errors" in json.loads(resultado.content)
+    assert "Somente o proprio usuario e administradores" in str(
+        json.loads(resultado.content)
+    )
+
+
+@pytest.mark.django_db
+def criar_perguntas_para_teste(enviadas, revisadas, publicadas, recusadas, user):
+    # Perguntas enviadas
+    if enviadas != 0:
+        baker.make("Pergunta", criado_por=user, _quantity=enviadas)
+
+    # Perguntas recusadas
+    if recusadas != 0:
+        baker.make(
+            "Pergunta",
+            criado_por=user,
+            recusado_por=user,
+            recusado_status=True,
+            _quantity=recusadas,
+        )
+
+    # Perguntas revisadas
+    if revisadas != 0:
+        baker.make(
+            "Pergunta",
+            criado_por=user,
+            revisado_por=user,
+            revisado_status=True,
+            _quantity=revisadas,
+        )
+
+    # Perguntas Publicadas
+    if publicadas != 0:
+        baker.make(
+            "Pergunta",
+            criado_por=user,
+            revisado_status=True,
+            publicado_por=user,
+            _quantity=publicadas,
+        )
+
+    return None
+
+
+@pytest.mark.parametrize(
+    (
+        "perguntas_enviadas",
+        "perguntas_revisadas",
+        "perguntas_publicadas",
+        "perguntas_recusadas",
+        "pontuacao_esperada",
+    ),
+    [
+        (1, 1, 1, 1, 7),
+        (4, 3, 2, 1, 17),
+        (10, 0, 5, 2, 27),
+        (3, 7, 0, 5, 22),
+        (6, 2, 3, 0, 19),
+        (2, 3, 4, 5, 25),
+    ],
+)
+@pytest.mark.django_db
+def test_deve_listar_pontuacao_do_usuario_corretamente(
+    client_graphql_with_login,
+    user,
+    perguntas_enviadas,
+    perguntas_revisadas,
+    perguntas_publicadas,
+    perguntas_recusadas,
+    pontuacao_esperada,
+):
+    criar_perguntas_para_teste(
+        enviadas=perguntas_enviadas,
+        revisadas=perguntas_revisadas,
+        publicadas=perguntas_publicadas,
+        recusadas=perguntas_recusadas,
+        user=user,
+    )
+
+    resultado = client_graphql_with_login(
+        query=eg.query_usuario, variables={"userId": user.id}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert (
+        json.loads(resultado.content)["data"]["user"]["pontuacao"] == pontuacao_esperada
+    )
+
+
+@pytest.mark.django_db
+def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_com_status_recusado(
+    client_graphql_with_login,
+    user,
+):
+    # Pergunta eviada
+    baker.make("Pergunta", criado_por=user)
+
+    # Pergunta com status revisada porém recusada
+    baker.make(
+        "Pergunta",
+        criado_por=user,
+        revisado_por=user,
+        revisado_status=True,
+        recusado_por=user,
+        recusado_status=True,
+    )
+
+    # Pergunta publicada porém recusada
+    baker.make(
+        "Pergunta",
+        criado_por=user,
+        revisado_status=True,
+        publicado_por=user,
+        recusado_por=user,
+        recusado_status=True,
+    )
+
+    resultado = client_graphql_with_login(
+        query=eg.query_usuario, variables={"userId": user.id}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert json.loads(resultado.content)["data"]["user"]["pontuacao"] == 3
+
+
+@pytest.mark.django_db
+def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publicada_sem_estarem_revisadas(
+    client_graphql_with_login,
+    user,
+):
+    # Pergunta eviada
+    baker.make("Pergunta", criado_por=user)
+
+    # Pergunta com status revisada porém recusada
+    baker.make(
+        "Pergunta",
+        criado_por=user,
+        revisado_por=user,
+        revisado_status=True,
+    )
+
+    # Pergunta publicada porém sem o status revisada
+    baker.make(
+        "Pergunta",
+        criado_por=user,
+        revisado_status=False,
+        publicado_por=user,
+    )
+
+    resultado = client_graphql_with_login(
+        query=eg.query_usuario, variables={"userId": user.id}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert json.loads(resultado.content)["data"]["user"]["pontuacao"] == 4

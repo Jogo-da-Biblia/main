@@ -39,12 +39,11 @@ class Query(graphene.ObjectType):
 
     @login_required
     def resolve_user(root, info, id=None):
-        assert check_if_user_is_admin_or_himself(info, id)
+        user_id = info.context.user.id if id is None else id
+        
+        assert check_if_user_is_admin_or_himself(info, user_id)
 
-        if id is None:
-            return info.context.user
-        return User.objects.get(id=id)
-
+        return User.objects.get(id=user_id)
 
     @login_required
     def resolve_users(root, info):

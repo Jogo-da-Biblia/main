@@ -48,9 +48,10 @@ class UsuarioType(DjangoObjectType):
             "email",
             "is_active",
             "is_superuser",
-            "perguntas_criadas",
+            "perguntas_enviadas",
             "perguntas_revisadas",
             "perguntas_publicadas",
+            "perguntas_recusadas",
         )
 
     pontuacao = graphene.Int()

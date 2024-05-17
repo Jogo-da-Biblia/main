@@ -45,11 +45,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def pontuacao(self):
         # Perguntas enviadas somarão um ponto
+        # Caso a pergunta seja recusada a pessoa continua com apenas um ponto
         # Perguntas enviadas e revisadas somarão dois pontos
         # Perguntas enviadas, revisadas e publicadas somarão três pontos
-        # Caso a pergunta seja recusada a pessoa continua com apenas um ponto
-        return (
-            self.perguntas_criadas.count()
-            + self.perguntas_revisadas.count()
-            + self.perguntas_publicadas.count()
-        )
+
+        perguntas_enviadas = self.perguntas_enviadas
+        
+        total = perguntas_enviadas.count() # Soma + 1 para todas as perguntas enviadas
+        perguntas_enviadas = perguntas_enviadas.exclude(recusado_status=True) # Remove as perguntas recusadas
+
+        total += perguntas_enviadas.filter(revisado_status=True).count()  # Soma + 1 para todas as perguntas revisadas
+        perguntas_enviadas = perguntas_enviadas.exclude(revisado_status=False) # Remove as perguntas nao revisadas
+        
+        total += perguntas_enviadas.filter(publicado_por__isnull=False).count() # + 1 para todas as perguntas publicadas
+
+        return total

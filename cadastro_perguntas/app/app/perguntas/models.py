@@ -42,7 +42,7 @@ class Pergunta(models.Model):
 
     criado_por = models.ForeignKey(
         User,
-        related_name='perguntas_criadas',
+        related_name='perguntas_enviadas',
         on_delete=models.CASCADE
     )
 
@@ -61,6 +61,23 @@ class Pergunta(models.Model):
     )
 
     revisado_em = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    recusado_por = models.ForeignKey(
+        User,
+        related_name='perguntas_recusadas',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    recusado_status = models.BooleanField(
+        default=False, verbose_name='Recusado'
+    )
+
+    recusado_em = models.DateTimeField(
         null=True,
         blank=True
     )

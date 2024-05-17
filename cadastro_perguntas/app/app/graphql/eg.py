@@ -7,11 +7,15 @@ query_usuario ='''
                 email
                 isSuperuser
                 isActive
-                perguntasCriadas {
+                perguntasEnviadas {
                     id
                     enunciado
                 }
                 perguntasRevisadas{
+                    id
+                    enunciado
+                }
+                perguntasRecusadas{
                     id
                     enunciado
                 }
@@ -30,19 +34,25 @@ usuario_vazio_query = '''
                 id
                 username
                 email
-                pontuacao    
-                perguntasCriadas {
-                id
-                enunciado
+                isSuperuser
+                isActive
+                perguntasEnviadas {
+                    id
+                    enunciado
                 }
                 perguntasRevisadas{
-                id
-                enunciado
+                    id
+                    enunciado
+                }
+                perguntasRecusadas{
+                    id
+                    enunciado
                 }
                 perguntasPublicadas{
                     id
                     enunciado
                 }
+                pontuacao  
             }
         }
     '''
