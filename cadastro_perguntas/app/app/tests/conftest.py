@@ -101,6 +101,21 @@ def admin_user():
     user.groups.add(admin_group)
     return user
 
+@pytest.fixture
+def revisor_user():
+    user = baker.make("core.User", _fill_optional=True)
+    revisor_group, _ = Group.objects.get_or_create(name="revisores")
+    user.groups.add(revisor_group)
+    return user
+
+
+@pytest.fixture
+def publicador_user():
+    user = baker.make("core.User", _fill_optional=True)
+    publicador_group, _ = Group.objects.get_or_create(name="publicadores")
+    user.groups.add(publicador_group)
+    return user
+
 
 @pytest.fixture
 def admin_client_with_login(client, admin_user):

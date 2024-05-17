@@ -5,7 +5,6 @@ query_usuario ='''
                 id
                 username
                 email
-                isSuperuser
                 isActive
                 perguntasEnviadas {
                     id
@@ -23,7 +22,10 @@ query_usuario ='''
                     id
                     enunciado
                 }
-                pontuacao    
+                pontuacao
+                isAdmin
+                isRevisor
+                isPublicador
             }
         }
     '''
@@ -34,7 +36,6 @@ usuario_vazio_query = '''
                 id
                 username
                 email
-                isSuperuser
                 isActive
                 perguntasEnviadas {
                     id
@@ -52,7 +53,10 @@ usuario_vazio_query = '''
                     id
                     enunciado
                 }
-                pontuacao  
+                pontuacao
+                isAdmin
+                isRevisor
+                isPublicador
             }
         }
     '''

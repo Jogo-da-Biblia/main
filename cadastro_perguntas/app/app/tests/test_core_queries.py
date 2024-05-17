@@ -4,6 +4,7 @@ import pytest
 from app.core.models import User
 from app.graphql import eg
 from graphene_django.utils.testing import graphql_query
+from django.contrib.auth.models import Group
 from model_bakery import baker
 
 
@@ -85,13 +86,15 @@ def test_deve_listar_informacoes_do_usuario_quando_usuario_for_ele_mesmo(
                 "id": str(user.id),
                 "username": str(user.username),
                 "email": str(user.email),
-                "isSuperuser": user.is_superuser,
                 "isActive": user.is_active,
                 "perguntasEnviadas": [],
                 "perguntasRevisadas": [],
                 "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
+                "isAdmin": False,
+                "isRevisor": False,
+                "isPublicador": False,
             }
         }
     }
@@ -115,13 +118,15 @@ def test_deve_listar_informacoes_do_usuario_quando_usuario_for_admin(
                 "id": str(user.id),
                 "username": str(user.username),
                 "email": str(user.email),
-                "isSuperuser": user.is_superuser,
                 "isActive": user.is_active,
                 "perguntasEnviadas": [],
                 "perguntasRevisadas": [],
                 "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
+                "isAdmin": False,
+                "isRevisor": False,
+                "isPublicador": False,
             }
         }
     }
@@ -145,13 +150,15 @@ def test_deve_listar_informacoes_do_usuario_logado_quando_nao_enviar_nenhum_id(
                 "id": str(user.id),
                 "username": str(user.username),
                 "email": str(user.email),
-                "isSuperuser": user.is_superuser,
                 "isActive": user.is_active,
                 "perguntasEnviadas": [],
                 "perguntasRevisadas": [],
                 "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
+                "isAdmin": False,
+                "isRevisor": False,
+                "isPublicador": False,
             }
         }
     }
@@ -336,3 +343,49 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publi
 
     assert "errors" not in json.loads(resultado.content)
     assert json.loads(resultado.content)["data"]["user"]["pontuacao"] == 4
+
+
+@pytest.mark.parametrize(
+    (
+        "admin",
+        "revisor",
+        "publicador",
+    ),
+    [
+        (True, True, True),
+        (False, True, False),
+        (False, False, False),
+        (False, False, True),
+    ],
+)
+@pytest.mark.django_db
+def test_deve_mostrar_permissoes_do_usuario(
+    client_graphql_with_login,
+    user, admin, revisor, publicador
+):
+    admin_group, _ = Group.objects.get_or_create(name="administradores")
+    revisor_group, _ = Group.objects.get_or_create(name="revisores")
+    publicador_group, _ = Group.objects.get_or_create(name="publicadores")
+
+    if admin is True:
+        user.groups.add(admin_group)
+    if revisor is True:
+        user.groups.add(revisor_group)
+    if publicador is True:
+        user.groups.add(publicador_group)
+
+    
+    resultado = client_graphql_with_login(
+        query=eg.query_usuario, variables={"userId": user.id}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert (
+        json.loads(resultado.content)["data"]["user"]["isAdmin"] is admin
+    )
+    assert (
+        json.loads(resultado.content)["data"]["user"]["isRevisor"] is revisor
+    )
+    assert (
+        json.loads(resultado.content)["data"]["user"]["isPublicador"] is publicador
+    )

@@ -47,7 +47,6 @@ class UsuarioType(DjangoObjectType):
             "username",
             "email",
             "is_active",
-            "is_superuser",
             "perguntas_enviadas",
             "perguntas_revisadas",
             "perguntas_publicadas",
@@ -55,6 +54,18 @@ class UsuarioType(DjangoObjectType):
         )
 
     pontuacao = graphene.Int()
+    is_admin = graphene.Boolean()
+    is_revisor = graphene.Boolean()
+    is_publicador = graphene.Boolean()
 
     def resolve_pontuacao(self, info):
         return self.pontuacao
+    
+    def resolve_is_admin(self, info):
+        return self.is_admin
+
+    def resolve_is_revisor(self, info):
+        return self.is_revisor
+
+    def resolve_is_publicador(self, info):
+        return self.is_publicador

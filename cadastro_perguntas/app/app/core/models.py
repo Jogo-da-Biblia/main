@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 from app.core.manager import UserManager
+from app.core import utils
 
 import re
 
@@ -60,3 +61,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         total += perguntas_enviadas.filter(publicado_por__isnull=False).count() # + 1 para todas as perguntas publicadas
 
         return total
+
+    @property
+    def is_admin(self):
+        return utils.usuario_superusuario_ou_admin(usuario=self)
+
+    @property
+    def is_revisor(self):
+        return utils.check_usuario_revisor(usuario=self)
+
+    @property
+    def is_publicador(self):
+        return utils.check_usuario_publicador(usuario=self)

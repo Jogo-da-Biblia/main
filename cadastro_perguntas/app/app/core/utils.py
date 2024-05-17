@@ -1,3 +1,5 @@
+# TODO test utils
+
 def usuario_superusuario_ou_admin(usuario, raise_exception=False):
     if usuario.is_superuser is True or usuario.groups.filter(name='administradores').exists() is True:
         return True
@@ -7,6 +9,14 @@ def usuario_superusuario_ou_admin(usuario, raise_exception=False):
                 "Somente administradores podem efetuar esta ação"
             )
     return False
+
+
+def check_usuario_revisor(usuario):
+    return usuario.groups.filter(name='revisores').exists()
+
+
+def check_usuario_publicador(usuario):
+    return usuario.groups.filter(name='publicadores').exists()
 
 
 def check_if_user_is_admin_or_himself(info, user_id):
@@ -24,20 +34,34 @@ def check_if_user_is_admin_or_himself(info, user_id):
             )
     return True
 
-# def receber_pontuacao_usuario(usuario):
-#     pontuacao = 0
-#     perguntas = Pergunta.objects.filter(
-#         criado_por=User.objects.get(id=usuario.id))
-#     for pergunta in perguntas:
-#         pontuacao += 1  # Questao enviada
-#         if pergunta.status is True:
-#             # questao revidada e publicada
-#             pontuacao += 2
-#         else:
-#             if pergunta.revisado_status is True:
-#                 # questao revisada
-#                 pontuacao += 1
-#                 if pergunta.status is False:
-#                     # questao revisada mas nao publicada
-#                     pontuacao -= 1
-#     return pontuacao
+
+def check_if_user_is_admin_or_revisor(info):
+    if (
+            any(
+                (
+                    usuario_superusuario_ou_admin(info.context.user),
+                    check_usuario_revisor(info.context.user)
+                )
+            )
+            is False
+        ):
+            raise Exception(
+                "Somente revisores e administradores podem efetuar esta ação"
+            )
+    return True
+
+
+def check_if_user_is_admin_or_publicador(info):
+    if (
+            any(
+                (
+                    usuario_superusuario_ou_admin(info.context.user),
+                    check_usuario_publicador(info.context.user)
+                )
+            )
+            is False
+        ):
+            raise Exception(
+                "Somente publicadores e administradores podem efetuar esta ação"
+            )
+    return True
