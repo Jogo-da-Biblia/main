@@ -16,11 +16,11 @@ class Mutation(graphene.ObjectType):
     adicionar_permissoes = AdicionarPermissoesMutation.Field()
     # TODO revisor e publicador
     # AlterarPermissoes (Apenas admin)
-        # Adicionar Revisor
+        
         # Remover revisor
-        # Adicionar Publicador
+        
         # Remover Publicador
-        # Adicionar Admin
+        
         # Remover Admin
     # TODO tests
     cadastrar_pergunta = CadastrarPerguntaMutation.Field()
