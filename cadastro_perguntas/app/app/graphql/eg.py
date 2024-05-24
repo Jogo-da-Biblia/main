@@ -1,5 +1,5 @@
 # Querys and Mutations to test
-query_usuario ='''
+query_usuario = """
         query usuarioQuery($userId: Int!){
             user(id:$userId){
                 id
@@ -28,9 +28,9 @@ query_usuario ='''
                 isPublicador
             }
         }
-    '''
+    """
 
-usuario_vazio_query = '''
+usuario_vazio_query = """
         query{
             user{
                 id
@@ -59,9 +59,9 @@ usuario_vazio_query = '''
                 isPublicador
             }
         }
-    '''
+    """
 
-query_usuarios = '''
+query_usuarios = """
         query{
             users{
                 id
@@ -69,27 +69,27 @@ query_usuarios = '''
                 email
             }
         }
-    '''
+    """
 
-pergunta_aleatoria_query = '''
+pergunta_aleatoria_query = """
         query perguntaAleatoriaQuery($temaId: Int){
             pergunta(temaId:$temaId){
                 id
                 enunciado
             }
         }
-    '''
+    """
 
-todas_perguntas_query = '''
+todas_perguntas_query = """
         query{
             perguntas{
                 id
                 enunciado
             }
         }
-    '''
+    """
 
-todos_comentarios_query = '''
+todos_comentarios_query = """
     query{
         comentarios{
             id
@@ -102,9 +102,9 @@ todos_comentarios_query = '''
             }
         }
     }
-    '''
+    """
 
-texto_biblico_query = '''
+texto_biblico_query = """
     query textoBiblicoQuery($textoBiblicoReferencia: String!){
         textoBiblico(
                 referencia: $textoBiblicoReferencia
@@ -126,9 +126,9 @@ texto_biblico_query = '''
                 texto
             }
         }
-    '''
+    """
 
-novo_usuario_mutation = '''
+novo_usuario_mutation = """
         mutation cadastrarUsuario($email: String!, $username: String!, $password: String!, $name: String!, $phone: String!, $isWhatsapp: Boolean) {
             cadastrarUsuario(
                 email: $email
@@ -144,10 +144,10 @@ novo_usuario_mutation = '''
                 }
             }	
         }
-    '''
+    """
 
 
-editar_usuario_mutation = '''
+editar_usuario_mutation = """
         mutation editarUsuario($userId: Int!, $email: String, $username: String, $password: String, $name: String, $phone: String, $isWhatsapp: Boolean){
             editarUsuario(
                 userId: $userId
@@ -165,10 +165,27 @@ editar_usuario_mutation = '''
                 }
             }
         }
-    '''
+    """
 
 
-recuperar_senha_mutation = '''
+adicionar_permissoes_mutation = """
+        mutation adicionarPermissoes($userId: Int!, $newRole: Role!){
+            adicionarPermissoes(
+                userId: $userId
+                newRole: $newRole
+            ){
+                usuario{
+                    id
+                    isAdmin
+                    isRevisor
+                    isPublicador
+                }
+            }
+        }
+    """
+
+
+recuperar_senha_mutation = """
         mutation recuperarSenha($userId: Int!, $email: String!){
             recuperarSenha(
                 userId: $userId, 
@@ -177,10 +194,10 @@ recuperar_senha_mutation = '''
                 mensagem
             }
         }
-    '''
+    """
 
 
-adicionar_nova_pergunta_mutation = '''
+adicionar_nova_pergunta_mutation = """
         mutation adicionarNovaPerguntaMutation($temaId: Int!, $referenciaId: Int!, $tipoResposta: String!){
             cadastrarPergunta(
                 enunciado:"Enunciaod da pergunta",
@@ -205,9 +222,9 @@ adicionar_nova_pergunta_mutation = '''
                 }
             }
         }
-    '''
+    """
 
-editar_pergunta_mutation = '''
+editar_pergunta_mutation = """
         mutation editarPerguntaMutation($perguntaId: Int!, $temaId: Int!, $referenciaId: Int!){
             editarPergunta(
                 id:$perguntaId, 
@@ -232,9 +249,9 @@ editar_pergunta_mutation = '''
                 }
             }
         }
-    '''
+    """
 
-adicionar_comentario_mutation = '''
+adicionar_comentario_mutation = """
     mutation adicionarComentarioMutation($perguntaId: Int!){
             adicionarComentario(
                 mensagem: "mensagem",
@@ -254,4 +271,4 @@ adicionar_comentario_mutation = '''
                 }
             }
         }
-    '''
+    """

@@ -101,6 +101,7 @@ def admin_user():
     user.groups.add(admin_group)
     return user
 
+
 @pytest.fixture
 def revisor_user():
     user = baker.make("core.User", _fill_optional=True)

@@ -27,7 +27,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=256)
     phone = models.CharField(max_length=11)
     is_whatsapp = models.BooleanField("É Whatsapp?", default=True)
-    is_staff = models.BooleanField("É da equipe?", default=False)
     is_active = models.BooleanField("Está ativo?", default=True)
     created_at = models.DateTimeField("Data de Cadastro", auto_now_add=True)
 

@@ -1,9 +1,11 @@
 import json
 
 import pytest
+from app.core.views import Role
 from app.core.models import User
 from app.graphql import eg
 from graphene_django.utils.testing import graphql_query
+from model_bakery import baker
 
 
 @pytest.mark.django_db
@@ -26,7 +28,6 @@ def test_deve_criar_novo_usuario(client_graphql_without_login):
 
     new_user = User.objects.get(username="ususaroteste1")
     assert new_user.username == "ususaroteste1"
-    assert new_user.is_staff is False
     assert new_user.name == "nome teste"
     assert new_user.phone == "12345678"
     assert new_user.is_whatsapp is True
@@ -207,3 +208,49 @@ def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(
 
     assert user.check_password("senhamudar") is False
     assert mocked_email.called is True
+
+
+@pytest.mark.parametrize(
+    (
+        "enum_selected",
+        "admin_expected",
+        "revisor_expected",
+        "publicador_expected",
+    ),
+    [
+        (Role.REVISOR.name, False, True, False),
+        (Role.PUBLICADOR.name, False, False, True),
+        (Role.ADMIN.name, True, False, False),
+    ],
+)
+@pytest.mark.django_db
+def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(admin_client_with_login, enum_selected, admin_expected, revisor_expected, publicador_expected):
+    new_user = baker.make("core.User", _fill_optional=True)
+    user_id = new_user.id
+
+    
+    assert new_user.is_admin is False
+    assert new_user.is_revisor is False
+    assert new_user.is_publicador is False
+
+    resultado = graphql_query(
+        query=eg.adicionar_permissoes_mutation,
+        operation_name="adicionarPermissoes",
+        variables={
+            "userId": user_id,
+            "newRole": enum_selected,
+        },
+        client=admin_client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert new_user.is_admin is admin_expected
+    assert new_user.is_revisor is revisor_expected
+    assert new_user.is_publicador is publicador_expected
+
+
+# TODO 
+# Test new admin
+# test new publicador
+# test only admin can do this

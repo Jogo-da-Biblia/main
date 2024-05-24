@@ -347,9 +347,9 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publi
 
 @pytest.mark.parametrize(
     (
-        "admin",
-        "revisor",
-        "publicador",
+        "admin_expected",
+        "revisor_expected",
+        "publicador_expected",
     ),
     [
         (True, True, True),
@@ -361,17 +361,17 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publi
 @pytest.mark.django_db
 def test_deve_mostrar_permissoes_do_usuario(
     client_graphql_with_login,
-    user, admin, revisor, publicador
+    user, admin_expected, revisor_expected, publicador_expected
 ):
     admin_group, _ = Group.objects.get_or_create(name="administradores")
     revisor_group, _ = Group.objects.get_or_create(name="revisores")
     publicador_group, _ = Group.objects.get_or_create(name="publicadores")
 
-    if admin is True:
+    if admin_expected is True:
         user.groups.add(admin_group)
-    if revisor is True:
+    if revisor_expected is True:
         user.groups.add(revisor_group)
-    if publicador is True:
+    if publicador_expected is True:
         user.groups.add(publicador_group)
 
     
@@ -381,11 +381,11 @@ def test_deve_mostrar_permissoes_do_usuario(
 
     assert "errors" not in json.loads(resultado.content)
     assert (
-        json.loads(resultado.content)["data"]["user"]["isAdmin"] is admin
+        json.loads(resultado.content)["data"]["user"]["isAdmin"] is admin_expected
     )
     assert (
-        json.loads(resultado.content)["data"]["user"]["isRevisor"] is revisor
+        json.loads(resultado.content)["data"]["user"]["isRevisor"] is revisor_expected
     )
     assert (
-        json.loads(resultado.content)["data"]["user"]["isPublicador"] is publicador
+        json.loads(resultado.content)["data"]["user"]["isPublicador"] is publicador_expected
     )

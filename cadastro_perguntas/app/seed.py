@@ -13,7 +13,6 @@ colaborador = User.objects.create(
     email="colaborador@jogodabiblia.com.br",
     phone="71992540736",
     is_whatsapp=True,
-    is_staff=False
 )
 colaborador.set_password("passw@rd")
 colaborador.save()
@@ -25,7 +24,6 @@ revisor = User.objects.create(
     email="revisor@teste.com",
     phone="71992540737",
     is_whatsapp=True,
-    is_staff=True,
 )
 revisor.set_password('passw@rd')
 revisor.save()
@@ -37,7 +35,6 @@ publicador = User.objects.create(
     email="publicador@teste.com",
     phone="71992540738",
     is_whatsapp=True,
-    is_staff=True
 )
 publicador.set_password("passw@rd")
 publicador.save()
@@ -49,7 +46,6 @@ supervisor = User.objects.create(
     email="supervisor@teste.com",
     phone="71992540739",
     is_whatsapp=True,
-    is_staff=True
 )
 supervisor.set_password("passw@rd")
 supervisor.save()
@@ -61,7 +57,6 @@ administrador = User.objects.create(
     email="administrador@teste.com",
     phone="71992540740",
     is_whatsapp=True,
-    is_staff=True
 )
 administrador.set_password("passw@rd")
 administrador.save()

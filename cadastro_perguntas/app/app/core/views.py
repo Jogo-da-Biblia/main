@@ -23,7 +23,7 @@ class CadastrarUsuarioMutation(graphene.Mutation):
     def mutate(self, info, username, email, password, name, phone, is_whatsapp=True):
         if len(password) < 6:
             raise Exception("A senha deve conter no minimo 6 caracteres")
-        
+
         usuario = User(
             username=username,
             email=email,
@@ -122,3 +122,40 @@ class RecuperarSenhaMutation(graphene.Mutation):
         return RecuperarSenhaMutation(
             mensagem="Senha alterada e email enviado com sucesso"
         )
+
+
+class Role(graphene.Enum):
+    ADMIN = "admin"
+    PUBLICADOR = "publicador"
+    REVISOR = "revisor"
+
+
+class AdicionarPermissoesMutation(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.Int(required=True)
+        new_role = Role(required=True)
+
+    usuario = graphene.Field(gql_types.UsuarioType)
+
+    @login_required
+    def mutate(
+        self,
+        info,
+        user_id,
+        new_role=None,
+    ):
+        assert utils.usuario_superusuario_ou_admin(
+            usuario=info.context.user, raise_exception=True
+        )
+
+        usuario = User.objects.get(id=user_id)
+
+        if new_role == Role.REVISOR:
+            utils.add_user_to_revisores(usuario=usuario)
+        elif new_role == Role.PUBLICADOR:
+            utils.add_user_to_publicador(usuario=usuario)
+        elif new_role == Role.ADMIN:
+            utils.add_user_to_admin(usuario=usuario)
+
+        usuario.save()
+        return AdicionarPermissoesMutation(usuario=usuario)

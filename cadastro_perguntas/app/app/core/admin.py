@@ -11,16 +11,16 @@ from .models import User
 class UserAdmin(UserAdmin):
     model = User
     list_display = ('username', 'email',)
-    list_filter = ('email', 'is_staff', 'is_active',)
+    list_filter = ('email', 'is_active')
     # Campos que aparecem na edição do usuário
     fieldsets = (
         (None, {'fields': ('email', 'name', 'phone', 'groups', 'password')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_active',)}),
     )
     # Campos que aparecem na adição de um usuário
     add_fieldsets = (
         (None, {
-            'fields': ('username', 'name', 'email', 'phone', 'password1', 'password2', 'is_staff', 'is_active')}
+            'fields': ('username', 'name', 'email', 'phone', 'password1', 'password2', 'is_active')}
          ),
     )
     search_fields = ('email',)
