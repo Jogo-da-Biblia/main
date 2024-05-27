@@ -256,9 +256,6 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
     assert new_user.is_publicador is publicador_expected
 
 
-# TODO
-# Test logged dont do this
-# Test anonymous dont do this
 @pytest.mark.parametrize(
     "enum_selected",
     [
@@ -331,124 +328,138 @@ def test_usuario_não_admin_nao_deve_adicionar_usuario_aos_grupos_solicitados(
     assert new_user.is_revisor is False
     assert new_user.is_publicador is False
 
-# TODO add remove test
-# @pytest.mark.parametrize(
-#     (
-#         "enum_selected",
-#         "admin_expected",
-#         "revisor_expected",
-#         "publicador_expected",
-#     ),
-#     [
-#         (Role.REVISOR.name, False, True, False),
-#         (Role.PUBLICADOR.name, False, False, True),
-#         (Role.ADMIN.name, True, False, False),
-#     ],
-# )
-# @pytest.mark.django_db
-# def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
-#     admin_client_with_login,
-#     enum_selected,
-#     admin_expected,
-#     revisor_expected,
-#     publicador_expected,
-# ):
-#     new_user = baker.make("core.User", _fill_optional=True)
-#     user_id = new_user.id
 
-#     assert new_user.is_admin is False
-#     assert new_user.is_revisor is False
-#     assert new_user.is_publicador is False
+@pytest.mark.parametrize(
+    (
+        "enum_selected",
+        "admin_expected",
+        "revisor_expected",
+        "publicador_expected",
+    ),
+    [
+        (Role.REVISOR.name, True, False, True),
+        (Role.PUBLICADOR.name, True, True, False),
+        (Role.ADMIN.name, False, True, True),
+    ],
+)
+@pytest.mark.django_db
+def test_usuario_admin_deve_remover_usuario_dos_grupos_solicitados(
+    admin_client_with_login,
+    enum_selected,
+    admin_expected,
+    revisor_expected,
+    publicador_expected,
+    admin_group,
+    revisor_group,
+    publicador_group,
+):
+    new_user = baker.make("core.User", _fill_optional=True)
+    user_id = new_user.id
 
-#     resultado = graphql_query(
-#         query=eg.alterar_permissoes_mutation,
-#         operation_name="alterarPermissoes",
-#         variables={
-#             "userId": user_id,
-#             "role": enum_selected,
-#             "action": Action.ADD.name,
-#         },
-#         client=admin_client_with_login,
-#     )
+    new_user.groups.add(admin_group, revisor_group, publicador_group)
 
-#     assert "errors" not in json.loads(resultado.content)
+    assert new_user.is_admin is True
+    assert new_user.is_revisor is True
+    assert new_user.is_publicador is True
 
-#     assert new_user.is_admin is admin_expected
-#     assert new_user.is_revisor is revisor_expected
-#     assert new_user.is_publicador is publicador_expected
+    resultado = graphql_query(
+        query=eg.alterar_permissoes_mutation,
+        operation_name="alterarPermissoes",
+        variables={
+            "userId": user_id,
+            "role": enum_selected,
+            "action": Action.REMOVE.name,
+        },
+        client=admin_client_with_login,
+    )
 
+    assert "errors" not in json.loads(resultado.content)
 
-# # TODO
-# # Test logged dont do this
-# # Test anonymous dont do this
-# @pytest.mark.parametrize(
-#     "enum_selected",
-#     [
-#         Role.REVISOR.name,
-#         Role.PUBLICADOR.name,
-#         Role.ADMIN.name,
-#     ],
-# )
-# @pytest.mark.django_db
-# def test_usuario_anonimos_nao_deve_adicionar_usuario_aos_grupos_solicitados(
-#     client, enum_selected
-# ):
-#     new_user = baker.make("core.User", _fill_optional=True)
-#     user_id = new_user.id
-
-#     assert new_user.is_admin is False
-#     assert new_user.is_revisor is False
-#     assert new_user.is_publicador is False
-
-#     resultado = graphql_query(
-#         query=eg.alterar_permissoes_mutation,
-#         operation_name="alterarPermissoes",
-#         variables={
-#             "userId": user_id,
-#             "role": enum_selected,
-#             "action": Action.ADD.name,
-#         },
-#         client=client,
-#     )
-
-#     assert "errors" in json.loads(resultado.content)
-
-#     assert new_user.is_admin is False
-#     assert new_user.is_revisor is False
-#     assert new_user.is_publicador is False
+    assert new_user.is_admin is admin_expected
+    assert new_user.is_revisor is revisor_expected
+    assert new_user.is_publicador is publicador_expected
 
 
-# @pytest.mark.parametrize(
-#     "enum_selected",
-#     [
-#         Role.REVISOR.name,
-#         Role.PUBLICADOR.name,
-#         Role.ADMIN.name,
-#     ],
-# )
-# @pytest.mark.django_db
-# def test_usuario_não_admin_nao_deve_adicionar_usuario_aos_grupos_solicitados(
-#     client_graphql_with_login, enum_selected
-# ):
-#     new_user = baker.make("core.User", _fill_optional=True)
-#     user_id = new_user.id
+@pytest.mark.parametrize(
+    "enum_selected",
+    [
+        Role.REVISOR.name,
+        Role.PUBLICADOR.name,
+        Role.ADMIN.name,
+    ],
+)
+@pytest.mark.django_db
+def test_usuario_anonimos_nao_deve_remover_usuario_dos_grupos_solicitados(
+    client,
+    enum_selected,
+    admin_group,
+    revisor_group,
+    publicador_group,
+):
+    new_user = baker.make("core.User", _fill_optional=True)
+    user_id = new_user.id
 
-#     assert new_user.is_admin is False
-#     assert new_user.is_revisor is False
-#     assert new_user.is_publicador is False
+    new_user.groups.add(admin_group, revisor_group, publicador_group)
 
-#     resultado = client_graphql_with_login(
-#         query=eg.alterar_permissoes_mutation,
-#         operation_name="alterarPermissoes",
-#         variables={
-#             "userId": user_id,
-#             "role": enum_selected,
-#             "action": Action.ADD.name,
-#         },
-#     )
+    assert new_user.is_admin is True
+    assert new_user.is_revisor is True
+    assert new_user.is_publicador is True
 
-#     assert "errors" in json.loads(resultado.content)
+    resultado = graphql_query(
+        query=eg.alterar_permissoes_mutation,
+        operation_name="alterarPermissoes",
+        variables={
+            "userId": user_id,
+            "role": enum_selected,
+            "action": Action.REMOVE.name,
+        },
+        client=client,
+    )
 
-#     assert new_user.is_admin is False
-#     assert new_user.is_revisor is False
-#     assert new_user.is_publicador is False
+    assert "errors" in json.loads(resultado.content)
+
+    assert new_user.is_admin is True
+    assert new_user.is_revisor is True
+    assert new_user.is_publicador is True
+
+
+@pytest.mark.parametrize(
+    "enum_selected",
+    [
+        Role.REVISOR.name,
+        Role.PUBLICADOR.name,
+        Role.ADMIN.name,
+    ],
+)
+@pytest.mark.django_db
+def test_usuario_não_admin_nao_deve_remover_usuario_dos_grupos_solicitados(
+    client_graphql_with_login,
+    enum_selected,
+    admin_group,
+    revisor_group,
+    publicador_group,
+):
+    new_user = baker.make("core.User", _fill_optional=True)
+    user_id = new_user.id
+
+    new_user.groups.add(admin_group, revisor_group, publicador_group)
+
+    assert new_user.is_admin is True
+    assert new_user.is_revisor is True
+    assert new_user.is_publicador is True
+
+    resultado = client_graphql_with_login(
+        query=eg.alterar_permissoes_mutation,
+        operation_name="alterarPermissoes",
+        variables={
+            "userId": user_id,
+            "role": enum_selected,
+            "action": Action.REMOVE.name,
+        },
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    assert new_user.is_admin is True
+    assert new_user.is_revisor is True
+    assert new_user.is_publicador is True

@@ -2,7 +2,6 @@ import graphene
 from app.perguntas.models import Pergunta, Tema
 from app.graphql import types as gql_types, inputs as gql_inputs
 from app.core.utils import usuario_superusuario_ou_admin
-from django.contrib.auth.decorators import login_required
 from graphql_jwt.decorators import login_required
 
 # FIXME As perguntas estavam sendo criadas sem alternativas e sem referência

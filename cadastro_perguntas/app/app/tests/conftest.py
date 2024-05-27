@@ -95,7 +95,22 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
 
 
 @pytest.fixture
-def admin_user():
+def admin_group():
+    return Group.objects.get_or_create(name="administradores")[0]
+
+
+@pytest.fixture
+def revisor_group():
+    return Group.objects.get_or_create(name="revisores")[0]
+
+
+@pytest.fixture
+def publicador_group():
+    return Group.objects.get_or_create(name="publicadores")[0]
+
+
+@pytest.fixture
+def admin_user(admin_group):
     user = baker.make("core.User", _fill_optional=True)
     admin_group, _ = Group.objects.get_or_create(name="administradores")
     user.groups.add(admin_group)
@@ -103,17 +118,15 @@ def admin_user():
 
 
 @pytest.fixture
-def revisor_user():
+def revisor_user(revisor_group):
     user = baker.make("core.User", _fill_optional=True)
-    revisor_group, _ = Group.objects.get_or_create(name="revisores")
     user.groups.add(revisor_group)
     return user
 
 
 @pytest.fixture
-def publicador_user():
+def publicador_user(publicador_group):
     user = baker.make("core.User", _fill_optional=True)
-    publicador_group, _ = Group.objects.get_or_create(name="publicadores")
     user.groups.add(publicador_group)
     return user
 

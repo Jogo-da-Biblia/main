@@ -14,15 +14,6 @@ class Mutation(graphene.ObjectType):
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
     alterar_permissoes = AlterarPermissoesMutation.Field()
-    # TODO revisor e publicador
-    # AlterarPermissoes (Apenas admin)
-        
-        # Remover revisor
-        
-        # Remover Publicador
-        
-        # Remover Admin
-    # TODO tests
     cadastrar_pergunta = CadastrarPerguntaMutation.Field()
     # TODO
     # Adicionar regra aonde o usuário só pode alterar a perguntas antes de ter sido revidasa
