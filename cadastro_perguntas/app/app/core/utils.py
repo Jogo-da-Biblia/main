@@ -82,3 +82,18 @@ def add_user_to_publicador(usuario):
 def add_user_to_revisores(usuario):
     revisor_group, _ = Group.objects.get_or_create(name="revisores")
     usuario.groups.add(revisor_group)
+
+
+def remove_user_from_admin(usuario):
+    admin_group, _ = Group.objects.get_or_create(name="administradores")
+    usuario.groups.remove(admin_group)
+
+
+def remove_user_from_publicador(usuario):
+    publicador_group, _ = Group.objects.get_or_create(name="publicadores")
+    usuario.groups.remove(publicador_group)
+
+
+def remove_user_from_revisores(usuario):
+    revisor_group, _ = Group.objects.get_or_create(name="revisores")
+    usuario.groups.remove(revisor_group)

@@ -168,11 +168,12 @@ editar_usuario_mutation = """
     """
 
 
-adicionar_permissoes_mutation = """
-        mutation adicionarPermissoes($userId: Int!, $newRole: Role!){
-            adicionarPermissoes(
+alterar_permissoes_mutation = """
+        mutation alterarPermissoes($userId: Int!, $role: Role! $action: Action!){
+            alterarPermissoes(
                 userId: $userId
-                newRole: $newRole
+                role: $role
+                action: $action
             ){
                 usuario{
                     id

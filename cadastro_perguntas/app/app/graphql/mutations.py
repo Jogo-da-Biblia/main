@@ -1,7 +1,7 @@
 import graphene
 import graphql_jwt
 from app.perguntas.views import CadastrarPerguntaMutation, EditarPerguntaMutation
-from app.core.views import CadastrarUsuarioMutation, EditarUsuarioMutation, RecuperarSenhaMutation, AdicionarPermissoesMutation
+from app.core.views import CadastrarUsuarioMutation, EditarUsuarioMutation, RecuperarSenhaMutation, AlterarPermissoesMutation
 from app.comentarios.views import AdicionarComentarioMutation
 
 """
@@ -13,7 +13,7 @@ class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
-    adicionar_permissoes = AdicionarPermissoesMutation.Field()
+    alterar_permissoes = AlterarPermissoesMutation.Field()
     # TODO revisor e publicador
     # AlterarPermissoes (Apenas admin)
         

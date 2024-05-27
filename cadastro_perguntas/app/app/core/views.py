@@ -130,10 +130,16 @@ class Role(graphene.Enum):
     REVISOR = "revisor"
 
 
-class AdicionarPermissoesMutation(graphene.Mutation):
+class Action(graphene.Enum):
+    ADD = "Adicionar"
+    REMOVE = "Remover"
+
+
+class AlterarPermissoesMutation(graphene.Mutation):
     class Arguments:
         user_id = graphene.Int(required=True)
-        new_role = Role(required=True)
+        role = Role(required=True)
+        action = Action(required=True)
 
     usuario = graphene.Field(gql_types.UsuarioType)
 
@@ -142,7 +148,8 @@ class AdicionarPermissoesMutation(graphene.Mutation):
         self,
         info,
         user_id,
-        new_role=None,
+        role,
+        action,
     ):
         assert utils.usuario_superusuario_ou_admin(
             usuario=info.context.user, raise_exception=True
@@ -150,12 +157,12 @@ class AdicionarPermissoesMutation(graphene.Mutation):
 
         usuario = User.objects.get(id=user_id)
 
-        if new_role == Role.REVISOR:
-            utils.add_user_to_revisores(usuario=usuario)
-        elif new_role == Role.PUBLICADOR:
-            utils.add_user_to_publicador(usuario=usuario)
-        elif new_role == Role.ADMIN:
-            utils.add_user_to_admin(usuario=usuario)
+        if role == Role.REVISOR:
+            utils.add_user_to_revisores(usuario=usuario) if action == Action.ADD else utils.remove_user_from_revisores(usuario=usuario)
+        elif role == Role.PUBLICADOR:
+            utils.add_user_to_publicador(usuario=usuario) if action == Action.ADD else utils.remove_user_from_publicador(usuario=usuario)
+        elif role == Role.ADMIN:
+            utils.add_user_to_admin(usuario=usuario) if action == Action.ADD else utils.remove_user_from_admin(usuario=usuario)
 
         usuario.save()
-        return AdicionarPermissoesMutation(usuario=usuario)
+        return AlterarPermissoesMutation(usuario=usuario)
