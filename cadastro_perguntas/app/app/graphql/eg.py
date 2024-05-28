@@ -85,9 +85,66 @@ todas_perguntas_query = """
             perguntas{
                 id
                 enunciado
+                tema {
+                    id
+                    nome
+                }
+                tipoResposta
+                referencia
+                status
+                criadoPor {
+                    id
+                    email
+                }
+                criadoEm
+                revisadoPor {
+                    id
+                    email
+                }
+                revisadoStatus
+                revisadoEm
+                recusadoPor {
+                    id
+                    email
+                }
+                publicadoPor {
+                    id
+                    email
+                }
+                publicadoEm
+                atualizadoEm
+                alternativas {
+                    id
+                    texto
+                    correta
+                }
+                alternativasCorretas {
+                    id
+                    texto
+                    correta
+                }
+                comentarios {
+                    id
+                    email
+                    phone
+                    isWhatsapp
+                    mensagem
+                    criadoEm
+                }
             }
         }
     """
+
+todos_temas_query = """
+    query{
+        temas{
+            id
+            nome
+            cor
+        }
+    }
+    """
+
 
 todos_comentarios_query = """
     query{

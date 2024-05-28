@@ -20,9 +20,10 @@ class Query(graphene.ObjectType):
     pergunta_aleatoria = graphene.Field(gql_types.PerguntasType, tema_id=graphene.Int())
     users = DjangoListField(gql_types.UsuarioType)
     user = graphene.Field(gql_types.UsuarioType, id=graphene.Int())
-    comentarios = DjangoListField(gql_types.ComentariosType)
-    # TODO Adicionar uma migration para selecionar comentarios de uma pergunta
     temas = DjangoListField(gql_types.TemaType)
+    # TODO 
+    # adicionar testes de comentarios 
+    comentarios = DjangoListField(gql_types.ComentariosType)
 
     @login_required
     def resolve_pergunta_aleatoria(root, info, tema_id):

@@ -14,9 +14,13 @@ class Mutation(graphene.ObjectType):
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
     alterar_permissoes = AlterarPermissoesMutation.Field()
-    cadastrar_pergunta = CadastrarPerguntaMutation.Field()
     # TODO
+    # Adicionar as alternativas na mutations de pergunta
+    # Adicionar tema na mutations de perguntas
+    # O tipo da pergunta deve ser um Enum
+    cadastrar_pergunta = CadastrarPerguntaMutation.Field()
     # Adicionar regra aonde o usuário só pode alterar a perguntas antes de ter sido revidasa
+    # Somente admins e o proprio usuario podem editar a pergunta
     editar_pergunta = EditarPerguntaMutation.Field()
     adicionar_comentario = AdicionarComentarioMutation.Field()
     login = graphql_jwt.ObtainJSONWebToken.Field()

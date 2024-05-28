@@ -13,12 +13,11 @@ class Tema(models.Model):
 
 
 class Pergunta(models.Model):
-
     TIPO_RESPOSTA = [
-        ('MES', 'Múltipla Escolha'),
-        ('RCO', 'Referência Completa'),
-        ('RLC', 'Referência Livro-Capítulo'),
-        ('RES', 'Resposta Simples')
+        ("MES", "Múltipla Escolha"),
+        ("RCO", "Referência Completa"),
+        ("RLC", "Referência Livro-Capítulo"),
+        ("RES", "Resposta Simples"),
     ]
 
     id = models.AutoField(primary_key=True)
@@ -26,9 +25,7 @@ class Pergunta(models.Model):
     enunciado = models.TextField()
 
     tipo_resposta = models.CharField(
-        max_length=3,
-        choices=TIPO_RESPOSTA,
-        verbose_name='Tipo de Resposta'
+        max_length=3, choices=TIPO_RESPOSTA, verbose_name="Tipo de Resposta"
     )
 
     referencia = models.TextField(
@@ -36,64 +33,47 @@ class Pergunta(models.Model):
         blank=True,
     )
 
-    referencia_biblica = models.BooleanField(default=True)
-
-    status = models.BooleanField(default=False, verbose_name='Publicado')
+    status = models.BooleanField(default=False, verbose_name="Publicado")
 
     criado_por = models.ForeignKey(
-        User,
-        related_name='perguntas_enviadas',
-        on_delete=models.CASCADE
+        User, related_name="perguntas_enviadas", on_delete=models.CASCADE
     )
 
     criado_em = models.DateTimeField(auto_now_add=True)
 
     revisado_por = models.ForeignKey(
         User,
-        related_name='perguntas_revisadas',
+        related_name="perguntas_revisadas",
         on_delete=models.CASCADE,
         null=True,
-        blank=True
+        blank=True,
     )
 
-    revisado_status = models.BooleanField(
-        default=False, verbose_name='Revisado'
-    )
+    revisado_status = models.BooleanField(default=False, verbose_name="Revisado")
 
-    revisado_em = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    revisado_em = models.DateTimeField(null=True, blank=True)
 
     recusado_por = models.ForeignKey(
         User,
-        related_name='perguntas_recusadas',
+        related_name="perguntas_recusadas",
         on_delete=models.CASCADE,
         null=True,
-        blank=True
+        blank=True,
     )
 
-    recusado_status = models.BooleanField(
-        default=False, verbose_name='Recusado'
-    )
+    recusado_status = models.BooleanField(default=False, verbose_name="Recusado")
 
-    recusado_em = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    recusado_em = models.DateTimeField(null=True, blank=True)
 
     publicado_por = models.ForeignKey(
         User,
-        related_name='perguntas_publicadas',
+        related_name="perguntas_publicadas",
         on_delete=models.CASCADE,
         null=True,
-        blank=True
+        blank=True,
     )
 
-    publicado_em = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    publicado_em = models.DateTimeField(null=True, blank=True)
 
     atualizado_em = models.DateTimeField(auto_now=True)
 
@@ -101,23 +81,21 @@ class Pergunta(models.Model):
         return f'<Pergunta enunciado="{self.enunciado}">'
 
     class Meta:
-        verbose_name = 'Pergunta'
+        verbose_name = "Pergunta"
 
-    def get_absolute_url(self):
-        return reverse('pages:pergunta_update', kwargs={'pk': self.id})
+    @property
+    def alternativas_corretas(self):
+        return self.alternativas.filter(correta=True).all()
 
 
 class Alternativa(models.Model):
     id = models.AutoField(primary_key=True)
     texto = models.TextField()
 
-    alternativas = models.ForeignKey(
-        Pergunta,
-        related_name='alternativas',
-        on_delete=models.CASCADE
+    pergunta = models.ForeignKey(
+        Pergunta, related_name="alternativas", on_delete=models.CASCADE
     )
-
-    alternativas_corretas = models.BooleanField(default=False)
+    correta = models.BooleanField(default=False)
 
     def __str__(self):
         return self.texto

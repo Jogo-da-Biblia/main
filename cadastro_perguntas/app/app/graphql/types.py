@@ -1,8 +1,15 @@
 import graphene
 from graphene_django import DjangoObjectType
-from app.perguntas.models import Pergunta, Tema
+from app.perguntas.models import Pergunta, Tema, Alternativa
 from app.comentarios.models import Comentario
 from app.core.models import User
+from graphene_django import DjangoListField
+
+
+class AlternativaType(DjangoObjectType):
+    class Meta:
+        model = Alternativa
+        fields = ("id", "texto", "pergunta", "correta")
 
 
 class PerguntasType(DjangoObjectType):
@@ -10,13 +17,30 @@ class PerguntasType(DjangoObjectType):
         model = Pergunta
         fields = (
             "id",
+            "tema",
             "enunciado",
             "tipo_resposta",
             "referencia",
             "status",
+            "criado_por",
+            "criado_em",
+            "revisado_status",
+            "revisado_em",
             "revisado_por",
-            "tema",
+            "recusado_status",
+            "recusado_em",
+            "recusado_por",
+            "publicado_por",
+            "publicado_em",
+            "atualizado_em",
+            "alternativas",
+            "comentarios",
         )
+
+    alternativas_corretas = DjangoListField(AlternativaType)
+
+    def resolve_alternativas_corretas(self, info):
+        return self.alternativas_corretas
 
 
 class ComentariosType(DjangoObjectType):
@@ -36,7 +60,7 @@ class ComentariosType(DjangoObjectType):
 class TemaType(DjangoObjectType):
     class Meta:
         model = Tema
-        fields = ("nome", "cor")
+        fields = ("id", "nome", "cor")
 
 
 class UsuarioType(DjangoObjectType):
@@ -60,7 +84,7 @@ class UsuarioType(DjangoObjectType):
 
     def resolve_pontuacao(self, info):
         return self.pontuacao
-    
+
     def resolve_is_admin(self, info):
         return self.is_admin
 
