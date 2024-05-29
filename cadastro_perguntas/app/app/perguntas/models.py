@@ -33,6 +33,8 @@ class Pergunta(models.Model):
         blank=True,
     )
 
+    referencia_biblica = models.BooleanField(default=True)
+
     status = models.BooleanField(default=False, verbose_name="Publicado")
 
     criado_por = models.ForeignKey(

@@ -226,7 +226,7 @@ editar_usuario_mutation = """
 
 
 alterar_permissoes_mutation = """
-        mutation alterarPermissoes($userId: Int!, $role: Role! $action: Action!){
+        mutation alterarPermissoes($userId: Int!, $role: RoleEnum! $action: ActionEnum!){
             alterarPermissoes(
                 userId: $userId
                 role: $role
@@ -255,32 +255,17 @@ recuperar_senha_mutation = """
     """
 
 
-adicionar_nova_pergunta_mutation = """
-        mutation adicionarNovaPerguntaMutation($temaId: Int!, $referenciaId: Int!, $tipoResposta: String!){
-            cadastrarPergunta(
-                enunciado:"Enunciaod da pergunta",
-                outrasReferencias: "outras ref",
-                referenciaRespostaId: $referenciaId,
-                temaId: $temaId,
-                tipoResposta: $tipoResposta,
-            ){
-                pergunta{
-                    id
-                    tema{
-                        nome
-                    }
-                    enunciado
-                    tipoResposta
-                    status
-                    revisadoPor {
-                        id
-                        username
-                        email
-                    }
-                }
+cadastrar_pergunta_mutation = """
+    mutation cadastrarPergunta($novaPergunta: PerguntaInput!){
+        cadastrarPergunta(
+            novaPergunta: $novaPergunta
+        ){
+            pergunta{
+                id
             }
         }
-    """
+    }
+"""
 
 editar_pergunta_mutation = """
         mutation editarPerguntaMutation($perguntaId: Int!, $temaId: Int!, $referenciaId: Int!){

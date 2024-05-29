@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from app.core.views import Role, Action
+from app.core.views import RoleEnum, ActionEnum
 from app.core.models import User
 from app.graphql import eg
 from graphene_django.utils.testing import graphql_query
@@ -218,9 +218,9 @@ def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(
         "publicador_expected",
     ),
     [
-        (Role.REVISOR.name, False, True, False),
-        (Role.PUBLICADOR.name, False, False, True),
-        (Role.ADMIN.name, True, False, False),
+        (RoleEnum.REVISOR.name, False, True, False),
+        (RoleEnum.PUBLICADOR.name, False, False, True),
+        (RoleEnum.ADMIN.name, True, False, False),
     ],
 )
 @pytest.mark.django_db
@@ -244,7 +244,7 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
         variables={
             "userId": user_id,
             "role": enum_selected,
-            "action": Action.ADD.name,
+            "action": ActionEnum.ADD.name,
         },
         client=admin_client_with_login,
     )
@@ -259,9 +259,9 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
 @pytest.mark.parametrize(
     "enum_selected",
     [
-        Role.REVISOR.name,
-        Role.PUBLICADOR.name,
-        Role.ADMIN.name,
+        RoleEnum.REVISOR.name,
+        RoleEnum.PUBLICADOR.name,
+        RoleEnum.ADMIN.name,
     ],
 )
 @pytest.mark.django_db
@@ -281,7 +281,7 @@ def test_usuario_anonimos_nao_deve_adicionar_usuario_aos_grupos_solicitados(
         variables={
             "userId": user_id,
             "role": enum_selected,
-            "action": Action.ADD.name,
+            "action": ActionEnum.ADD.name,
         },
         client=client,
     )
@@ -296,9 +296,9 @@ def test_usuario_anonimos_nao_deve_adicionar_usuario_aos_grupos_solicitados(
 @pytest.mark.parametrize(
     "enum_selected",
     [
-        Role.REVISOR.name,
-        Role.PUBLICADOR.name,
-        Role.ADMIN.name,
+        RoleEnum.REVISOR.name,
+        RoleEnum.PUBLICADOR.name,
+        RoleEnum.ADMIN.name,
     ],
 )
 @pytest.mark.django_db
@@ -318,7 +318,7 @@ def test_usuario_não_admin_nao_deve_adicionar_usuario_aos_grupos_solicitados(
         variables={
             "userId": user_id,
             "role": enum_selected,
-            "action": Action.ADD.name,
+            "action": ActionEnum.ADD.name,
         },
     )
 
@@ -337,9 +337,9 @@ def test_usuario_não_admin_nao_deve_adicionar_usuario_aos_grupos_solicitados(
         "publicador_expected",
     ),
     [
-        (Role.REVISOR.name, True, False, True),
-        (Role.PUBLICADOR.name, True, True, False),
-        (Role.ADMIN.name, False, True, True),
+        (RoleEnum.REVISOR.name, True, False, True),
+        (RoleEnum.PUBLICADOR.name, True, True, False),
+        (RoleEnum.ADMIN.name, False, True, True),
     ],
 )
 @pytest.mark.django_db
@@ -368,7 +368,7 @@ def test_usuario_admin_deve_remover_usuario_dos_grupos_solicitados(
         variables={
             "userId": user_id,
             "role": enum_selected,
-            "action": Action.REMOVE.name,
+            "action": ActionEnum.REMOVE.name,
         },
         client=admin_client_with_login,
     )
@@ -383,9 +383,9 @@ def test_usuario_admin_deve_remover_usuario_dos_grupos_solicitados(
 @pytest.mark.parametrize(
     "enum_selected",
     [
-        Role.REVISOR.name,
-        Role.PUBLICADOR.name,
-        Role.ADMIN.name,
+        RoleEnum.REVISOR.name,
+        RoleEnum.PUBLICADOR.name,
+        RoleEnum.ADMIN.name,
     ],
 )
 @pytest.mark.django_db
@@ -411,7 +411,7 @@ def test_usuario_anonimos_nao_deve_remover_usuario_dos_grupos_solicitados(
         variables={
             "userId": user_id,
             "role": enum_selected,
-            "action": Action.REMOVE.name,
+            "action": ActionEnum.REMOVE.name,
         },
         client=client,
     )
@@ -426,9 +426,9 @@ def test_usuario_anonimos_nao_deve_remover_usuario_dos_grupos_solicitados(
 @pytest.mark.parametrize(
     "enum_selected",
     [
-        Role.REVISOR.name,
-        Role.PUBLICADOR.name,
-        Role.ADMIN.name,
+        RoleEnum.REVISOR.name,
+        RoleEnum.PUBLICADOR.name,
+        RoleEnum.ADMIN.name,
     ],
 )
 @pytest.mark.django_db
@@ -454,7 +454,7 @@ def test_usuario_não_admin_nao_deve_remover_usuario_dos_grupos_solicitados(
         variables={
             "userId": user_id,
             "role": enum_selected,
-            "action": Action.REMOVE.name,
+            "action": ActionEnum.REMOVE.name,
         },
     )
 

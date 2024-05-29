@@ -10,18 +10,24 @@ from app.comentarios.views import AdicionarComentarioMutation
 
 
 class Mutation(graphene.ObjectType):
+    # TODO
+    # Utilizar input de usuario
     cadastrar_usuario = CadastrarUsuarioMutation.Field()
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
     alterar_permissoes = AlterarPermissoesMutation.Field()
     # TODO
+    # Adicionar mutation que gera tema
     # Adicionar as alternativas na mutations de pergunta
-    # Adicionar tema na mutations de perguntas
-    # O tipo da pergunta deve ser um Enum
+    # O tipo da pergunta deve ser um Enum - pronto
     cadastrar_pergunta = CadastrarPerguntaMutation.Field()
     # Adicionar regra aonde o usuário só pode alterar a perguntas antes de ter sido revidasa
     # Somente admins e o proprio usuario podem editar a pergunta
     editar_pergunta = EditarPerguntaMutation.Field()
+    # TODO
+    # Adicionar mutation para revisar pergunta
+    # Adicionar mutation para recusar pergunta
+    # Adicionar mutation para publicar pergunta
     adicionar_comentario = AdicionarComentarioMutation.Field()
     login = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()

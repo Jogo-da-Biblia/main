@@ -1,7 +1,5 @@
 from django.contrib.auth.models import Group
 
-# TODO test utils
-
 
 def usuario_superusuario_ou_admin(usuario, raise_exception=False):
     if (
