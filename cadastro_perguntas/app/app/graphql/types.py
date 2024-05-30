@@ -21,6 +21,7 @@ class PerguntasType(DjangoObjectType):
             "enunciado",
             "tipo_resposta",
             "referencia",
+            "referencia_biblica",
             "status",
             "criado_por",
             "criado_em",

@@ -41,3 +41,53 @@ def check_if_referencia_biblica_is_valid(referencia):
             "Não foi possível encontrar a referência biblica, por favor adicionar uma única referencia"
         )
     return True
+
+
+def update_pergunta_values(new_fields, pergunta):
+    try:
+        with transaction.atomic():
+            for key, value in new_fields.items():
+                if value is not None:
+                    if key == "tema":
+                        value = Tema.objects.get(id=value)
+                    elif key == "referencia":
+                        if any(
+                            [
+                                new_fields["referencia_biblica"] is None
+                                and pergunta.referencia_biblica is True,
+                                new_fields["referencia_biblica"] is True,
+                            ]
+                        ):
+                            check_if_referencia_biblica_is_valid(referencia=value)
+                    elif key == "tipo_resposta":
+                        value = value.name
+                    elif key == "alternativas":
+                        _update_alternativas_values(pergunta, value)
+                        continue
+                    setattr(pergunta, key, value)
+        pergunta.save()
+    except IntegrityError as e:
+        raise Exception(
+            f"Dados inválidos. Não foi possível atualizar a pergunta com os dados: {e}"
+        )
+
+    return
+
+
+def _update_alternativas_values(pergunta, value):
+    if len(value) == 0:
+        return
+    
+    for nova_alternativa in value:
+        alternativa = pergunta.alternativas.get(id=nova_alternativa.alternativa_id)
+
+        new_alternativas_fields = {
+            "texto": nova_alternativa.novo_texto,
+            "correta": nova_alternativa.novo_correta,
+        }
+
+        for key, value in new_alternativas_fields.items():
+            if value is not None:
+                setattr(alternativa, key, value)
+        
+        alternativa.save()

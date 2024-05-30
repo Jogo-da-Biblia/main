@@ -364,3 +364,235 @@ def test_nao_deve_deletar_tema_se_usuario_for_anonimo(client):
     assert "errors" in json.loads(resultado.content)
 
     assert Tema.objects.exists() is True
+
+
+@pytest.mark.django_db
+def test_deve_editar_pergunta(client_with_login, user, mocker_request_get):
+    pergunta = baker.make(
+        "Pergunta",
+        criado_por=user,
+        tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
+        referencia_biblica=False,
+        revisado_status=False,
+    )
+    tema = baker.make("Tema", _fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.editar_pergunta_mutation,
+        operation_name="editarPergunta",
+        variables={
+            "perguntaId": pergunta.id,
+            "novoTemaId": tema.id,
+            "novoEnunciado": "testenovoenunciando",
+            "novoTipoResposta": inputs.TipoRespostaEnum.MES.name,
+            "novoReferencia": "novaReferencia",
+            "novoReferenciaBiblica": True,
+            "novoAlternativas": [],
+        },
+        client=client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.enunciado == "testenovoenunciando"
+    assert pergunta.tema == tema
+    assert pergunta.tipo_resposta == inputs.TipoRespostaEnum.MES.name
+    assert pergunta.referencia == "novaReferencia"
+    assert pergunta.referencia_biblica is True
+    assert mocker_request_get.called is True
+
+
+@pytest.mark.django_db
+def test_admin_deve_editar_pergunta(admin_client_with_login, user, mocker_request_get):
+    pergunta = baker.make(
+        "Pergunta",
+        criado_por=user,
+        tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
+        referencia_biblica=False,
+        revisado_status=False,
+    )
+    tema = baker.make("Tema", _fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.editar_pergunta_mutation,
+        operation_name="editarPergunta",
+        variables={
+            "perguntaId": pergunta.id,
+            "novoTemaId": tema.id,
+            "novoEnunciado": "testenovoenunciando",
+            "novoTipoResposta": inputs.TipoRespostaEnum.MES.name,
+            "novoReferencia": "novaReferencia",
+            "novoReferenciaBiblica": True,
+            "novoAlternativas": [],
+        },
+        client=admin_client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.enunciado == "testenovoenunciando"
+    assert pergunta.tema == tema
+    assert pergunta.tipo_resposta == inputs.TipoRespostaEnum.MES.name
+    assert pergunta.referencia == "novaReferencia"
+    assert pergunta.referencia_biblica is True
+    assert mocker_request_get.called is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_editar_quando_user_nao_for_o_mesmo_que_criou_a_pergunta(
+    client, user, mocker_request_get
+):
+    pergunta = baker.make(
+        "Pergunta",
+        criado_por=user,
+        tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
+        referencia_biblica=False,
+        revisado_status=False,
+        tema=baker.make("Tema"),
+    )
+    tema = baker.make("Tema", _fill_optional=True)
+
+    other_user = baker.make("core.User", __fill_optional=True)
+    client_with_user = client.force_login(other_user)
+
+    resultado = graphql_query(
+        query=eg.editar_pergunta_mutation,
+        operation_name="editarPergunta",
+        variables={
+            "perguntaId": pergunta.id,
+            "novoTemaId": tema.id,
+            "novoEnunciado": "testenovoenunciando",
+            "novoTipoResposta": inputs.TipoRespostaEnum.MES.name,
+            "novoReferencia": "novaReferencia",
+            "novoReferenciaBiblica": True,
+            "novoAlternativas": [],
+        },
+        client=client_with_user,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.tema != tema
+    assert pergunta.tipo_resposta == inputs.TipoRespostaEnum.RLC.name
+    assert pergunta.referencia_biblica is False
+    assert mocker_request_get.called is False
+
+
+@pytest.mark.django_db
+def test_nao_deve_editar_quando_nova_referencia_nao_for_valida(
+    client_with_login, user, mocker_request_get_error
+):
+    pergunta = baker.make(
+        "Pergunta",
+        criado_por=user,
+        tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
+        referencia_biblica=False,
+        revisado_status=False,
+        tema=baker.make("Tema"),
+    )
+    tema = baker.make("Tema", _fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.editar_pergunta_mutation,
+        operation_name="editarPergunta",
+        variables={
+            "perguntaId": pergunta.id,
+            "novoTemaId": tema.id,
+            "novoEnunciado": "testenovoenunciando",
+            "novoTipoResposta": inputs.TipoRespostaEnum.MES.name,
+            "novoReferencia": "novaReferencia",
+            "novoReferenciaBiblica": True,
+            "novoAlternativas": [],
+        },
+        client=client_with_login,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.tema != tema
+    assert pergunta.tipo_resposta == inputs.TipoRespostaEnum.RLC.name
+    assert pergunta.referencia_biblica is False
+    assert mocker_request_get_error.called is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_editar_quando_pergunta_ja_tiver_sido_revisada(
+    client_with_login, user, mocker_request_get
+):
+    pergunta = baker.make(
+        "Pergunta",
+        criado_por=user,
+        tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
+        referencia_biblica=False,
+        revisado_status=True,
+        tema=baker.make("Tema"),
+    )
+    tema = baker.make("Tema", _fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.editar_pergunta_mutation,
+        operation_name="editarPergunta",
+        variables={
+            "perguntaId": pergunta.id,
+            "novoTemaId": tema.id,
+            "novoEnunciado": "testenovoenunciando",
+            "novoTipoResposta": inputs.TipoRespostaEnum.MES.name,
+            "novoReferencia": "novaReferencia",
+            "novoReferenciaBiblica": True,
+            "novoAlternativas": [],
+        },
+        client=client_with_login,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.tema != tema
+    assert pergunta.tipo_resposta == inputs.TipoRespostaEnum.RLC.name
+    assert pergunta.referencia_biblica is False
+    assert mocker_request_get.called is False
+
+
+@pytest.mark.django_db
+def test_deve_editar_perguntas_e_alternativas(
+    client_with_login, user, mocker_request_get
+):
+    pergunta = baker.make(
+        "Pergunta",
+        criado_por=user,
+        tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
+        referencia_biblica=False,
+        revisado_status=False,
+    )
+    alternativa1 = baker.make("Alternativa", pergunta=pergunta, __fill_optional=True)
+    alternativa2 = baker.make("Alternativa", pergunta=pergunta, __fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.editar_pergunta_mutation,
+        operation_name="editarPergunta",
+        variables={
+            "perguntaId": pergunta.id,
+            "novoAlternativas": [
+                {
+                    "alternativaId": alternativa1.id,
+                    "novoTexto": "London",
+                    "novoCorreta": False,
+                },
+            ],
+        },
+        client=client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    alternativa1.refresh_from_db()
+    alternativa2.refresh_from_db()
+    assert pergunta.alternativas.count() == 2
+    assert alternativa1.texto == "London"
+    assert alternativa1.correta is False
+    assert mocker_request_get.called is False

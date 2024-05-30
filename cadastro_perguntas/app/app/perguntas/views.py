@@ -7,6 +7,7 @@ from app.core.utils import (
 from app.perguntas.utils import (
     criar_nova_pergunta_via_mutation,
     check_if_referencia_biblica_is_valid,
+    update_pergunta_values
 )
 from graphql_jwt.decorators import login_required
 
@@ -37,51 +38,50 @@ class CadastrarPerguntaMutation(graphene.Mutation):
 
 class EditarPerguntaMutation(graphene.Mutation):
     class Arguments:
-        id = graphene.Int(required=True)
-        tema_id = graphene.Int()
-        enunciado = graphene.String()
-        tipo_resposta = graphene.String()
-        referencia_resposta_id = graphene.Int()
-        outras_referencias = graphene.String()
-        status = graphene.Boolean()
+        pergunta_id = graphene.Int(required=True)
+        novo_tema_id = graphene.Int()
+        novo_enunciado = graphene.String()
+        novo_tipo_resposta = gql_inputs.TipoRespostaEnum()
+        novo_referencia = graphene.String()
+        novo_referencia_biblica = graphene.Boolean()
+        novo_alternativas = graphene.List(
+            gql_inputs.EditarAlternativaInput
+        )
 
     pergunta = graphene.Field(gql_types.PerguntasType)
 
     def mutate(
         self,
         info,
-        id,
-        tema_id=None,
-        enunciado=None,
-        tipo_resposta=None,
-        referencia_resposta_id=None,
-        outras_referencias=None,
-        status=None,
+        pergunta_id,
+        novo_tema_id=None,
+        novo_enunciado=None,
+        novo_tipo_resposta=None,
+        novo_referencia=None,
+        novo_referencia_biblica=None,
+        novo_alternativas=None,
     ):
+        pergunta = Pergunta.objects.get(id=pergunta_id)
         if (
             usuario_superusuario_ou_admin(info.context.user) is False
-            and info.context.user.id != id
+            and info.context.user.id != pergunta.criado_por.id
         ):
             raise Exception("Somente admins e o proprio usuario podem editar perguntas")
 
+        if pergunta.revisado_status is True:
+            raise Exception("Somente perguntas não revisadas podem ser editadas")
+
         new_fields = {
-            "tema": tema_id,
-            "enunciado": enunciado,
-            "tipo_resposta": tipo_resposta,
-            "referencia_resposta": referencia_resposta_id,
-            "outras_referencias": outras_referencias,
-            "status": status,
+            "tema": novo_tema_id,
+            "enunciado": novo_enunciado,
+            "tipo_resposta": novo_tipo_resposta,
+            "referencia": novo_referencia,
+            "referencia_biblica": novo_referencia_biblica,
+            "alternativas":
+            novo_alternativas
         }
 
-        pergunta = Pergunta.objects.get(id=id)
-
-        for key, value in new_fields.items():
-            if value is not None:
-                if key == "tema":
-                    value = Tema.objects.get(id=value)
-                setattr(pergunta, key, value)
-
-        pergunta.save()
+        update_pergunta_values(new_fields=new_fields, pergunta=pergunta)
         return CadastrarPerguntaMutation(pergunta=pergunta)
 
 
@@ -113,7 +113,7 @@ class DeletarTemaMutation(graphene.Mutation):
 
     def mutate(self, info, tema_id):
         usuario_superusuario_ou_admin(info.context.user, raise_exception=True)
-    
+
         tema = Tema.objects.get(id=tema_id)
         tema.delete()
 

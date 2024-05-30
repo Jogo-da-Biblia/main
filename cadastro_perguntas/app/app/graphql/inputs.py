@@ -11,6 +11,11 @@ class AlternativaInput(graphene.InputObjectType):
     correta = graphene.Boolean(required=True, description="Se a alternativa é correta")
 
 
+class EditarAlternativaInput(graphene.InputObjectType):
+    alternativa_id = graphene.Int(required=True)
+    novo_texto = graphene.String(required=True, description="Texto da alternativa")
+    novo_correta = graphene.Boolean(required=True, description="Se a alternativa é correta")
+
 class TipoRespostaEnum(graphene.Enum):
     MES = ("MES",)
     RCO = ("RCO",)

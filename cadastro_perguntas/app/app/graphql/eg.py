@@ -263,27 +263,22 @@ cadastrar_pergunta_mutation = """
 """
 
 editar_pergunta_mutation = """
-        mutation editarPerguntaMutation($perguntaId: Int!, $temaId: Int!, $referenciaId: Int!){
+        mutation editarPergunta($perguntaId: Int!, $novoTemaId: Int, $novoEnunciado: String, $novoTipoResposta: TipoRespostaEnum, $novoReferencia: String, $novoReferenciaBiblica: Boolean, $novoAlternativas: [EditarAlternativaInput]){
             editarPergunta(
-                id:$perguntaId, 
-                enunciado:"Novo enunciado",
-                outrasReferencias: "novaOUtraRefe",
-                referenciaRespostaId: $referenciaId,
-                temaId: $temaId,
-                tipoResposta: "MES",
-                status: true
+                perguntaId: $perguntaId, 
+                novoTemaId: $novoTemaId,
+                novoEnunciado: $novoEnunciado,
+                novoTipoResposta: $novoTipoResposta,
+                novoReferencia: $novoReferencia,
+                novoReferenciaBiblica: $novoReferenciaBiblica,
+                novoAlternativas: $novoAlternativas,
             ){
                 pergunta{
                     id
                     enunciado
-                    revisadoPor{
-                        id
-                        username
-                    }
-                    status
-                    revisadoPor {
-                        id
-                    }
+                    tipoResposta
+                    referencia
+                    referenciaBiblica
                 }
             }
         }

@@ -15,17 +15,14 @@ class Mutation(graphene.ObjectType):
     recuperar_senha = RecuperarSenhaMutation.Field()
     alterar_permissoes = AlterarPermissoesMutation.Field()
     cadastrar_tema = CadastrarTemaMutation.Field()
-    # mutation que remove tema
     deletar_tema = DeletarTemaMutation.Field()
     cadastrar_pergunta = CadastrarPerguntaMutation.Field()
-    # TODO
-    # Adicionar regra aonde o usuário só pode alterar a perguntas antes de ter sido revidasa
-    # Somente admins e o proprio usuario podem editar a pergunta
     editar_pergunta = EditarPerguntaMutation.Field()
     # TODO
-    # Adicionar mutation para revisar pergunta
+    # Adicionar mutation para aprovar pergunta
     # Adicionar mutation para recusar pergunta
     # Adicionar mutation para publicar pergunta
+    # Corrigir adicionar comentario mutation
     adicionar_comentario = AdicionarComentarioMutation.Field()
     # Adicionar mutation para remover comentário
     login = graphql_jwt.ObtainJSONWebToken.Field()
