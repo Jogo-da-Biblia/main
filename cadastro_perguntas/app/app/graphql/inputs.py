@@ -3,7 +3,7 @@ import graphene
 
 class TemaInput(graphene.InputObjectType):
     nome = graphene.String(required=True, description="Nome do Tema")
-    cor = graphene.Boolean(required=True, description="Cor do Tema")
+    cor = graphene.String(required=True, description="Cor do Tema")
 
 
 class AlternativaInput(graphene.InputObjectType):
@@ -44,3 +44,12 @@ class PerguntaInput(graphene.InputObjectType):
     alternativas = graphene.List(
         AlternativaInput, required=True, description="Alternativas da pergunta"
     )
+
+
+class UsuarioInput(graphene.InputObjectType):
+    username = graphene.String(required=True)
+    email = graphene.String(required=True)
+    password = graphene.String(required=True)
+    name = graphene.String(required=True)
+    phone = graphene.String(required=True)
+    is_whatsapp = graphene.Boolean(required=True)

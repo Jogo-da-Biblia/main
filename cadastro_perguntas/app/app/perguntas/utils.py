@@ -1,4 +1,6 @@
+import requests
 from app.perguntas.models import Pergunta, Alternativa, Tema
+from app.settings import GET_BIBLIA_VERSE_URL
 
 from django.db import transaction, IntegrityError
 
@@ -29,3 +31,13 @@ def criar_nova_pergunta_via_mutation(nova_pergunta, user):
         raise Exception(
             f"Dados inválidos. Não foi possível criar a pergunta com os dados: {e}"
         )
+
+
+def check_if_referencia_biblica_is_valid(referencia):
+    params = {"q": referencia}
+    response = requests.get(GET_BIBLIA_VERSE_URL, params=params)
+    if response.status_code != 200:
+        raise Exception(
+            "Não foi possível encontrar a referência biblica, por favor adicionar uma única referencia"
+        )
+    return True

@@ -23,6 +23,7 @@ class Query(graphene.ObjectType):
     temas = DjangoListField(gql_types.TemaType)
     # TODO 
     # adicionar testes de comentarios 
+    # Adicionar querie para retornar o texto da referencia de uma pergunta pelo site
     comentarios = DjangoListField(gql_types.ComentariosType)
 
     @login_required

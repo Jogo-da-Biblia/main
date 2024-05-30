@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from graphene_django.utils.testing import graphql_query
 from model_bakery import baker
-
+from collections import namedtuple
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 django.setup()
 
@@ -170,3 +170,15 @@ def client_graphql_without_login(client):
         return graphql_query(*args, **kwargs, client=client)
 
     return func
+
+
+@pytest.fixture
+def mocker_request_get(mocker):
+    Response = namedtuple('Response', ['status_code'])
+    return mocker.patch("requests.get", return_value=Response(status_code=200))
+
+
+@pytest.fixture
+def mocker_request_get_error(mocker):
+    Response = namedtuple('Response', ['status_code'])
+    return mocker.patch("requests.get", return_value=Response(status_code=500))

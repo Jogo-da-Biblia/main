@@ -3,6 +3,7 @@ from app.core.models import User
 from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
 from app.graphql import types as gql_types
+from app.graphql import inputs as gql_inputs
 from graphql_jwt.decorators import login_required
 
 import smtplib
@@ -11,28 +12,25 @@ import graphene
 
 class CadastrarUsuarioMutation(graphene.Mutation):
     class Arguments:
-        username = graphene.String(required=True)
-        email = graphene.String(required=True)
-        password = graphene.String(required=True)
-        name = graphene.String(required=True)
-        phone = graphene.String(required=True)
-        is_whatsapp = graphene.Boolean(required=False)
+        novo_usuario = gql_inputs.UsuarioInput(
+            required=True, description="Dados de usuario"
+        )
 
     usuario = graphene.Field(gql_types.UsuarioType)
 
-    def mutate(self, info, username, email, password, name, phone, is_whatsapp=True):
-        if len(password) < 6:
+    def mutate(self, info, novo_usuario):
+        if len(novo_usuario.password) < 6:
             raise Exception("A senha deve conter no minimo 6 caracteres")
 
         usuario = User(
-            username=username,
-            email=email,
-            name=name,
-            phone=phone,
-            is_whatsapp=is_whatsapp,
+            username=novo_usuario.username,
+            email=novo_usuario.email,
+            name=novo_usuario.name,
+            phone=novo_usuario.phone,
+            is_whatsapp=novo_usuario.is_whatsapp,
         )
 
-        usuario.set_password(password)
+        usuario.set_password(novo_usuario.password)
         usuario.save()
         return CadastrarUsuarioMutation(usuario=usuario)
 

@@ -186,14 +186,9 @@ texto_biblico_query = """
     """
 
 novo_usuario_mutation = """
-        mutation cadastrarUsuario($email: String!, $username: String!, $password: String!, $name: String!, $phone: String!, $isWhatsapp: Boolean) {
+        mutation cadastrarUsuario($novoUsuario: UsuarioInput!) {
             cadastrarUsuario(
-                email: $email
-                username: $username
-                password: $password
-                name: $name
-                phone: $phone
-                isWhatsapp: $isWhatsapp
+                novoUsuario: $novoUsuario
             ){
                 usuario{
                     id
@@ -315,3 +310,22 @@ adicionar_comentario_mutation = """
             }
         }
     """
+
+
+cadastrar_tema_mutation = """
+    mutation cadastrarTema($novoTema: TemaInput!)
+    {
+            cadastrarTema(
+                novoTema: $novoTema
+                ){
+                    tema{
+                        id
+                        nome
+                        cor
+                    }
+                }
+    }
+    """
+
+
+

@@ -14,12 +14,14 @@ def test_deve_criar_novo_usuario(client_graphql_without_login):
         query=eg.novo_usuario_mutation,
         operation_name="cadastrarUsuario",
         variables={
-            "email": "teste1@email.com",
-            "password": "senhateste123",
-            "username": "ususaroteste1",
-            "name": "nome teste",
-            "phone": "12345678",
-            "isWhatsapp": True,
+            "novoUsuario": {
+                "email": "teste1@email.com",
+                "password": "senhateste123",
+                "username": "ususaroteste1",
+                "name": "nome teste",
+                "phone": "12345678",
+                "isWhatsapp": True,
+            }
         },
     )
 
