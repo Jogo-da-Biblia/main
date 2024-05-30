@@ -190,7 +190,9 @@ def test_nao_deve_criar_nova_pergunta_se_nao_enviar_uma_alternativa_valida(
 
 
 @pytest.mark.django_db
-def test_deve_criar_nova_pergunta_com_referencia_biblica(client_with_login, user, mocker_request_get):
+def test_deve_criar_nova_pergunta_com_referencia_biblica(
+    client_with_login, user, mocker_request_get
+):
     tema = baker.make("Tema", _fill_optional=True)
 
     assert Pergunta.objects.exists() is False
@@ -228,7 +230,9 @@ def test_deve_criar_nova_pergunta_com_referencia_biblica(client_with_login, user
 
 
 @pytest.mark.django_db
-def test_nao_deve_criar_nova_pergunta_com_referencia_biblica_caso_invalida(client_with_login, user, mocker_request_get_error):
+def test_nao_deve_criar_nova_pergunta_com_referencia_biblica_caso_invalida(
+    client_with_login, user, mocker_request_get_error
+):
     tema = baker.make("Tema", _fill_optional=True)
 
     assert Pergunta.objects.exists() is False
@@ -262,10 +266,6 @@ def test_nao_deve_criar_nova_pergunta_com_referencia_biblica_caso_invalida(clien
     assert mocker_request_get_error.called is True
 
 
-# TODO
-# apagar somente admin pode apagar novo tema
-# usuario nao admin nao deve apagar
-# usuario anonimo nao deve apagar
 @pytest.mark.django_db
 def test_deve_criar_novo_tema(client_with_login):
     assert Tema.objects.exists() is False
@@ -309,4 +309,58 @@ def test_nao_deve_criar_novo_tema_se_for_usuario_anonimo(client):
     assert "errors" in json.loads(resultado.content)
 
     assert Tema.objects.exists() is False
-    
+
+
+@pytest.mark.django_db
+def test_deve_deletar_tema(admin_client_with_login):
+    tema = baker.make("Tema", _fill_optional=True)
+    assert Tema.objects.exists() is True
+
+    resultado = graphql_query(
+        query=eg.deletar_tema_mutation,
+        operation_name="deletarTema",
+        variables={"temaId": tema.id},
+        client=admin_client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert Tema.objects.exists() is False
+    assert (
+        resultado.json()["data"]["deletarTema"]["mensagem"]
+        == f"Tema #{tema.id} deletado com sucesso"
+    )
+
+
+@pytest.mark.django_db
+def test_nao_deve_deletar_tema_se_usuario_nao_for_admin(client_with_login):
+    tema = baker.make("Tema", _fill_optional=True)
+    assert Tema.objects.exists() is True
+
+    resultado = graphql_query(
+        query=eg.deletar_tema_mutation,
+        operation_name="deletarTema",
+        variables={"temaId": tema.id},
+        client=client_with_login,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    assert Tema.objects.exists() is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_deletar_tema_se_usuario_for_anonimo(client):
+    tema = baker.make("Tema", _fill_optional=True)
+    assert Tema.objects.exists() is True
+
+    resultado = graphql_query(
+        query=eg.deletar_tema_mutation,
+        operation_name="deletarTema",
+        variables={"temaId": tema.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    assert Tema.objects.exists() is True

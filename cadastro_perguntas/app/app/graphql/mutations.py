@@ -1,6 +1,6 @@
 import graphene
 import graphql_jwt
-from app.perguntas.views import CadastrarPerguntaMutation, EditarPerguntaMutation, CadastrarTemaMutation
+from app.perguntas.views import CadastrarPerguntaMutation, EditarPerguntaMutation, CadastrarTemaMutation, DeletarTemaMutation
 from app.core.views import CadastrarUsuarioMutation, EditarUsuarioMutation, RecuperarSenhaMutation, AlterarPermissoesMutation
 from app.comentarios.views import AdicionarComentarioMutation
 
@@ -14,10 +14,9 @@ class Mutation(graphene.ObjectType):
     editar_usuario = EditarUsuarioMutation.Field()
     recuperar_senha = RecuperarSenhaMutation.Field()
     alterar_permissoes = AlterarPermissoesMutation.Field()
-    # TODO
-    # mutation que gera tema
     cadastrar_tema = CadastrarTemaMutation.Field()
     # mutation que remove tema
+    deletar_tema = DeletarTemaMutation.Field()
     cadastrar_pergunta = CadastrarPerguntaMutation.Field()
     # TODO
     # Adicionar regra aonde o usuário só pode alterar a perguntas antes de ter sido revidasa

@@ -103,3 +103,18 @@ class CadastrarTemaMutation(graphene.Mutation):
         tema = Tema.objects.create(nome=novo_tema.nome, cor=novo_tema.cor)
 
         return CadastrarTemaMutation(tema=tema)
+
+
+class DeletarTemaMutation(graphene.Mutation):
+    class Arguments:
+        tema_id = graphene.Int()
+
+    mensagem = graphene.String()
+
+    def mutate(self, info, tema_id):
+        usuario_superusuario_ou_admin(info.context.user, raise_exception=True)
+    
+        tema = Tema.objects.get(id=tema_id)
+        tema.delete()
+
+        return DeletarTemaMutation(mensagem=f"Tema #{tema_id} deletado com sucesso")

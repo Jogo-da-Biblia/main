@@ -328,4 +328,13 @@ cadastrar_tema_mutation = """
     """
 
 
-
+deletar_tema_mutation = """
+    mutation deletarTema($temaId: Int!)
+    {
+        deletarTema(
+            temaId: $temaId
+            ){
+                mensagem
+            }
+    }
+    """
