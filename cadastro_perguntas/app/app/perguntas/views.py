@@ -3,11 +3,14 @@ from app.perguntas.models import Pergunta, Tema
 from app.graphql import types as gql_types, inputs as gql_inputs
 from app.core.utils import (
     usuario_superusuario_ou_admin,
+    check_if_user_is_admin_or_revisor,
+    check_if_user_is_admin_or_publicador
 )
 from app.perguntas.utils import (
     criar_nova_pergunta_via_mutation,
     check_if_referencia_biblica_is_valid,
-    update_pergunta_values
+    update_pergunta_values,
+    aprove_pergunta
 )
 from graphql_jwt.decorators import login_required
 
@@ -44,12 +47,11 @@ class EditarPerguntaMutation(graphene.Mutation):
         novo_tipo_resposta = gql_inputs.TipoRespostaEnum()
         novo_referencia = graphene.String()
         novo_referencia_biblica = graphene.Boolean()
-        novo_alternativas = graphene.List(
-            gql_inputs.EditarAlternativaInput
-        )
+        novo_alternativas = graphene.List(gql_inputs.EditarAlternativaInput)
 
     pergunta = graphene.Field(gql_types.PerguntasType)
 
+    @login_required
     def mutate(
         self,
         info,
@@ -77,12 +79,33 @@ class EditarPerguntaMutation(graphene.Mutation):
             "tipo_resposta": novo_tipo_resposta,
             "referencia": novo_referencia,
             "referencia_biblica": novo_referencia_biblica,
-            "alternativas":
-            novo_alternativas
+            "alternativas": novo_alternativas,
         }
 
         update_pergunta_values(new_fields=new_fields, pergunta=pergunta)
         return CadastrarPerguntaMutation(pergunta=pergunta)
+
+
+class AprovarPerguntaMutation(graphene.Mutation):
+    class Arguments:
+        pergunta_id = graphene.Int(required=True)
+
+    mensagem = graphene.String()
+
+    @login_required
+    def mutate(
+        self,
+        info,
+        pergunta_id,
+    ):
+        assert check_if_user_is_admin_or_revisor(info)
+
+        pergunta = Pergunta.objects.get(id=pergunta_id)
+        if pergunta.revisado_status is True:
+            raise Exception("Esta pergunta já foi revisada")
+
+        pergunta = aprove_pergunta(user=info.context.user, pergunta=pergunta)
+        return AprovarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for aprovada com sucesso")
 
 
 class CadastrarTemaMutation(graphene.Mutation):
@@ -111,6 +134,7 @@ class DeletarTemaMutation(graphene.Mutation):
 
     mensagem = graphene.String()
 
+    @login_required
     def mutate(self, info, tema_id):
         usuario_superusuario_ou_admin(info.context.user, raise_exception=True)
 

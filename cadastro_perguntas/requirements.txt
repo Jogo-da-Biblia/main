@@ -9,6 +9,7 @@ django-graphiql==0.4.4
 django-guardian
 django-widget-tweaks==1.4.12
 djangorestframework
+freezegun
 graphene-django==3.2.1
 gunicorn
 markdown

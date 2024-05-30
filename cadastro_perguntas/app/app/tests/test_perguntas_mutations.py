@@ -5,6 +5,7 @@ from app.perguntas.models import Pergunta, Alternativa, Tema
 from app.graphql import eg, inputs
 from graphene_django.utils.testing import graphql_query
 from model_bakery import baker
+from freezegun import freeze_time
 
 
 @pytest.mark.django_db
@@ -596,3 +597,43 @@ def test_deve_editar_perguntas_e_alternativas(
     assert alternativa1.texto == "London"
     assert alternativa1.correta is False
     assert mocker_request_get.called is False
+
+
+# TODO
+# Aprovar pergunta se for revisor
+# Aprovar pergunta se for admin
+# Nao aprovar se o usuario for anonimo
+# Nao aprovar se o usuario nao for revisor
+# Nao aprovar se o usuario nao for admin
+# Nao aprovar se a pergunta já for aprovada
+@freeze_time("2012-01-14 12:00:01 +00:00")
+@pytest.mark.django_db
+def test_deve_aprovar_pergunta(
+    client, revisor_user
+):
+    pergunta = baker.make(
+        "Pergunta",
+        revisado_por=None,
+        revisado_status=False,
+        revisado_em=None
+    )
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.aprovar_pergunta_mutation,
+        operation_name="aprovarPergunta",
+        variables={
+            "perguntaId": pergunta.id
+        },
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.revisado_por == revisor_user
+    assert pergunta.revisado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.revisado_status is True
+
+

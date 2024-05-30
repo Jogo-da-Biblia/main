@@ -333,3 +333,15 @@ deletar_tema_mutation = """
             }
     }
     """
+
+
+aprovar_pergunta_mutation = """
+    mutation aprovarPergunta($perguntaId: Int!)
+    {
+        aprovarPergunta(
+            perguntaId: $perguntaId
+            ){
+                mensagem
+            }
+    }
+    """

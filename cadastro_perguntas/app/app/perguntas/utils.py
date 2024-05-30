@@ -3,7 +3,7 @@ from app.perguntas.models import Pergunta, Alternativa, Tema
 from app.settings import GET_BIBLIA_VERSE_URL
 
 from django.db import transaction, IntegrityError
-
+from django.utils import timezone
 
 def criar_nova_pergunta_via_mutation(nova_pergunta, user):
     tema = Tema.objects.get(id=nova_pergunta.tema_id)
@@ -91,3 +91,12 @@ def _update_alternativas_values(pergunta, value):
                 setattr(alternativa, key, value)
         
         alternativa.save()
+
+
+def aprove_pergunta(user, pergunta):
+    pergunta.revisado_por = user
+    pergunta.revisado_em = timezone.now()
+    pergunta.revisado_status = True
+    pergunta.save()
+
+    return pergunta

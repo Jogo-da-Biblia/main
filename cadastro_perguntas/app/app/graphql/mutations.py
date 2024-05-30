@@ -1,7 +1,18 @@
 import graphene
 import graphql_jwt
-from app.perguntas.views import CadastrarPerguntaMutation, EditarPerguntaMutation, CadastrarTemaMutation, DeletarTemaMutation
-from app.core.views import CadastrarUsuarioMutation, EditarUsuarioMutation, RecuperarSenhaMutation, AlterarPermissoesMutation
+from app.perguntas.views import (
+    CadastrarPerguntaMutation,
+    EditarPerguntaMutation,
+    CadastrarTemaMutation,
+    DeletarTemaMutation,
+    AprovarPerguntaMutation
+)
+from app.core.views import (
+    CadastrarUsuarioMutation,
+    EditarUsuarioMutation,
+    RecuperarSenhaMutation,
+    AlterarPermissoesMutation,
+)
 from app.comentarios.views import AdicionarComentarioMutation
 
 """
@@ -20,6 +31,7 @@ class Mutation(graphene.ObjectType):
     editar_pergunta = EditarPerguntaMutation.Field()
     # TODO
     # Adicionar mutation para aprovar pergunta
+    aprovar_pergunta = AprovarPerguntaMutation.Field()
     # Adicionar mutation para recusar pergunta
     # Adicionar mutation para publicar pergunta
     # Corrigir adicionar comentario mutation
