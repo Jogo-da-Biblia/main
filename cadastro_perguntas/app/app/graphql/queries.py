@@ -18,6 +18,8 @@ class Query(graphene.ObjectType):
     perguntas = DjangoListField(gql_types.PerguntasType)
     pergunta = graphene.Field(gql_types.PerguntasType, id=graphene.Int())
     pergunta_aleatoria = graphene.Field(gql_types.PerguntasType, tema_id=graphene.Int())
+    # TODO 
+    # pergunta aleatoria deve retornar somente perguntas publicadas
     users = DjangoListField(gql_types.UsuarioType)
     user = graphene.Field(gql_types.UsuarioType, id=graphene.Int())
     temas = DjangoListField(gql_types.TemaType)

@@ -10,7 +10,8 @@ from app.perguntas.utils import (
     criar_nova_pergunta_via_mutation,
     check_if_referencia_biblica_is_valid,
     update_pergunta_values,
-    aprove_pergunta
+    aprove_pergunta,
+    refuse_pergunta
 )
 from graphql_jwt.decorators import login_required
 
@@ -70,8 +71,8 @@ class EditarPerguntaMutation(graphene.Mutation):
         ):
             raise Exception("Somente admins e o proprio usuario podem editar perguntas")
 
-        if pergunta.revisado_status is True:
-            raise Exception("Somente perguntas não revisadas podem ser editadas")
+        if pergunta.aprovado_status is True:
+            raise Exception("Somente perguntas não aprovadas podem ser editadas")
 
         new_fields = {
             "tema": novo_tema_id,
@@ -101,11 +102,33 @@ class AprovarPerguntaMutation(graphene.Mutation):
         assert check_if_user_is_admin_or_revisor(info)
 
         pergunta = Pergunta.objects.get(id=pergunta_id)
-        if pergunta.revisado_status is True:
-            raise Exception("Esta pergunta já foi revisada")
+        if pergunta.aprovado_status is True:
+            raise Exception("Esta pergunta já foi aprovada")
 
         pergunta = aprove_pergunta(user=info.context.user, pergunta=pergunta)
         return AprovarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for aprovada com sucesso")
+
+
+class RecusarPerguntaMutation(graphene.Mutation):
+    class Arguments:
+        pergunta_id = graphene.Int(required=True)
+
+    mensagem = graphene.String()
+
+    @login_required
+    def mutate(
+        self,
+        info,
+        pergunta_id,
+    ):
+        assert check_if_user_is_admin_or_revisor(info)
+
+        pergunta = Pergunta.objects.get(id=pergunta_id)
+        if pergunta.recusado_status is True:
+            raise Exception("Esta pergunta já foi recusada")
+
+        pergunta = refuse_pergunta(user=info.context.user, pergunta=pergunta)
+        return RecusarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for recusada com sucesso")
 
 
 class CadastrarTemaMutation(graphene.Mutation):

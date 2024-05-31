@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('atualizado_em', models.DateTimeField(auto_now=True)),
                 ('criado_por', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='perguntas_criadas', to=settings.AUTH_USER_MODEL)),
                 ('publicado_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='perguntas_publicadas', to=settings.AUTH_USER_MODEL)),
-                ('revisado_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='perguntas_revisadas', to=settings.AUTH_USER_MODEL)),
+                ('revisado_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='perguntas_aprovadas', to=settings.AUTH_USER_MODEL)),
                 ('tema', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='perguntas.tema')),
             ],
             options={

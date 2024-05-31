@@ -43,17 +43,17 @@ class Pergunta(models.Model):
 
     criado_em = models.DateTimeField(auto_now_add=True)
 
-    revisado_por = models.ForeignKey(
+    aprovado_por = models.ForeignKey(
         User,
-        related_name="perguntas_revisadas",
+        related_name="perguntas_aprovadas",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
 
-    revisado_status = models.BooleanField(default=False, verbose_name="Revisado")
+    aprovado_status = models.BooleanField(default=False, verbose_name="Revisado")
 
-    revisado_em = models.DateTimeField(null=True, blank=True)
+    aprovado_em = models.DateTimeField(null=True, blank=True)
 
     recusado_por = models.ForeignKey(
         User,

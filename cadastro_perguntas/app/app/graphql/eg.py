@@ -10,7 +10,7 @@ query_usuario = """
                     id
                     enunciado
                 }
-                perguntasRevisadas{
+                perguntasAprovadas{
                     id
                     enunciado
                 }
@@ -41,7 +41,7 @@ usuario_vazio_query = """
                     id
                     enunciado
                 }
-                perguntasRevisadas{
+                perguntasAprovadas{
                     id
                     enunciado
                 }
@@ -97,12 +97,12 @@ todas_perguntas_query = """
                     email
                 }
                 criadoEm
-                revisadoPor {
+                aprovadoPor {
                     id
                     email
                 }
-                revisadoStatus
-                revisadoEm
+                aprovadoStatus
+                aprovadoEm
                 recusadoPor {
                     id
                     email
@@ -339,6 +339,18 @@ aprovar_pergunta_mutation = """
     mutation aprovarPergunta($perguntaId: Int!)
     {
         aprovarPergunta(
+            perguntaId: $perguntaId
+            ){
+                mensagem
+            }
+    }
+    """
+
+
+recusar_pergunta_mutation = """
+    mutation recusarPergunta($perguntaId: Int!)
+    {
+        recusarPergunta(
             perguntaId: $perguntaId
             ){
                 mensagem

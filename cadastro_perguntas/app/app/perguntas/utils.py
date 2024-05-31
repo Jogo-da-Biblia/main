@@ -94,9 +94,20 @@ def _update_alternativas_values(pergunta, value):
 
 
 def aprove_pergunta(user, pergunta):
-    pergunta.revisado_por = user
-    pergunta.revisado_em = timezone.now()
-    pergunta.revisado_status = True
+    pergunta.aprovado_por = user
+    pergunta.aprovado_em = timezone.now()
+    pergunta.aprovado_status = True
+    pergunta.recusado_status = False
+    pergunta.save()
+
+    return pergunta
+
+
+def refuse_pergunta(user, pergunta):
+    pergunta.recusado_por = user
+    pergunta.recusado_em = timezone.now()
+    pergunta.recusado_status = True
+    pergunta.aprovado_status = False
     pergunta.save()
 
     return pergunta

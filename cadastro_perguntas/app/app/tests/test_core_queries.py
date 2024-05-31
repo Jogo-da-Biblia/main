@@ -88,7 +88,7 @@ def test_deve_listar_informacoes_do_usuario_quando_usuario_for_ele_mesmo(
                 "email": str(user.email),
                 "isActive": user.is_active,
                 "perguntasEnviadas": [],
-                "perguntasRevisadas": [],
+                "perguntasAprovadas": [],
                 "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
@@ -120,7 +120,7 @@ def test_deve_listar_informacoes_do_usuario_quando_usuario_for_admin(
                 "email": str(user.email),
                 "isActive": user.is_active,
                 "perguntasEnviadas": [],
-                "perguntasRevisadas": [],
+                "perguntasAprovadas": [],
                 "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
@@ -152,7 +152,7 @@ def test_deve_listar_informacoes_do_usuario_logado_quando_nao_enviar_nenhum_id(
                 "email": str(user.email),
                 "isActive": user.is_active,
                 "perguntasEnviadas": [],
-                "perguntasRevisadas": [],
+                "perguntasAprovadas": [],
                 "perguntasRecusadas": [],
                 "perguntasPublicadas": [],
                 "pontuacao": 0,
@@ -194,7 +194,7 @@ def test_nao_deve_listar_informacoes_do_usuario_quando_usuario_nao_for_ele_mesmo
 
 
 @pytest.mark.django_db
-def criar_perguntas_para_teste(enviadas, revisadas, publicadas, recusadas, user):
+def criar_perguntas_para_teste(enviadas, aprovadas, publicadas, recusadas, user):
     # Perguntas enviadas
     if enviadas != 0:
         baker.make("Pergunta", criado_por=user, _quantity=enviadas)
@@ -209,14 +209,14 @@ def criar_perguntas_para_teste(enviadas, revisadas, publicadas, recusadas, user)
             _quantity=recusadas,
         )
 
-    # Perguntas revisadas
-    if revisadas != 0:
+    # Perguntas aprovadas
+    if aprovadas != 0:
         baker.make(
             "Pergunta",
             criado_por=user,
-            revisado_por=user,
-            revisado_status=True,
-            _quantity=revisadas,
+            aprovado_por=user,
+            aprovado_status=True,
+            _quantity=aprovadas,
         )
 
     # Perguntas Publicadas
@@ -224,7 +224,7 @@ def criar_perguntas_para_teste(enviadas, revisadas, publicadas, recusadas, user)
         baker.make(
             "Pergunta",
             criado_por=user,
-            revisado_status=True,
+            aprovado_status=True,
             publicado_por=user,
             _quantity=publicadas,
         )
@@ -235,7 +235,7 @@ def criar_perguntas_para_teste(enviadas, revisadas, publicadas, recusadas, user)
 @pytest.mark.parametrize(
     (
         "perguntas_enviadas",
-        "perguntas_revisadas",
+        "perguntas_aprovadas",
         "perguntas_publicadas",
         "perguntas_recusadas",
         "pontuacao_esperada",
@@ -254,14 +254,14 @@ def test_deve_listar_pontuacao_do_usuario_corretamente(
     client_graphql_with_login,
     user,
     perguntas_enviadas,
-    perguntas_revisadas,
+    perguntas_aprovadas,
     perguntas_publicadas,
     perguntas_recusadas,
     pontuacao_esperada,
 ):
     criar_perguntas_para_teste(
         enviadas=perguntas_enviadas,
-        revisadas=perguntas_revisadas,
+        aprovadas=perguntas_aprovadas,
         publicadas=perguntas_publicadas,
         recusadas=perguntas_recusadas,
         user=user,
@@ -285,12 +285,12 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_com_s
     # Pergunta eviada
     baker.make("Pergunta", criado_por=user)
 
-    # Pergunta com status revisada porém recusada
+    # Pergunta com status aprovada porém recusada
     baker.make(
         "Pergunta",
         criado_por=user,
-        revisado_por=user,
-        revisado_status=True,
+        aprovado_por=user,
+        aprovado_status=False,
         recusado_por=user,
         recusado_status=True,
     )
@@ -299,7 +299,7 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_com_s
     baker.make(
         "Pergunta",
         criado_por=user,
-        revisado_status=True,
+        aprovado_status=False,
         publicado_por=user,
         recusado_por=user,
         recusado_status=True,
@@ -314,26 +314,26 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_com_s
 
 
 @pytest.mark.django_db
-def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publicada_sem_estarem_revisadas(
+def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publicada_sem_estarem_aprovadas(
     client_graphql_with_login,
     user,
 ):
     # Pergunta eviada
     baker.make("Pergunta", criado_por=user)
 
-    # Pergunta com status revisada porém recusada
+    # Pergunta com status aprovada
     baker.make(
         "Pergunta",
         criado_por=user,
-        revisado_por=user,
-        revisado_status=True,
+        aprovado_por=user,
+        aprovado_status=True,
     )
 
-    # Pergunta publicada porém sem o status revisada
+    # Pergunta publicada porém sem o status aprovada
     baker.make(
         "Pergunta",
         criado_por=user,
-        revisado_status=False,
+        aprovado_status=False,
         publicado_por=user,
     )
 

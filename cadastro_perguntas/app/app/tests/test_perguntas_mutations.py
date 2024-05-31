@@ -374,7 +374,7 @@ def test_deve_editar_pergunta(client_with_login, user, mocker_request_get):
         criado_por=user,
         tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
         referencia_biblica=False,
-        revisado_status=False,
+        aprovado_status=False,
     )
     tema = baker.make("Tema", _fill_optional=True)
 
@@ -411,7 +411,7 @@ def test_admin_deve_editar_pergunta(admin_client_with_login, user, mocker_reques
         criado_por=user,
         tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
         referencia_biblica=False,
-        revisado_status=False,
+        aprovado_status=False,
     )
     tema = baker.make("Tema", _fill_optional=True)
 
@@ -450,7 +450,7 @@ def test_nao_deve_editar_quando_user_nao_for_o_mesmo_que_criou_a_pergunta(
         criado_por=user,
         tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
         referencia_biblica=False,
-        revisado_status=False,
+        aprovado_status=False,
         tema=baker.make("Tema"),
     )
     tema = baker.make("Tema", _fill_optional=True)
@@ -491,7 +491,7 @@ def test_nao_deve_editar_quando_nova_referencia_nao_for_valida(
         criado_por=user,
         tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
         referencia_biblica=False,
-        revisado_status=False,
+        aprovado_status=False,
         tema=baker.make("Tema"),
     )
     tema = baker.make("Tema", _fill_optional=True)
@@ -521,7 +521,7 @@ def test_nao_deve_editar_quando_nova_referencia_nao_for_valida(
 
 
 @pytest.mark.django_db
-def test_nao_deve_editar_quando_pergunta_ja_tiver_sido_revisada(
+def test_nao_deve_editar_quando_pergunta_ja_tiver_sido_aprovada(
     client_with_login, user, mocker_request_get
 ):
     pergunta = baker.make(
@@ -529,7 +529,7 @@ def test_nao_deve_editar_quando_pergunta_ja_tiver_sido_revisada(
         criado_por=user,
         tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
         referencia_biblica=False,
-        revisado_status=True,
+        aprovado_status=True,
         tema=baker.make("Tema"),
     )
     tema = baker.make("Tema", _fill_optional=True)
@@ -567,7 +567,7 @@ def test_deve_editar_perguntas_e_alternativas(
         criado_por=user,
         tipo_resposta=inputs.TipoRespostaEnum.RLC.name,
         referencia_biblica=False,
-        revisado_status=False,
+        aprovado_status=False,
     )
     alternativa1 = baker.make("Alternativa", pergunta=pergunta, __fill_optional=True)
     alternativa2 = baker.make("Alternativa", pergunta=pergunta, __fill_optional=True)
@@ -599,23 +599,11 @@ def test_deve_editar_perguntas_e_alternativas(
     assert mocker_request_get.called is False
 
 
-# TODO
-# Aprovar pergunta se for revisor
-# Aprovar pergunta se for admin
-# Nao aprovar se o usuario for anonimo
-# Nao aprovar se o usuario nao for revisor
-# Nao aprovar se o usuario nao for admin
-# Nao aprovar se a pergunta já for aprovada
 @freeze_time("2012-01-14 12:00:01 +00:00")
 @pytest.mark.django_db
-def test_deve_aprovar_pergunta(
-    client, revisor_user
-):
+def test_deve_aprovar_pergunta(client, revisor_user):
     pergunta = baker.make(
-        "Pergunta",
-        revisado_por=None,
-        revisado_status=False,
-        revisado_em=None
+        "Pergunta", aprovado_por=None, aprovado_status=False, aprovado_em=None
     )
 
     client.force_login(revisor_user)
@@ -623,17 +611,285 @@ def test_deve_aprovar_pergunta(
     resultado = graphql_query(
         query=eg.aprovar_pergunta_mutation,
         operation_name="aprovarPergunta",
-        variables={
-            "perguntaId": pergunta.id
-        },
+        variables={"perguntaId": pergunta.id},
         client=client,
     )
 
     assert "errors" not in json.loads(resultado.content)
 
     pergunta.refresh_from_db()
-    assert pergunta.revisado_por == revisor_user
-    assert pergunta.revisado_em.isoformat() == "2012-01-14T12:00:01+00:00"
-    assert pergunta.revisado_status is True
+    assert pergunta.aprovado_por == revisor_user
+    assert pergunta.aprovado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.aprovado_status is True
 
 
+@freeze_time("2012-01-14 12:00:01 +00:00")
+@pytest.mark.django_db
+def test_deve_aprovar_pergunta_caso_usuario_seja_admin(client, admin_user):
+    pergunta = baker.make(
+        "Pergunta", aprovado_por=None, aprovado_status=False, aprovado_em=None
+    )
+
+    client.force_login(admin_user)
+
+    resultado = graphql_query(
+        query=eg.aprovar_pergunta_mutation,
+        operation_name="aprovarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.aprovado_por == admin_user
+    assert pergunta.aprovado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.aprovado_status is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_aprovar_pergunta_caso_ja_tenha_sido_aprovada(client, revisor_user):
+    pergunta = baker.make(
+        "Pergunta", aprovado_por=None, aprovado_status=True, aprovado_em=None
+    )
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.aprovar_pergunta_mutation,
+        operation_name="aprovarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.aprovado_por is None
+    assert pergunta.aprovado_em is None
+    assert pergunta.aprovado_status is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_aprovar_caso_usuario_nao_tenha_permissao(
+    client, publicador_user, user
+):
+    unauthorized_users = [user, publicador_user]
+    for current_user in unauthorized_users:
+        pergunta = baker.make(
+            "Pergunta", aprovado_por=None, aprovado_status=False, aprovado_em=None
+        )
+
+        client.force_login(current_user)
+
+        resultado = graphql_query(
+            query=eg.aprovar_pergunta_mutation,
+            operation_name="aprovarPergunta",
+            variables={"perguntaId": pergunta.id},
+            client=client,
+        )
+
+        assert "errors" in json.loads(resultado.content)
+
+        pergunta.refresh_from_db()
+        assert pergunta.aprovado_por is None
+        assert pergunta.aprovado_em is None
+        assert pergunta.aprovado_status is False
+
+
+@pytest.mark.django_db
+def test_nao_deve_aprovar_caso_usuario_seja_anonimo(client):
+    pergunta = baker.make(
+        "Pergunta", aprovado_por=None, aprovado_status=False, aprovado_em=None
+    )
+
+    resultado = graphql_query(
+        query=eg.aprovar_pergunta_mutation,
+        operation_name="aprovarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.aprovado_por is None
+    assert pergunta.aprovado_em is None
+    assert pergunta.aprovado_status is False
+
+
+@freeze_time("2012-01-14 12:00:01 +00:00")
+@pytest.mark.django_db
+def test_deve_aprovar_pergunta_recusada(client, revisor_user):
+    pergunta = baker.make(
+        "Pergunta",
+        aprovado_por=None,
+        aprovado_status=False,
+        aprovado_em=None,
+        recusado_status=True,
+    )
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.aprovar_pergunta_mutation,
+        operation_name="aprovarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.aprovado_por == revisor_user
+    assert pergunta.aprovado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.aprovado_status is True
+    assert pergunta.recusado_status is False
+
+
+@freeze_time("2012-01-14 12:00:01 +00:00")
+@pytest.mark.django_db
+def test_deve_recusar_pergunta(client, revisor_user):
+    pergunta = baker.make(
+        "Pergunta", recusado_por=None, recusado_status=False, recusado_em=None
+    )
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.recusar_pergunta_mutation,
+        operation_name="recusarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.recusado_por == revisor_user
+    assert pergunta.recusado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.recusado_status is True
+
+
+@freeze_time("2012-01-14 12:00:01 +00:00")
+@pytest.mark.django_db
+def test_deve_recusar_pergunta_caso_usuario_seja_admin(client, admin_user):
+    pergunta = baker.make(
+        "Pergunta", recusado_por=None, recusado_status=False, recusado_em=None
+    )
+
+    client.force_login(admin_user)
+
+    resultado = graphql_query(
+        query=eg.recusar_pergunta_mutation,
+        operation_name="recusarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.recusado_por == admin_user
+    assert pergunta.recusado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.recusado_status is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_recusar_pergunta_caso_ja_tenha_sido_recusada(client, revisor_user):
+    pergunta = baker.make(
+        "Pergunta", recusado_por=None, recusado_status=True, recusado_em=None
+    )
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.recusar_pergunta_mutation,
+        operation_name="recusarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.recusado_por is None
+    assert pergunta.recusado_em is None
+    assert pergunta.recusado_status is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_recusar_caso_usuario_nao_tenha_permissao(
+    client, publicador_user, user
+):
+    unauthorized_users = [user, publicador_user]
+    for current_user in unauthorized_users:
+        pergunta = baker.make(
+            "Pergunta", recusado_por=None, recusado_status=False, recusado_em=None
+        )
+
+        client.force_login(current_user)
+
+        resultado = graphql_query(
+            query=eg.recusar_pergunta_mutation,
+            operation_name="recusarPergunta",
+            variables={"perguntaId": pergunta.id},
+            client=client,
+        )
+
+        assert "errors" in json.loads(resultado.content)
+
+        pergunta.refresh_from_db()
+        assert pergunta.recusado_por is None
+        assert pergunta.recusado_em is None
+        assert pergunta.recusado_status is False
+
+
+@pytest.mark.django_db
+def test_nao_deve_recusar_caso_usuario_seja_anonimo(client):
+    pergunta = baker.make(
+        "Pergunta", recusado_por=None, recusado_status=False, recusado_em=None
+    )
+
+    resultado = graphql_query(
+        query=eg.recusar_pergunta_mutation,
+        operation_name="recusarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.recusado_por is None
+    assert pergunta.recusado_em is None
+    assert pergunta.recusado_status is False
+
+
+@freeze_time("2012-01-14 12:00:01 +00:00")
+@pytest.mark.django_db
+def test_deve_recusar_pergunta_aprovada(client, revisor_user):
+    pergunta = baker.make(
+        "Pergunta",
+        recusado_por=None,
+        recusado_status=False,
+        recusado_em=None,
+        aprovado_status=True,
+    )
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.recusar_pergunta_mutation,
+        operation_name="recusarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.recusado_por == revisor_user
+    assert pergunta.recusado_em.isoformat() == "2012-01-14T12:00:01+00:00"
+    assert pergunta.recusado_status is True
+    assert pergunta.aprovado_status is False
