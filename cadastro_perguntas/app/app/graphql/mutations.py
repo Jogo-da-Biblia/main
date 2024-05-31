@@ -7,6 +7,7 @@ from app.perguntas.views import (
     DeletarTemaMutation,
     AprovarPerguntaMutation,
     RecusarPerguntaMutation,
+    PublicarPerguntaMutation
 )
 from app.core.views import (
     CadastrarUsuarioMutation,
@@ -32,8 +33,7 @@ class Mutation(graphene.ObjectType):
     editar_pergunta = EditarPerguntaMutation.Field()
     aprovar_pergunta = AprovarPerguntaMutation.Field()
     recusar_pergunta = RecusarPerguntaMutation.Field()
-    # TODO
-    # Adicionar mutation para publicar pergunta
+    publicar_pergunta = PublicarPerguntaMutation.Field()
     # Corrigir adicionar comentario mutation
     adicionar_comentario = AdicionarComentarioMutation.Field()
     # Adicionar mutation para remover comentário

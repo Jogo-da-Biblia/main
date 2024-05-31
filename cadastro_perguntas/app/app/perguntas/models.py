@@ -77,6 +77,8 @@ class Pergunta(models.Model):
 
     publicado_em = models.DateTimeField(null=True, blank=True)
 
+    publicado_status = models.BooleanField(default=False, verbose_name="Publicado")
+    
     atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):

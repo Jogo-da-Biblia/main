@@ -357,3 +357,15 @@ recusar_pergunta_mutation = """
             }
     }
     """
+
+
+publicar_pergunta_mutation = """
+    mutation publicarPergunta($perguntaId: Int!)
+    {
+        publicarPergunta(
+            perguntaId: $perguntaId
+            ){
+                mensagem
+            }
+    }
+    """

@@ -11,7 +11,8 @@ from app.perguntas.utils import (
     check_if_referencia_biblica_is_valid,
     update_pergunta_values,
     aprove_pergunta,
-    refuse_pergunta
+    refuse_pergunta,
+    publish_pergunta
 )
 from graphql_jwt.decorators import login_required
 
@@ -104,6 +105,8 @@ class AprovarPerguntaMutation(graphene.Mutation):
         pergunta = Pergunta.objects.get(id=pergunta_id)
         if pergunta.aprovado_status is True:
             raise Exception("Esta pergunta já foi aprovada")
+        elif pergunta.recusado_status is True and usuario_superusuario_ou_admin(info.context.user) is False:
+            raise Exception("Somente administradores podem aprovar uma pergunta recusada")
 
         pergunta = aprove_pergunta(user=info.context.user, pergunta=pergunta)
         return AprovarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for aprovada com sucesso")
@@ -126,9 +129,36 @@ class RecusarPerguntaMutation(graphene.Mutation):
         pergunta = Pergunta.objects.get(id=pergunta_id)
         if pergunta.recusado_status is True:
             raise Exception("Esta pergunta já foi recusada")
+        elif pergunta.aprovado_status is True and usuario_superusuario_ou_admin(info.context.user) is False:
+            raise Exception("Somente administradores podem recusar uma pergunta aprovada")
 
         pergunta = refuse_pergunta(user=info.context.user, pergunta=pergunta)
         return RecusarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for recusada com sucesso")
+
+
+class PublicarPerguntaMutation(graphene.Mutation):
+    class Arguments:
+        pergunta_id = graphene.Int(required=True)
+
+    mensagem = graphene.String()
+
+    @login_required
+    def mutate(
+        self,
+        info,
+        pergunta_id,
+    ):
+        assert check_if_user_is_admin_or_publicador(info)
+
+        pergunta = Pergunta.objects.get(id=pergunta_id)
+
+        if pergunta.recusado_status is True:
+            raise Exception("Você não pode publicar esta pergunta pois ela foi recusada. Ela deve ser aprovada primeiro.")
+        elif pergunta.aprovado_status is False:
+            raise Exception("Você não pode publicar esta pergunta pois ela não foi aprovada.")
+
+        pergunta = publish_pergunta(user=info.context.user, pergunta=pergunta)
+        return RecusarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for publicada com sucesso")
 
 
 class CadastrarTemaMutation(graphene.Mutation):

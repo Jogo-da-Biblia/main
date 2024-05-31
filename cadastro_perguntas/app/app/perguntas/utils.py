@@ -5,6 +5,7 @@ from app.settings import GET_BIBLIA_VERSE_URL
 from django.db import transaction, IntegrityError
 from django.utils import timezone
 
+
 def criar_nova_pergunta_via_mutation(nova_pergunta, user):
     tema = Tema.objects.get(id=nova_pergunta.tema_id)
 
@@ -77,7 +78,7 @@ def update_pergunta_values(new_fields, pergunta):
 def _update_alternativas_values(pergunta, value):
     if len(value) == 0:
         return
-    
+
     for nova_alternativa in value:
         alternativa = pergunta.alternativas.get(id=nova_alternativa.alternativa_id)
 
@@ -89,7 +90,7 @@ def _update_alternativas_values(pergunta, value):
         for key, value in new_alternativas_fields.items():
             if value is not None:
                 setattr(alternativa, key, value)
-        
+
         alternativa.save()
 
 
@@ -108,6 +109,16 @@ def refuse_pergunta(user, pergunta):
     pergunta.recusado_em = timezone.now()
     pergunta.recusado_status = True
     pergunta.aprovado_status = False
+    pergunta.publicado_status = False
+    pergunta.save()
+
+    return pergunta
+
+
+def publish_pergunta(user, pergunta):
+    pergunta.publicado_por = user
+    pergunta.publicado_em = timezone.now()
+    pergunta.publicado_status = True
     pergunta.save()
 
     return pergunta

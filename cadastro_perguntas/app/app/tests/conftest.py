@@ -21,7 +21,7 @@ class UsuarioEmContexto:
 
 
 @pytest.fixture
-def usuario_admin(db):
+def usuario_superuser(db):
     try:
         usuario = User.objects.get(username="admin")
     except ObjectDoesNotExist:
@@ -54,7 +54,7 @@ def delete_todos_items(db):
 
 
 @pytest.fixture
-def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
+def criar_dados_de_teste(usuario_superuser, delete_todos_items, db):
     Tema.objects.create(nome="Conhecimentos Gerais", cor="red")
     Tema.objects.create(nome="Doutrina", cor="roxo")
 
@@ -62,14 +62,14 @@ def criar_dados_de_teste(usuario_admin, delete_todos_items, db):
         tema=Tema.objects.get(nome="Conhecimentos Gerais"),
         enunciado="Quem criou o homem?",
         tipo_resposta="MES",
-        criado_por=usuario_admin,
+        criado_por=usuario_superuser,
     )
 
     pergunta2 = Pergunta.objects.create(
         tema=Tema.objects.get(nome="Doutrina"),
         enunciado="O que Jesus nos mandou fazer?",
         tipo_resposta="MES",
-        criado_por=usuario_admin,
+        criado_por=usuario_superuser,
     )
 
     pergunta1.save()
