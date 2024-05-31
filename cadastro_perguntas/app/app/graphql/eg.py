@@ -285,12 +285,13 @@ editar_pergunta_mutation = """
     """
 
 adicionar_comentario_mutation = """
-    mutation adicionarComentarioMutation($perguntaId: Int!){
+    mutation adicionarComentario($perguntaId: Int!, $mensagem: String!, $phone: String, $email: String, $isWhatsapp: Boolean){
             adicionarComentario(
-                mensagem: "mensagem",
+                mensagem: $mensagem,
                 perguntaId: $perguntaId,
-                phone: "12345678911",
-                isWhatsapp: true
+                phone: $phone,
+                isWhatsapp: $isWhatsapp,
+                email: $email
                 ){
                 comentario{
                     phone

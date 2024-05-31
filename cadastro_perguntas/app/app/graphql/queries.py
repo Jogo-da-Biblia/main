@@ -23,7 +23,7 @@ class Query(graphene.ObjectType):
     users = DjangoListField(gql_types.UsuarioType)
     user = graphene.Field(gql_types.UsuarioType, id=graphene.Int())
     temas = DjangoListField(gql_types.TemaType)
-    # TODO 
+    # TODO
     # adicionar testes de comentarios 
     # Adicionar querie para retornar o texto da referencia de uma pergunta pelo site
     comentarios = DjangoListField(gql_types.ComentariosType)
