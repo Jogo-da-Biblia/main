@@ -36,8 +36,6 @@ class Mutation(graphene.ObjectType):
     publicar_pergunta = PublicarPerguntaMutation.Field()
     adicionar_comentario = AdicionarComentarioMutation.Field()
     deletar_comentario = DeletarComentarioMutation.Field()
-    # TODO
-    # Adicionar mutation para remover comentário
     login = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()

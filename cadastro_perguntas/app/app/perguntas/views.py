@@ -18,14 +18,19 @@ from graphql_jwt.decorators import login_required
 
 
 class CadastrarPerguntaMutation(graphene.Mutation):
-    """Cadastra uma pergunta, para executar essa ação você deve estar logado"""
+    """
+    Mutation para cadastrar uma pergunta.
+    Requer autenticação do usuário.
+    """
 
     class Arguments:
         nova_pergunta = gql_inputs.PerguntaInput(
-            required=True, description="Dados de perguntas e alternativas"
+            required=True, description="Dados da nova pergunta e suas alternativas."
         )
 
-    pergunta = graphene.Field(gql_types.PerguntasType)
+    pergunta = graphene.Field(
+        gql_types.PerguntasType, description="A pergunta cadastrada."
+    )
 
     @login_required
     def mutate(self, info, nova_pergunta):
@@ -40,16 +45,32 @@ class CadastrarPerguntaMutation(graphene.Mutation):
 
 
 class EditarPerguntaMutation(graphene.Mutation):
-    class Arguments:
-        pergunta_id = graphene.Int(required=True)
-        novo_tema_id = graphene.Int()
-        novo_enunciado = graphene.String()
-        novo_tipo_resposta = gql_inputs.TipoRespostaEnum()
-        novo_referencia = graphene.String()
-        novo_referencia_biblica = graphene.Boolean()
-        novo_alternativas = graphene.List(gql_inputs.EditarAlternativaInput)
+    """
+    Mutation para editar uma pergunta.
+    Requer autenticação do usuário.
+    """
 
-    pergunta = graphene.Field(gql_types.PerguntasType)
+    class Arguments:
+        pergunta_id = graphene.Int(
+            required=True, description="ID da pergunta a ser editada."
+        )
+        novo_tema_id = graphene.Int(description="ID do novo tema da pergunta.")
+        novo_enunciado = graphene.String(description="Novo enunciado da pergunta.")
+        novo_tipo_resposta = gql_inputs.TipoRespostaEnum(
+            description="Novo tipo de resposta da pergunta."
+        )
+        novo_referencia = graphene.String(description="Nova referência da pergunta.")
+        novo_referencia_biblica = graphene.Boolean(
+            description="Indica se a referência da pergunta é bíblica ou não."
+        )
+        novo_alternativas = graphene.List(
+            gql_inputs.EditarAlternativaInput,
+            description="Nova lista de alternativas da pergunta.",
+        )
+
+    pergunta = graphene.Field(
+        gql_types.PerguntasType, description="A pergunta editada."
+    )
 
     @login_required
     def mutate(
@@ -68,10 +89,12 @@ class EditarPerguntaMutation(graphene.Mutation):
             usuario_superusuario_ou_admin(info.context.user) is False
             and info.context.user.id != pergunta.criado_por.id
         ):
-            raise Exception("Somente admins e o proprio usuario podem editar perguntas")
+            raise Exception(
+                "Somente administradores e o próprio usuário podem editar perguntas."
+            )
 
         if pergunta.aprovado_status is True:
-            raise Exception("Somente perguntas não aprovadas podem ser editadas")
+            raise Exception("Somente perguntas não aprovadas podem ser editadas.")
 
         new_fields = {
             "tema": novo_tema_id,
@@ -83,14 +106,23 @@ class EditarPerguntaMutation(graphene.Mutation):
         }
 
         update_pergunta_values(new_fields=new_fields, pergunta=pergunta)
-        return CadastrarPerguntaMutation(pergunta=pergunta)
+        return EditarPerguntaMutation(pergunta=pergunta)
 
 
 class AprovarPerguntaMutation(graphene.Mutation):
-    class Arguments:
-        pergunta_id = graphene.Int(required=True)
+    """
+    Mutation para aprovar uma pergunta.
+    Requer autenticação do usuário com permissões de revisor ou administrador.
+    """
 
-    mensagem = graphene.String()
+    class Arguments:
+        pergunta_id = graphene.Int(
+            required=True, description="ID da pergunta a ser aprovada."
+        )
+
+    mensagem = graphene.String(
+        description="Mensagem indicando o resultado da aprovação."
+    )
 
     @login_required
     def mutate(
@@ -118,10 +150,17 @@ class AprovarPerguntaMutation(graphene.Mutation):
 
 
 class RecusarPerguntaMutation(graphene.Mutation):
-    class Arguments:
-        pergunta_id = graphene.Int(required=True)
+    """
+    Mutation para recusar uma pergunta.
+    Requer autenticação do usuário com permissões de revisor ou administrador.
+    """
 
-    mensagem = graphene.String()
+    class Arguments:
+        pergunta_id = graphene.Int(
+            required=True, description="ID da pergunta a ser recusada."
+        )
+
+    mensagem = graphene.String(description="Mensagem indicando o resultado da recusa.")
 
     @login_required
     def mutate(
@@ -149,10 +188,19 @@ class RecusarPerguntaMutation(graphene.Mutation):
 
 
 class PublicarPerguntaMutation(graphene.Mutation):
-    class Arguments:
-        pergunta_id = graphene.Int(required=True)
+    """
+    Mutation para publicar uma pergunta.
+    Requer autenticação do usuário com permissões de publicador ou administrador.
+    """
 
-    mensagem = graphene.String()
+    class Arguments:
+        pergunta_id = graphene.Int(
+            required=True, description="ID da pergunta a ser publicada."
+        )
+
+    mensagem = graphene.String(
+        description="Mensagem indicando o resultado da publicação da pergunta."
+    )
 
     @login_required
     def mutate(
@@ -174,25 +222,33 @@ class PublicarPerguntaMutation(graphene.Mutation):
             )
 
         pergunta = publish_pergunta(user=info.context.user, pergunta=pergunta)
-        return RecusarPerguntaMutation(
-            mensagem=f"A pergunta {pergunta.id} for publicada com sucesso"
+        return PublicarPerguntaMutation(
+            mensagem=f"A pergunta {pergunta.id} foi publicada com sucesso."
         )
 
 
 class CadastrarTemaMutation(graphene.Mutation):
-    """Cadastra um novo Tema, para executar essa ação você deve estar logado"""
+    """
+    Mutation para cadastrar um novo tema.
+    Requer autenticação do usuário.
+    """
 
     class Arguments:
-        novo_tema = gql_inputs.TemaInput(required=True, description="Dados do Tema")
+        novo_tema = gql_inputs.TemaInput(
+            required=True, description="Dados do novo tema a ser cadastrado."
+        )
 
-    tema = graphene.Field(gql_types.TemaType)
+    tema = graphene.Field(
+        gql_types.TemaType,
+        description="O tema cadastrado.",
+    )
 
     @login_required
     def mutate(self, info, novo_tema):
         if len(novo_tema.nome) > 50:
-            raise Exception("O nome do tema deve ter no maximo 50 caracteres")
+            raise Exception("O nome do tema deve ter no máximo 50 caracteres.")
         if len(novo_tema.cor) > 6:
-            raise Exception("A cor do tema deve ter no maximo 6 caracteres")
+            raise Exception("A cor do tema deve ter no máximo 6 caracteres.")
 
         tema = Tema.objects.create(nome=novo_tema.nome, cor=novo_tema.cor)
 
@@ -200,10 +256,19 @@ class CadastrarTemaMutation(graphene.Mutation):
 
 
 class DeletarTemaMutation(graphene.Mutation):
-    class Arguments:
-        tema_id = graphene.Int()
+    """
+    Mutation para deletar um tema existente.
+    Requer autenticação do usuário com permissões de superusuário ou administrador.
+    """
 
-    mensagem = graphene.String()
+    class Arguments:
+        tema_id = graphene.Int(
+            required=True, description="ID do tema a ser deletado."
+        )
+
+    mensagem = graphene.String(
+        description="Mensagem indicando o resultado da exclusão do tema."
+    )
 
     @login_required
     def mutate(self, info, tema_id):
@@ -212,4 +277,6 @@ class DeletarTemaMutation(graphene.Mutation):
         tema = Tema.objects.get(id=tema_id)
         tema.delete()
 
-        return DeletarTemaMutation(mensagem=f"Tema #{tema_id} deletado com sucesso")
+        return DeletarTemaMutation(
+            mensagem=f"Tema #{tema_id} foi deletado com sucesso."
+        )

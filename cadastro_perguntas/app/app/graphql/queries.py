@@ -16,15 +16,55 @@ from graphql_jwt.decorators import login_required
 
 
 class Query(graphene.ObjectType):
-    perguntas = DjangoListField(gql_types.PerguntasType)
-    pergunta = graphene.Field(gql_types.PerguntasType, id=graphene.Int())
-    pergunta_aleatoria = graphene.Field(gql_types.PerguntasType, tema_id=graphene.Int())
-    users = DjangoListField(gql_types.UsuarioType)
-    user = graphene.Field(gql_types.UsuarioType, id=graphene.Int())
-    temas = DjangoListField(gql_types.TemaType)
-    tema = graphene.Field(gql_types.TemaType, id=graphene.Int())
-    comentarios = DjangoListField(gql_types.ComentariosType)
-    referencia = graphene.List(gql_types.ReferenciaType, referencia=graphene.String())
+    perguntas = DjangoListField(
+        gql_types.PerguntasType,
+        description="Consulta para obter uma lista de todas as perguntas publicadas",
+    )
+
+    pergunta = graphene.Field(
+        gql_types.PerguntasType,
+        id=graphene.Int(),
+        description="Consulta para obter uma pergunta específica pelo ID",
+    )
+
+    pergunta_aleatoria = graphene.Field(
+        gql_types.PerguntasType,
+        tema_id=graphene.Int(),
+        description="Consulta para obter uma pergunta aleatória publicada. Se um ID de tema for fornecido, filtra pelas perguntas desse tema.",
+    )
+
+    users = DjangoListField(
+        gql_types.UsuarioType,
+        description="Consulta para obter uma lista de todos os usuários",
+    )
+
+    user = graphene.Field(
+        gql_types.UsuarioType,
+        id=graphene.Int(),
+        description="Consulta para obter um usuário específico pelo ID. Se nenhum ID for fornecido, retorna o usuário autenticado.",
+    )
+
+    temas = DjangoListField(
+        gql_types.TemaType,
+        description="Consulta para obter uma lista de todos os temas",
+    )
+
+    tema = graphene.Field(
+        gql_types.TemaType,
+        id=graphene.Int(),
+        description="Consulta para obter um tema específico pelo ID",
+    )
+
+    comentarios = DjangoListField(
+        gql_types.ComentariosType,
+        description="Consulta para obter uma lista de todos os comentários",
+    )
+
+    referencia = graphene.List(
+        gql_types.ReferenciaType,
+        referencia=graphene.String(),
+        description="Consulta para obter uma lista de referências bíblicas com base em uma string de referência fornecida",
+    )
 
     @login_required
     def resolve_pergunta_aleatoria(root, info, tema_id=None):
@@ -84,8 +124,7 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_tema(root, info, id):
         return Tema.objects.get(id=id)
-    
-    
+
     @login_required
     def resolve_referencia(root, info, referencia):
         all_referencias = get_referencia_biblica_from_web(referencia)

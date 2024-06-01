@@ -6,14 +6,31 @@ from app.core.utils import usuario_superusuario_ou_admin
 from graphql_jwt.decorators import login_required
 
 class AdicionarComentarioMutation(graphene.Mutation):
-    class Arguments:
-        pergunta_id = graphene.Int(required=True)
-        mensagem = graphene.String(required=True)
-        email = graphene.String()
-        phone = graphene.String()
-        is_whatsapp = graphene.Boolean()
+    """
+    Mutation para adicionar um comentário a uma pergunta.
+    """
 
-    comentario = graphene.Field(gql_types.ComentariosType)
+    class Arguments:
+        pergunta_id = graphene.Int(
+            required=True, description="ID da pergunta à qual o comentário será adicionado."
+        )
+        mensagem = graphene.String(
+            required=True, description="Mensagem do comentário a ser adicionado."
+        )
+        email = graphene.String(
+            description="E-mail do usuário que está adicionando o comentário."
+        )
+        phone = graphene.String(
+            description="Número de telefone do usuário que está adicionando o comentário."
+        )
+        is_whatsapp = graphene.Boolean(
+            description="Indica se o número de telefone fornecido é do WhatsApp."
+        )
+
+    comentario = graphene.Field(
+        gql_types.ComentariosType,
+        description="Comentário adicionado à pergunta.",
+    )
 
     def mutate(
         self, info, pergunta_id, mensagem, email=None, phone=None, is_whatsapp=True
@@ -22,12 +39,12 @@ class AdicionarComentarioMutation(graphene.Mutation):
             email = info.context.user.email
         elif str(email).strip() == "" or email is None:
             raise Exception(
-                "Voce precisa estar logado ou informar um email valido para cadastrar um comentario"
+                "Você precisa estar logado ou informar um email válido para cadastrar um comentário"
             )
 
         mensagem = mensagem.strip()
         if mensagem == "":
-            raise Exception("A mensagem nao pode ser vazia")
+            raise Exception("A mensagem não pode ser vazia")
 
         pergunta = Pergunta.objects.get(id=pergunta_id)
 
@@ -43,10 +60,18 @@ class AdicionarComentarioMutation(graphene.Mutation):
 
 
 class DeletarComentarioMutation(graphene.Mutation):
-    class Arguments:
-        comentario_id = graphene.Int()
+    """
+    Mutation para deletar um comentário.
+    """
 
-    mensagem = graphene.String()
+    class Arguments:
+        comentario_id = graphene.Int(
+            description="ID do comentário a ser deletado."
+        )
+
+    mensagem = graphene.String(
+        description="Mensagem indicando o sucesso da operação de exclusão do comentário."
+    )
 
     @login_required
     def mutate(self, info, comentario_id):

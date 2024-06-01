@@ -55,9 +55,28 @@ class PerguntaInput(graphene.InputObjectType):
 
 
 class UsuarioInput(graphene.InputObjectType):
-    username = graphene.String(required=True)
-    email = graphene.String(required=True)
-    password = graphene.String(required=True)
-    name = graphene.String(required=True)
-    phone = graphene.String(required=True)
-    is_whatsapp = graphene.Boolean(required=True)
+    username = graphene.String(
+        required=True,
+        description="Nome de usuário do usuário.",
+    )
+    email = graphene.String(
+        required=True,
+        description="Endereço de e-mail do usuário.",
+    )
+    password = graphene.String(
+        required=True,
+        description="Senha do usuário.",
+    )
+    name = graphene.String(
+        required=True,
+        description="Nome do usuário.",
+    )
+    phone = graphene.String(
+        required=True,
+        description="Número de telefone do usuário.",
+    )
+    is_whatsapp = graphene.Boolean(
+        required=True,
+        description="Indica se o número de telefone fornecido é do WhatsApp."
+    )
+

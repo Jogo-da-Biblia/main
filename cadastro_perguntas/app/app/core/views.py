@@ -11,16 +11,20 @@ import graphene
 
 
 class CadastrarUsuarioMutation(graphene.Mutation):
+    """
+    Mutation para cadastrar um novo usuário.
+    """
+
     class Arguments:
         novo_usuario = gql_inputs.UsuarioInput(
-            required=True, description="Dados de usuario"
+            required=True, description="Dados do novo usuário a ser cadastrado."
         )
 
-    usuario = graphene.Field(gql_types.UsuarioType)
+    usuario = graphene.Field(gql_types.UsuarioType, description="O usuário cadastrado.")
 
     def mutate(self, info, novo_usuario):
         if len(novo_usuario.password) < 6:
-            raise Exception("A senha deve conter no minimo 6 caracteres")
+            raise Exception("A senha deve conter no mínimo 6 caracteres.")
 
         usuario = User(
             username=novo_usuario.username,
@@ -36,16 +40,24 @@ class CadastrarUsuarioMutation(graphene.Mutation):
 
 
 class EditarUsuarioMutation(graphene.Mutation):
-    class Arguments:
-        user_id = graphene.Int(required=True)
-        username = graphene.String(required=False)
-        email = graphene.String(required=False)
-        password = graphene.String(required=False)
-        name = graphene.String(required=False)
-        phone = graphene.String(required=False)
-        is_whatsapp = graphene.Boolean(required=False)
+    """
+    Mutation para editar informações de um usuário existente.
+    """
 
-    usuario = graphene.Field(gql_types.UsuarioType)
+    class Arguments:
+        user_id = graphene.Int(
+            required=True, description="ID do usuário a ser editado."
+        )
+        username = graphene.String(description="Novo nome de usuário.")
+        email = graphene.String(description="Novo endereço de email.")
+        password = graphene.String(description="Nova senha.")
+        name = graphene.String(description="Novo nome.")
+        phone = graphene.String(description="Novo número de telefone.")
+        is_whatsapp = graphene.Boolean(
+            description="Indica se o novo número de telefone é do WhatsApp."
+        )
+
+    usuario = graphene.Field(gql_types.UsuarioType, description="O usuário editado.")
 
     @login_required
     def mutate(
@@ -65,7 +77,7 @@ class EditarUsuarioMutation(graphene.Mutation):
 
         if password is not None:
             if len(password) < 6:
-                raise Exception("A senha deve conter no minimo 6 caracteres")
+                raise Exception("A senha deve conter no mínimo 6 caracteres.")
             usuario.set_password(password)
 
         updates = {
@@ -85,11 +97,21 @@ class EditarUsuarioMutation(graphene.Mutation):
 
 
 class RecuperarSenhaMutation(graphene.Mutation):
-    class Arguments:
-        user_id = graphene.Int(required=True)
-        email = graphene.String(required=True)
+    """
+    Mutation para recuperar a senha de um usuário.
+    """
 
-    mensagem = graphene.String()
+    class Arguments:
+        user_id = graphene.Int(
+            required=True, description="ID do usuário que deseja recuperar a senha."
+        )
+        email = graphene.String(
+            required=True, description="Email do usuário para enviar a nova senha."
+        )
+
+    mensagem = graphene.String(
+        description="Mensagem indicando o status da operação de recuperação de senha."
+    )
 
     def mutate(self, info, user_id, email):
         assert utils.check_if_user_is_admin_or_himself(info=info, user_id=user_id)
@@ -97,7 +119,7 @@ class RecuperarSenhaMutation(graphene.Mutation):
         user = User.objects.get(id=user_id)
 
         if email != user.email:
-            raise Exception("O email informado nao corresponde ao email cadastrado")
+            raise Exception("O email informado não corresponde ao email cadastrado.")
 
         new_password = User.objects.make_random_password(length=10)
         user.set_password(new_password)
@@ -105,7 +127,7 @@ class RecuperarSenhaMutation(graphene.Mutation):
 
         try:
             send_mail(
-                subject="Recuperacao de Senha - Jogo da Biblia",
+                subject="Recuperação de Senha - Jogo da Bíblia",
                 message="Recebemos seu pedido de recuperação de senha, esta é a sua nova senha de acesso: "
                 + new_password,
                 from_email=DEFAULT_FROM_EMAIL,
@@ -134,12 +156,25 @@ class ActionEnum(graphene.Enum):
 
 
 class AlterarPermissoesMutation(graphene.Mutation):
-    class Arguments:
-        user_id = graphene.Int(required=True)
-        role = RoleEnum(required=True)
-        action = ActionEnum(required=True)
+    """
+    Mutation para alterar as permissões de um usuário.
+    """
 
-    usuario = graphene.Field(gql_types.UsuarioType)
+    class Arguments:
+        user_id = graphene.Int(
+            required=True, description="ID do usuário para alterar as permissões."
+        )
+        role = RoleEnum(
+            required=True, description="Permissão que será adicionada ou removida."
+        )
+        action = ActionEnum(
+            required=True, description="Ação para adicionar ou remover permissões."
+        )
+
+    usuario = graphene.Field(
+        gql_types.UsuarioType,
+        description="Usuário cujas permissões foram alteradas.",
+    )
 
     @login_required
     def mutate(
@@ -156,11 +191,23 @@ class AlterarPermissoesMutation(graphene.Mutation):
         usuario = User.objects.get(id=user_id)
 
         if role == RoleEnum.REVISOR:
-            utils.add_user_to_revisores(usuario=usuario) if action == ActionEnum.ADD else utils.remove_user_from_revisores(usuario=usuario)
+            utils.add_user_to_revisores(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_revisores(
+                usuario=usuario
+            )
         elif role == RoleEnum.PUBLICADOR:
-            utils.add_user_to_publicador(usuario=usuario) if action == ActionEnum.ADD else utils.remove_user_from_publicador(usuario=usuario)
+            utils.add_user_to_publicador(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_publicador(
+                usuario=usuario
+            )
         elif role == RoleEnum.ADMIN:
-            utils.add_user_to_admin(usuario=usuario) if action == ActionEnum.ADD else utils.remove_user_from_admin(usuario=usuario)
+            utils.add_user_to_admin(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_admin(
+                usuario=usuario
+            )
 
         usuario.save()
         return AlterarPermissoesMutation(usuario=usuario)
