@@ -116,7 +116,7 @@ def test_deve_listar_todas_os_temas(client_with_login):
 def test_nao_deve_listar_todos_temas_caso_o_usuario_seja_anonimo(client):
     tema = baker.make("Tema", _fill_optional=True, _quantity=10)
 
-    resultado = graphql_query(query=eg.todas_perguntas_query, client=client)
+    resultado = graphql_query(query=eg.todos_temas_query, client=client)
 
     assert "errors" in json.loads(resultado.content)
 
@@ -133,6 +133,41 @@ def test_deve_listar_todos_temas_e_suas_informações(client_with_login):
     assert str(tema.id) == resultado_json["id"]
     assert tema.nome == resultado_json["nome"]
     assert tema.cor == resultado_json["cor"]
+
+
+@pytest.mark.django_db
+def test_deve_listar_um_tema_especifico(client_with_login):
+    tema = baker.make("Tema", _fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.tema_query, client=client_with_login, variables={"id": tema.id}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert str(tema.id) == json.loads(resultado.content)["data"]["tema"]["id"]
+    assert tema.nome == json.loads(resultado.content)["data"]["tema"]["nome"]
+    assert tema.cor == json.loads(resultado.content)["data"]["tema"]["cor"]
+
+
+@pytest.mark.django_db
+def test_nao_deve_retornar_um_tema_caso_o_usuario_seja_anonimo(client):
+    tema = baker.make("Tema", _fill_optional=True)
+
+    resultado = graphql_query(
+        query=eg.tema_query, client=client, variables={"id": tema.id}
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+
+@pytest.mark.django_db
+def test_nao_deve_retornar_um_tema_que_nao_existe(client_with_login):
+    resultado = graphql_query(
+        query=eg.tema_query, client=client_with_login, variables={"id": 1}
+    )
+
+    assert "errors" in json.loads(resultado.content)
 
 
 @pytest.mark.django_db
@@ -302,9 +337,6 @@ def test_deve_nao_retornar_uma_pergunta_aleatoria_caso_nao_tenha_nenhuma_pergunt
 def test_nao_deve_retornar_uma_pergunta_aleatoria_se_o_usuario_for_anonimo(client):
     baker.make("Pergunta", publicado_status=True)
 
-    resultado = graphql_query(
-        query=eg.pergunta_aleatoria_query,
-        client=client
-    )
+    resultado = graphql_query(query=eg.pergunta_aleatoria_query, client=client)
 
     assert "errors" in json.loads(resultado.content)

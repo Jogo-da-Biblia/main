@@ -202,6 +202,17 @@ todos_temas_query = """
     """
 
 
+tema_query = """
+    query ($id: Int!){
+        tema (id: $id){
+            id
+            nome
+            cor
+        }
+    }
+    """
+
+
 todos_comentarios_query = """
     query{
         comentarios{

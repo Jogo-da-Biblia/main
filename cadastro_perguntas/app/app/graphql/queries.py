@@ -82,3 +82,7 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_temas(root, info):
         return Tema.objects.all()
+
+    @login_required
+    def resolve_tema(root, info, id):
+        return Tema.objects.get(id=id)
