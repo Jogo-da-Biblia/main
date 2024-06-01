@@ -258,8 +258,6 @@ def test_nao_deve_listar_uma_pergunta_especifica_caso_o_usuario_seja_anonimo(cli
     assert "errors" in json.loads(resultado.content)
 
 
-# TODO
-# Usuarios anonimos nao podem receber
 @pytest.mark.django_db
 def test_deve_retornar_uma_pergunta_aleatoria_de_um_tema(client_with_login):
     tema = baker.make("Tema", _fill_optional=True)

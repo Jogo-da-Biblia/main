@@ -159,3 +159,59 @@ def test_usuario_anonimo_nao_deve_criar_novo_comentario_se_mensagem_for_vazia(
     assert "errors" in json.loads(resultado.content)
 
     assert Comentario.objects.count() == 0
+
+
+
+@pytest.mark.django_db
+def test_deve_deletar_comentario(admin_client_with_login):
+    comentario = baker.make("Comentario", _fill_optional=True)
+    assert Comentario.objects.exists() is True
+
+    resultado = graphql_query(
+        query=eg.deletar_comentario_mutation,
+        operation_name="deletarComentario",
+        variables={"comentarioId": comentario.id},
+        client=admin_client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert Comentario.objects.exists() is False
+    assert (
+        resultado.json()["data"]["deletarComentario"]["mensagem"]
+        == f"Comentário #{comentario.id} deletado com sucesso"
+    )
+
+
+@pytest.mark.django_db
+def test_nao_deve_deletar_comentario_se_usuario_nao_for_admin(client_with_login):
+    comentario = baker.make("Comentario", _fill_optional=True)
+    assert Comentario.objects.exists() is True
+
+    resultado = graphql_query(
+        query=eg.deletar_comentario_mutation,
+        operation_name="deletarComentario",
+        variables={"comentarioId": comentario.id},
+        client=client_with_login,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    assert Comentario.objects.exists() is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_deletar_comentario_se_usuario_for_anonimo(client):
+    comentario = baker.make("Comentario", _fill_optional=True)
+    assert Comentario.objects.exists() is True
+
+    resultado = graphql_query(
+        query=eg.deletar_comentario_mutation,
+        operation_name="deletarComentario",
+        variables={"comentarioId": comentario.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    assert Comentario.objects.exists() is True

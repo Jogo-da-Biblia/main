@@ -2,7 +2,8 @@ import graphene
 from app.graphql import types as gql_types
 from app.comentarios.models import Comentario
 from app.perguntas.models import Pergunta
-
+from app.core.utils import usuario_superusuario_ou_admin
+from graphql_jwt.decorators import login_required
 
 class AdicionarComentarioMutation(graphene.Mutation):
     class Arguments:
@@ -39,3 +40,19 @@ class AdicionarComentarioMutation(graphene.Mutation):
         )
 
         return AdicionarComentarioMutation(comentario=comentario)
+
+
+class DeletarComentarioMutation(graphene.Mutation):
+    class Arguments:
+        comentario_id = graphene.Int()
+
+    mensagem = graphene.String()
+
+    @login_required
+    def mutate(self, info, comentario_id):
+        usuario_superusuario_ou_admin(info.context.user, raise_exception=True)
+
+        comentario = Comentario.objects.get(id=comentario_id)
+        comentario.delete()
+
+        return DeletarComentarioMutation(mensagem=f"Comentário #{comentario_id} deletado com sucesso")

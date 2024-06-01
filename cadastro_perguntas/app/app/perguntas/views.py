@@ -4,7 +4,7 @@ from app.graphql import types as gql_types, inputs as gql_inputs
 from app.core.utils import (
     usuario_superusuario_ou_admin,
     check_if_user_is_admin_or_revisor,
-    check_if_user_is_admin_or_publicador
+    check_if_user_is_admin_or_publicador,
 )
 from app.perguntas.utils import (
     criar_nova_pergunta_via_mutation,
@@ -12,7 +12,7 @@ from app.perguntas.utils import (
     update_pergunta_values,
     aprove_pergunta,
     refuse_pergunta,
-    publish_pergunta
+    publish_pergunta,
 )
 from graphql_jwt.decorators import login_required
 
@@ -103,11 +103,18 @@ class AprovarPerguntaMutation(graphene.Mutation):
         pergunta = Pergunta.objects.get(id=pergunta_id)
         if pergunta.aprovado_status is True:
             raise Exception("Esta pergunta já foi aprovada")
-        elif pergunta.recusado_status is True and usuario_superusuario_ou_admin(info.context.user) is False:
-            raise Exception("Somente administradores podem aprovar uma pergunta recusada")
+        elif (
+            pergunta.recusado_status is True
+            and usuario_superusuario_ou_admin(info.context.user) is False
+        ):
+            raise Exception(
+                "Somente administradores podem aprovar uma pergunta recusada"
+            )
 
         pergunta = aprove_pergunta(user=info.context.user, pergunta=pergunta)
-        return AprovarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for aprovada com sucesso")
+        return AprovarPerguntaMutation(
+            mensagem=f"A pergunta {pergunta.id} for aprovada com sucesso"
+        )
 
 
 class RecusarPerguntaMutation(graphene.Mutation):
@@ -127,11 +134,18 @@ class RecusarPerguntaMutation(graphene.Mutation):
         pergunta = Pergunta.objects.get(id=pergunta_id)
         if pergunta.recusado_status is True:
             raise Exception("Esta pergunta já foi recusada")
-        elif pergunta.aprovado_status is True and usuario_superusuario_ou_admin(info.context.user) is False:
-            raise Exception("Somente administradores podem recusar uma pergunta aprovada")
+        elif (
+            pergunta.aprovado_status is True
+            and usuario_superusuario_ou_admin(info.context.user) is False
+        ):
+            raise Exception(
+                "Somente administradores podem recusar uma pergunta aprovada"
+            )
 
         pergunta = refuse_pergunta(user=info.context.user, pergunta=pergunta)
-        return RecusarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for recusada com sucesso")
+        return RecusarPerguntaMutation(
+            mensagem=f"A pergunta {pergunta.id} for recusada com sucesso"
+        )
 
 
 class PublicarPerguntaMutation(graphene.Mutation):
@@ -151,12 +165,18 @@ class PublicarPerguntaMutation(graphene.Mutation):
         pergunta = Pergunta.objects.get(id=pergunta_id)
 
         if pergunta.recusado_status is True:
-            raise Exception("Você não pode publicar esta pergunta pois ela foi recusada. Ela deve ser aprovada primeiro.")
+            raise Exception(
+                "Você não pode publicar esta pergunta pois ela foi recusada. Ela deve ser aprovada primeiro."
+            )
         elif pergunta.aprovado_status is False:
-            raise Exception("Você não pode publicar esta pergunta pois ela não foi aprovada.")
+            raise Exception(
+                "Você não pode publicar esta pergunta pois ela não foi aprovada."
+            )
 
         pergunta = publish_pergunta(user=info.context.user, pergunta=pergunta)
-        return RecusarPerguntaMutation(mensagem=f"A pergunta {pergunta.id} for publicada com sucesso")
+        return RecusarPerguntaMutation(
+            mensagem=f"A pergunta {pergunta.id} for publicada com sucesso"
+        )
 
 
 class CadastrarTemaMutation(graphene.Mutation):

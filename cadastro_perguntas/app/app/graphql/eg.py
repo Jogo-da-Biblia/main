@@ -450,3 +450,15 @@ query_referencia = """
             }
         }
 """
+
+
+deletar_comentario_mutation = """
+    mutation deletarComentario($comentarioId: Int!)
+    {
+        deletarComentario(
+            comentarioId: $comentarioId
+            ){
+                mensagem
+            }
+    }
+    """

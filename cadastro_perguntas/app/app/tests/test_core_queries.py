@@ -392,9 +392,6 @@ def test_deve_mostrar_permissoes_do_usuario(
     )
 
 
-# TODO
-# nao deve retornar quando usuario for anonimo
-# nao deve retornar quando der erro
 @pytest.mark.django_db
 def test_deve_retornar_referencia(client_graphql_with_login, mocker_request_get):
     resultado = client_graphql_with_login(

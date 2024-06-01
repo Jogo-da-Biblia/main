@@ -15,7 +15,7 @@ from app.core.views import (
     RecuperarSenhaMutation,
     AlterarPermissoesMutation,
 )
-from app.comentarios.views import AdicionarComentarioMutation
+from app.comentarios.views import AdicionarComentarioMutation, DeletarComentarioMutation
 
 """
 ========== Mutations ==========
@@ -35,6 +35,7 @@ class Mutation(graphene.ObjectType):
     recusar_pergunta = RecusarPerguntaMutation.Field()
     publicar_pergunta = PublicarPerguntaMutation.Field()
     adicionar_comentario = AdicionarComentarioMutation.Field()
+    deletar_comentario = DeletarComentarioMutation.Field()
     # TODO
     # Adicionar mutation para remover comentário
     login = graphql_jwt.ObtainJSONWebToken.Field()
