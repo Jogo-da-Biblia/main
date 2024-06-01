@@ -72,13 +72,69 @@ query_usuarios = """
     """
 
 pergunta_aleatoria_query = """
-        query perguntaAleatoriaQuery($temaId: Int){
-            pergunta(temaId:$temaId){
+        query ($temaId: Int){
+            perguntaAleatoria(temaId: $temaId){
                 id
                 enunciado
             }
         }
     """
+
+pergunta_query = """
+        query ($perguntaId: Int){
+            pergunta(id: $perguntaId){
+                id
+                enunciado
+                tema {
+                    id
+                    nome
+                }
+                tipoResposta
+                referencia
+                status
+                criadoPor {
+                    id
+                    email
+                }
+                criadoEm
+                aprovadoPor {
+                    id
+                    email
+                }
+                aprovadoStatus
+                aprovadoEm
+                recusadoPor {
+                    id
+                    email
+                }
+                publicadoPor {
+                    id
+                    email
+                }
+                publicadoEm
+                atualizadoEm
+                alternativas {
+                    id
+                    texto
+                    correta
+                }
+                alternativasCorretas {
+                    id
+                    texto
+                    correta
+                }
+                comentarios {
+                    id
+                    email
+                    phone
+                    isWhatsapp
+                    mensagem
+                    criadoEm
+                }
+            }
+        }
+    """
+
 
 todas_perguntas_query = """
         query{

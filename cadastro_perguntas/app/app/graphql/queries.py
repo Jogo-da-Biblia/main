@@ -18,20 +18,40 @@ class Query(graphene.ObjectType):
     perguntas = DjangoListField(gql_types.PerguntasType)
     pergunta = graphene.Field(gql_types.PerguntasType, id=graphene.Int())
     pergunta_aleatoria = graphene.Field(gql_types.PerguntasType, tema_id=graphene.Int())
-    # TODO 
-    # pergunta aleatoria deve retornar somente perguntas publicadas
     users = DjangoListField(gql_types.UsuarioType)
     user = graphene.Field(gql_types.UsuarioType, id=graphene.Int())
     temas = DjangoListField(gql_types.TemaType)
     # TODO
-    # adicionar testes de comentarios 
+    # Adicionar query para retornar um tema especifico
+    tema = graphene.Field(gql_types.TemaType, id=graphene.Int())
+    # TODO
+    # adicionar testes de comentarios
     # Adicionar querie para retornar o texto da referencia de uma pergunta pelo site
     comentarios = DjangoListField(gql_types.ComentariosType)
 
     @login_required
-    def resolve_pergunta_aleatoria(root, info, tema_id):
-        tema = get_object_or_404(Tema, id=tema_id)
-        return random.choice(tuple(Pergunta.objects.filter(tema=tema).all()))
+    def resolve_pergunta_aleatoria(root, info, tema_id=None):
+        if tema_id is None:
+            try:
+                random_pergunta_id = random.choice(
+                    Pergunta.objects.filter(publicado_status=True).values_list(
+                        "id", flat=True
+                    )
+                )
+            except IndexError:
+                raise Exception("Nenhuma pergunta publicada foi encontrada")
+        else:
+            tema = get_object_or_404(Tema, id=tema_id)
+            try:
+                random_pergunta_id = random.choice(
+                    Pergunta.objects.filter(tema=tema, publicado_status=True).values_list(
+                        "id", flat=True
+                    )
+                )
+            except IndexError:
+                raise Exception("Nenhuma pergunta publicada foi encontrada com o tema escolhido")
+
+        return Pergunta.objects.get(id=random_pergunta_id)
 
     @login_required
     def resolve_pergunta(root, info, id):
@@ -44,7 +64,7 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_user(root, info, id=None):
         user_id = info.context.user.id if id is None else id
-        
+
         assert check_if_user_is_admin_or_himself(info, user_id)
 
         return User.objects.get(id=user_id)

@@ -895,8 +895,6 @@ def test_nao_deve_recusar_caso_usuario_seja_anonimo(client):
     assert pergunta.recusado_status is False
 
 
-# TODO
-# Somente admins podem fazer isso
 @freeze_time("2012-01-14 12:00:01 +00:00")
 @pytest.mark.django_db
 def test_admin_deve_recusar_pergunta_aprovada_e_publicada(client, admin_user):

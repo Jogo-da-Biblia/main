@@ -16,8 +16,6 @@ from app.perguntas.utils import (
 )
 from graphql_jwt.decorators import login_required
 
-# FIXME As perguntas estavam sendo criadas sem alternativas e sem referência
-
 
 class CadastrarPerguntaMutation(graphene.Mutation):
     """Cadastra uma pergunta, para executar essa ação você deve estar logado"""
