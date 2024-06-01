@@ -10,6 +10,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from graphene_django.utils.testing import graphql_query
 from model_bakery import baker
 from collections import namedtuple
+from unittest.mock import Mock
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 django.setup()
 
@@ -174,11 +176,36 @@ def client_graphql_without_login(client):
 
 @pytest.fixture
 def mocker_request_get(mocker):
-    Response = namedtuple('Response', ['status_code'])
-    return mocker.patch("requests.get", return_value=Response(status_code=200))
+    mock_response_data = [
+        {
+            "versao_abrev": "ARA",
+            "livro_abrev": "Jo",
+            "capitulo": 3,
+            "versiculo": 16,
+            "texto": "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+        },
+        {
+            "versao_abrev": "ARA",
+            "livro_abrev": "Jo",
+            "capitulo": 3,
+            "versiculo": 17,
+            "texto": "Porque Deus enviou o seu Filho ao mundo, não para que julgasse o mundo, mas para que o mundo fosse salvo por ele.",
+        },
+        {
+            "versao_abrev": "ARA",
+            "livro_abrev": "Jo",
+            "capitulo": 3,
+            "versiculo": 18,
+            "texto": "Quem crê nele não é julgado; mas quem não crê, já está julgado; porquanto não crê no nome do unigênito Filho de Deus.",
+        },
+    ]
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = mock_response_data
+    return mocker.patch("requests.get", return_value=mock_response)
 
 
 @pytest.fixture
 def mocker_request_get_error(mocker):
-    Response = namedtuple('Response', ['status_code'])
+    Response = namedtuple("Response", ["status_code"])
     return mocker.patch("requests.get", return_value=Response(status_code=500))

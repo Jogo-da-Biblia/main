@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from app.core.utils import (
     check_if_user_is_admin_or_himself,
     usuario_superusuario_ou_admin,
+    get_referencia_biblica_from_web,
 )
 from app.core.models import User
 from app.perguntas.models import Pergunta, Tema
@@ -21,13 +22,9 @@ class Query(graphene.ObjectType):
     users = DjangoListField(gql_types.UsuarioType)
     user = graphene.Field(gql_types.UsuarioType, id=graphene.Int())
     temas = DjangoListField(gql_types.TemaType)
-    # TODO
-    # Adicionar query para retornar um tema especifico
     tema = graphene.Field(gql_types.TemaType, id=graphene.Int())
-    # TODO
-    # adicionar testes de comentarios
-    # Adicionar querie para retornar o texto da referencia de uma pergunta pelo site
     comentarios = DjangoListField(gql_types.ComentariosType)
+    referencia = graphene.List(gql_types.ReferenciaType, referencia=graphene.String())
 
     @login_required
     def resolve_pergunta_aleatoria(root, info, tema_id=None):
@@ -44,12 +41,14 @@ class Query(graphene.ObjectType):
             tema = get_object_or_404(Tema, id=tema_id)
             try:
                 random_pergunta_id = random.choice(
-                    Pergunta.objects.filter(tema=tema, publicado_status=True).values_list(
-                        "id", flat=True
-                    )
+                    Pergunta.objects.filter(
+                        tema=tema, publicado_status=True
+                    ).values_list("id", flat=True)
                 )
             except IndexError:
-                raise Exception("Nenhuma pergunta publicada foi encontrada com o tema escolhido")
+                raise Exception(
+                    "Nenhuma pergunta publicada foi encontrada com o tema escolhido"
+                )
 
         return Pergunta.objects.get(id=random_pergunta_id)
 
@@ -75,7 +74,6 @@ class Query(graphene.ObjectType):
 
         return User.objects.all()
 
-    @login_required
     def resolve_comentarios(root, info):
         return Comentario.objects.all()
 
@@ -86,3 +84,9 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_tema(root, info, id):
         return Tema.objects.get(id=id)
+    
+    
+    @login_required
+    def resolve_referencia(root, info, referencia):
+        all_referencias = get_referencia_biblica_from_web(referencia)
+        return [gql_types.ReferenciaType(**ref) for ref in all_referencias]

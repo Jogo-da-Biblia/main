@@ -23,13 +23,13 @@ def test_deve_listar_usuarios(admin_client_with_login, admin_user):
         "username": str(user3.username),
         "email": str(user3.email),
     } in json.loads(resultado.content)["data"]["users"]
-    
+
     assert {
         "id": str(admin_user.id),
         "username": str(admin_user.username),
         "email": str(admin_user.email),
     } in json.loads(resultado.content)["data"]["users"]
-    
+
     assert {
         "id": str(user1.id),
         "username": str(user1.username),
@@ -361,7 +361,10 @@ def test_deve_listar_pontuacao_do_usuario_corretamente_e_ignorar_perguntas_publi
 @pytest.mark.django_db
 def test_deve_mostrar_permissoes_do_usuario(
     client_graphql_with_login,
-    user, admin_expected, revisor_expected, publicador_expected
+    user,
+    admin_expected,
+    revisor_expected,
+    publicador_expected,
 ):
     admin_group, _ = Group.objects.get_or_create(name="administradores")
     revisor_group, _ = Group.objects.get_or_create(name="revisores")
@@ -374,18 +377,77 @@ def test_deve_mostrar_permissoes_do_usuario(
     if publicador_expected is True:
         user.groups.add(publicador_group)
 
-    
     resultado = client_graphql_with_login(
         query=eg.query_usuario, variables={"userId": user.id}
     )
 
     assert "errors" not in json.loads(resultado.content)
-    assert (
-        json.loads(resultado.content)["data"]["user"]["isAdmin"] is admin_expected
-    )
+    assert json.loads(resultado.content)["data"]["user"]["isAdmin"] is admin_expected
     assert (
         json.loads(resultado.content)["data"]["user"]["isRevisor"] is revisor_expected
     )
     assert (
-        json.loads(resultado.content)["data"]["user"]["isPublicador"] is publicador_expected
+        json.loads(resultado.content)["data"]["user"]["isPublicador"]
+        is publicador_expected
     )
+
+
+# TODO
+# nao deve retornar quando usuario for anonimo
+# nao deve retornar quando der erro
+@pytest.mark.django_db
+def test_deve_retornar_referencia(client_graphql_with_login, mocker_request_get):
+    resultado = client_graphql_with_login(
+        query=eg.query_referencia, variables={"referencia": "Jo 3:16-18"}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert json.loads(resultado.content)["data"]["referencia"] == [
+        {
+            "versaoAbrev": "ARA",
+            "livroAbrev": "Jo",
+            "capitulo": 3,
+            "versiculo": 16,
+            "texto": "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+        },
+        {
+            "versaoAbrev": "ARA",
+            "livroAbrev": "Jo",
+            "capitulo": 3,
+            "versiculo": 17,
+            "texto": "Porque Deus enviou o seu Filho ao mundo, não para que julgasse o mundo, mas para que o mundo fosse salvo por ele.",
+        },
+        {
+            "versaoAbrev": "ARA",
+            "livroAbrev": "Jo",
+            "capitulo": 3,
+            "versiculo": 18,
+            "texto": "Quem crê nele não é julgado; mas quem não crê, já está julgado; porquanto não crê no nome do unigênito Filho de Deus.",
+        },
+    ]
+    assert mocker_request_get.called is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_retornar_referencia_quando_usuario_for_anonimo(
+    client, mocker_request_get
+):
+    resultado = graphql_query(
+        query=eg.query_referencia, variables={"referencia": "Jo 3:16-18"}, client=client
+    )
+
+    assert "errors" in json.loads(resultado.content)
+    assert mocker_request_get.called is False
+
+
+@pytest.mark.django_db
+def test_nao_deve_retornar_referencia_quando_a_requisicao_der_erro(
+    client_graphql_with_login, mocker_request_get_error
+):
+    resultado = client_graphql_with_login(
+        query=eg.query_referencia, variables={"referencia": "Jo 3:16-18"}
+    )
+
+    assert "errors" in json.loads(resultado.content)
+    assert mocker_request_get_error.called is True

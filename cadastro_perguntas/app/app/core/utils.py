@@ -1,3 +1,5 @@
+import requests
+from app.settings import GET_BIBLIA_VERSE_URL
 from django.contrib.auth.models import Group
 
 
@@ -95,3 +97,12 @@ def remove_user_from_publicador(usuario):
 def remove_user_from_revisores(usuario):
     revisor_group, _ = Group.objects.get_or_create(name="revisores")
     usuario.groups.remove(revisor_group)
+
+
+def get_referencia_biblica_from_web(referencia):
+    params = {"q": referencia}
+    response = requests.get(GET_BIBLIA_VERSE_URL, params=params)
+    if response.status_code != 200:
+        raise Exception("Não foi possível encontrar a referência biblica.")
+
+    return response.json()

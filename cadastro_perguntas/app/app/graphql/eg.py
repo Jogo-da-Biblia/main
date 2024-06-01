@@ -437,3 +437,16 @@ publicar_pergunta_mutation = """
             }
     }
     """
+
+
+query_referencia = """
+        query ($referencia: String!){
+            referencia(referencia: $referencia) {
+                versaoAbrev
+                livroAbrev
+                capitulo
+                versiculo
+                texto
+            }
+        }
+"""

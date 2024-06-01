@@ -38,9 +38,7 @@ def check_if_referencia_biblica_is_valid(referencia):
     params = {"q": referencia}
     response = requests.get(GET_BIBLIA_VERSE_URL, params=params)
     if response.status_code != 200:
-        raise Exception(
-            "Não foi possível encontrar a referência biblica, por favor adicionar uma única referencia"
-        )
+        raise Exception("Não foi possível encontrar a referência biblica.")
     return True
 
 

@@ -12,6 +12,14 @@ class AlternativaType(DjangoObjectType):
         fields = ("id", "texto", "pergunta", "correta")
 
 
+class ReferenciaType(graphene.ObjectType):
+    versao_abrev = graphene.String()
+    livro_abrev = graphene.String()
+    capitulo = graphene.Int()
+    versiculo = graphene.Int()
+    texto = graphene.String()
+
+
 class PerguntasType(DjangoObjectType):
     class Meta:
         model = Pergunta
