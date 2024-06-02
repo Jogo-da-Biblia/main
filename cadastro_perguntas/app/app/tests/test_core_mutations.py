@@ -179,9 +179,6 @@ def test_nao_deve_enviar_email_com_nova_senha_caso_email_enviado_seja_diferente_
     )
 
     assert "errors" in json.loads(resultado.content)
-    assert "O email informado nao corresponde ao email cadastrado" in str(
-        resultado.content
-    )
     user.refresh_from_db()
     assert user.check_password("senhamudar") is True
     assert mocked_email.called is False

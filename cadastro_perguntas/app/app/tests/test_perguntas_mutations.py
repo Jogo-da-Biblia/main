@@ -329,7 +329,7 @@ def test_deve_deletar_tema(admin_client_with_login):
     assert Tema.objects.exists() is False
     assert (
         resultado.json()["data"]["deletarTema"]["mensagem"]
-        == f"Tema #{tema.id} deletado com sucesso"
+        == f"Tema #{tema.id} foi deletado com sucesso."
     )
 
 
@@ -671,6 +671,29 @@ def test_nao_deve_aprovar_pergunta_caso_ja_tenha_sido_aprovada(client, revisor_u
 
 
 @pytest.mark.django_db
+def test_nao_deve_aprovar_pergunta_caso_tenha_sido_criada_pelo_proprio_usuario(
+    client, revisor_user
+):
+    pergunta = baker.make("Pergunta", aprovado_status=False, criado_por=revisor_user)
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.aprovar_pergunta_mutation,
+        operation_name="aprovarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.aprovado_por is None
+    assert pergunta.aprovado_em is None
+    assert pergunta.aprovado_status is False
+
+
+@pytest.mark.django_db
 def test_nao_deve_aprovar_caso_usuario_nao_tenha_permissao(
     client, publicador_user, user
 ):
@@ -848,6 +871,29 @@ def test_nao_deve_recusar_pergunta_caso_ja_tenha_sido_recusada(client, revisor_u
 
 
 @pytest.mark.django_db
+def test_nao_deve_reprovar_pergunta_caso_tenha_sido_criada_pelo_proprio_usuario(
+    client, revisor_user
+):
+    pergunta = baker.make("Pergunta", recusado_status=False, criado_por=revisor_user)
+
+    client.force_login(revisor_user)
+
+    resultado = graphql_query(
+        query=eg.recusar_pergunta_mutation,
+        operation_name="recusarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.recusado_por is None
+    assert pergunta.recusado_em is None
+    assert pergunta.recusado_status is False
+
+
+@pytest.mark.django_db
 def test_nao_deve_recusar_caso_usuario_nao_tenha_permissao(
     client, publicador_user, user
 ):
@@ -1001,10 +1047,12 @@ def test_deve_publicar_pergunta_caso_usuario_seja_admin(client, admin_user):
 
 
 @pytest.mark.django_db
-def test_nao_deve_publicar_pergunta_caso_ja_tenha_sido_recusada(client, revisor_user):
+def test_nao_deve_publicar_pergunta_caso_ja_tenha_sido_recusada(
+    client, publicador_user
+):
     pergunta = baker.make("Pergunta", recusado_status=True, aprovado_status=False)
 
-    client.force_login(revisor_user)
+    client.force_login(publicador_user)
 
     resultado = graphql_query(
         query=eg.publicar_pergunta_mutation,
@@ -1020,6 +1068,29 @@ def test_nao_deve_publicar_pergunta_caso_ja_tenha_sido_recusada(client, revisor_
     assert pergunta.publicado_em is None
     assert pergunta.publicado_status is False
     assert pergunta.recusado_status is True
+
+
+@pytest.mark.django_db
+def test_nao_deve_publicar_pergunta_caso_tenha_sido_criada_pelo_proprio_usuario(
+    client, publicador_user
+):
+    pergunta = baker.make("Pergunta", criado_por=publicador_user, aprovado_status=True)
+
+    client.force_login(publicador_user)
+
+    resultado = graphql_query(
+        query=eg.publicar_pergunta_mutation,
+        operation_name="publicarPergunta",
+        variables={"perguntaId": pergunta.id},
+        client=client,
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+    pergunta.refresh_from_db()
+    assert pergunta.publicado_por is None
+    assert pergunta.publicado_em is None
+    assert pergunta.publicado_status is False
 
 
 @pytest.mark.django_db

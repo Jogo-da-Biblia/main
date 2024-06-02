@@ -142,6 +142,13 @@ class AprovarPerguntaMutation(graphene.Mutation):
             raise Exception(
                 "Somente administradores podem aprovar uma pergunta recusada"
             )
+        elif (
+            pergunta.criado_por == info.context.user
+            and usuario_superusuario_ou_admin(info.context.user) is False
+        ):
+            raise Exception(
+                "Você não pode aprovar uma pergunta criada por você mesmo. Somente administradores pordem fazer isto"
+            )
 
         pergunta = aprove_pergunta(user=info.context.user, pergunta=pergunta)
         return AprovarPerguntaMutation(
@@ -179,6 +186,13 @@ class RecusarPerguntaMutation(graphene.Mutation):
         ):
             raise Exception(
                 "Somente administradores podem recusar uma pergunta aprovada"
+            )
+        elif (
+            pergunta.criado_por == info.context.user
+            and usuario_superusuario_ou_admin(info.context.user) is False
+        ):
+            raise Exception(
+                "Você não pode recusar uma pergunta criada por você mesmo. Somente administradores pordem fazer isto"
             )
 
         pergunta = refuse_pergunta(user=info.context.user, pergunta=pergunta)
@@ -219,6 +233,13 @@ class PublicarPerguntaMutation(graphene.Mutation):
         elif pergunta.aprovado_status is False:
             raise Exception(
                 "Você não pode publicar esta pergunta pois ela não foi aprovada."
+            )
+        elif (
+            pergunta.criado_por == info.context.user
+            and usuario_superusuario_ou_admin(info.context.user) is False
+        ):
+            raise Exception(
+                "Você não pode publicar uma pergunta criada por você mesmo. Somente administradores pordem fazer isto"
             )
 
         pergunta = publish_pergunta(user=info.context.user, pergunta=pergunta)
@@ -262,9 +283,7 @@ class DeletarTemaMutation(graphene.Mutation):
     """
 
     class Arguments:
-        tema_id = graphene.Int(
-            required=True, description="ID do tema a ser deletado."
-        )
+        tema_id = graphene.Int(required=True, description="ID do tema a ser deletado.")
 
     mensagem = graphene.String(
         description="Mensagem indicando o resultado da exclusão do tema."
