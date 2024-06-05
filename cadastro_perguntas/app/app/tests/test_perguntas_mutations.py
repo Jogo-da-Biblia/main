@@ -58,6 +58,38 @@ def test_deve_criar_nova_pergunta(client_with_login, user):
 
 
 @pytest.mark.django_db
+def test_usuario_admin_deve_criar_nova_pergunta(admin_client_with_login, user):
+    tema = baker.make("Tema", _fill_optional=True)
+
+    assert Pergunta.objects.exists() is False
+
+    resultado = graphql_query(
+        query=eg.cadastrar_pergunta_mutation,
+        operation_name="cadastrarPergunta",
+        variables={
+            "novaPergunta": {
+                "enunciado": "What is the capital of France?",
+                "temaId": tema.id,
+                "tipoResposta": inputs.TipoRespostaEnum.MES.name,
+                "referencia": "Paris",
+                "referenciaBiblica": False,
+                "alternativas": [
+                    {"texto": "London", "correta": False},
+                    {"texto": "Berlin", "correta": False},
+                    {"texto": "Paris", "correta": True},
+                    {"texto": "Madrid", "correta": False},
+                ],
+            }
+        },
+        client=admin_client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+
+    assert Pergunta.objects.count() == 1
+
+
+@pytest.mark.django_db
 def test_nao_deve_criar_nova_pergunta_se_for_usuario_anonimo(
     client_graphql_without_login,
 ):
@@ -89,6 +121,44 @@ def test_nao_deve_criar_nova_pergunta_se_for_usuario_anonimo(
 
     assert Pergunta.objects.count() == 0
     assert Alternativa.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_nao_deve_criar_nova_pergunta_se_usuario_nao_for_colaborador(
+    client, publicador_user, revisor_user
+):
+    tema = baker.make("Tema", _fill_optional=True)
+
+    assert Pergunta.objects.exists() is False
+
+    for not_colaboradores_user in [publicador_user, revisor_user]:
+        client.force_login(not_colaboradores_user)
+
+        resultado = graphql_query(
+            query=eg.cadastrar_pergunta_mutation,
+            operation_name="cadastrarPergunta",
+            variables={
+                "novaPergunta": {
+                    "enunciado": "What is the capital of France?",
+                    "temaId": tema.id,
+                    "tipoResposta": inputs.TipoRespostaEnum.MES.name,
+                    "referencia": "Paris",
+                    "referenciaBiblica": False,
+                    "alternativas": [
+                        {"texto": "London", "correta": False},
+                        {"texto": "Berlin", "correta": False},
+                        {"texto": "Paris", "correta": True},
+                        {"texto": "Madrid", "correta": False},
+                    ],
+                }
+            },
+            client=client,
+        )
+
+        assert "errors" in json.loads(resultado.content)
+
+        assert Pergunta.objects.count() == 0
+        assert Alternativa.objects.count() == 0
 
 
 @pytest.mark.django_db

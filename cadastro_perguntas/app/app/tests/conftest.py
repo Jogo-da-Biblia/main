@@ -112,6 +112,11 @@ def publicador_group():
 
 
 @pytest.fixture
+def colaborador_group():
+    return Group.objects.get_or_create(name="colaboradores")[0]
+
+
+@pytest.fixture
 def admin_user(admin_group):
     user = baker.make("core.User", _fill_optional=True)
     admin_group, _ = Group.objects.get_or_create(name="administradores")
@@ -134,6 +139,13 @@ def publicador_user(publicador_group):
 
 
 @pytest.fixture
+def user(colaborador_group):
+    user = baker.make("core.User", _fill_optional=True)
+    user.groups.add(colaborador_group)
+    return user
+
+
+@pytest.fixture
 def admin_client_with_login(client, admin_user):
     client.force_login(admin_user)
     return client
@@ -145,11 +157,6 @@ def staff_client_graphql(staff_client_with_login):
         return graphql_query(*args, **kwargs, client=staff_client_with_login)
 
     return func
-
-
-@pytest.fixture
-def user():
-    return baker.make("core.User", _fill_optional=True)
 
 
 @pytest.fixture

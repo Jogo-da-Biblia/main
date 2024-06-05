@@ -34,6 +34,7 @@ def test_deve_criar_novo_usuario(client_graphql_without_login):
     assert new_user.phone == "12345678"
     assert new_user.is_whatsapp is True
     assert new_user.check_password("senhateste123")
+    assert new_user.groups.filter(name="colaboradores").exists()
 
 
 @pytest.mark.django_db
@@ -215,11 +216,13 @@ def test_deve_enviar_email_com_nova_senha_caso_usuario_seja_admin(
         "admin_expected",
         "revisor_expected",
         "publicador_expected",
+        "colaborador_expected",
     ),
     [
-        (RoleEnum.REVISOR.name, False, True, False),
-        (RoleEnum.PUBLICADOR.name, False, False, True),
-        (RoleEnum.ADMIN.name, True, False, False),
+        (RoleEnum.REVISOR.name, False, True, False, False),
+        (RoleEnum.PUBLICADOR.name, False, False, True, False),
+        (RoleEnum.ADMIN.name, True, False, False, False),
+        (RoleEnum.COLABORADOR.name, False, False, False, True),
     ],
 )
 @pytest.mark.django_db
@@ -229,6 +232,7 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
     admin_expected,
     revisor_expected,
     publicador_expected,
+    colaborador_expected,
 ):
     new_user = baker.make("core.User", _fill_optional=True)
     user_id = new_user.id
@@ -236,6 +240,7 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
     assert new_user.is_admin is False
     assert new_user.is_revisor is False
     assert new_user.is_publicador is False
+    assert new_user.is_colaborador is False
 
     resultado = graphql_query(
         query=eg.alterar_permissoes_mutation,
@@ -253,6 +258,7 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
     assert new_user.is_admin is admin_expected
     assert new_user.is_revisor is revisor_expected
     assert new_user.is_publicador is publicador_expected
+    assert new_user.is_colaborador is colaborador_expected
 
 
 @pytest.mark.parametrize(
@@ -261,6 +267,7 @@ def test_usuario_admin_deve_adicionar_usuario_aos_grupos_solicitados(
         RoleEnum.REVISOR.name,
         RoleEnum.PUBLICADOR.name,
         RoleEnum.ADMIN.name,
+        RoleEnum.COLABORADOR.name,
     ],
 )
 @pytest.mark.django_db
@@ -298,6 +305,7 @@ def test_usuario_anonimos_nao_deve_adicionar_usuario_aos_grupos_solicitados(
         RoleEnum.REVISOR.name,
         RoleEnum.PUBLICADOR.name,
         RoleEnum.ADMIN.name,
+        RoleEnum.COLABORADOR.name,
     ],
 )
 @pytest.mark.django_db
@@ -334,11 +342,13 @@ def test_usuario_não_admin_nao_deve_adicionar_usuario_aos_grupos_solicitados(
         "admin_expected",
         "revisor_expected",
         "publicador_expected",
+        "colaborator_expected",
     ),
     [
-        (RoleEnum.REVISOR.name, True, False, True),
-        (RoleEnum.PUBLICADOR.name, True, True, False),
-        (RoleEnum.ADMIN.name, False, True, True),
+        (RoleEnum.REVISOR.name, True, False, True, True),
+        (RoleEnum.PUBLICADOR.name, True, True, False, True),
+        (RoleEnum.ADMIN.name, False, True, True, True),
+        (RoleEnum.COLABORADOR.name, True, True, True, False),
     ],
 )
 @pytest.mark.django_db
@@ -348,14 +358,16 @@ def test_usuario_admin_deve_remover_usuario_dos_grupos_solicitados(
     admin_expected,
     revisor_expected,
     publicador_expected,
+    colaborator_expected,
     admin_group,
     revisor_group,
     publicador_group,
+    colaborador_group,
 ):
     new_user = baker.make("core.User", _fill_optional=True)
     user_id = new_user.id
 
-    new_user.groups.add(admin_group, revisor_group, publicador_group)
+    new_user.groups.add(admin_group, revisor_group, publicador_group, colaborador_group)
 
     assert new_user.is_admin is True
     assert new_user.is_revisor is True
@@ -377,6 +389,7 @@ def test_usuario_admin_deve_remover_usuario_dos_grupos_solicitados(
     assert new_user.is_admin is admin_expected
     assert new_user.is_revisor is revisor_expected
     assert new_user.is_publicador is publicador_expected
+    assert new_user.is_colaborador is colaborator_expected
 
 
 @pytest.mark.parametrize(
@@ -385,6 +398,7 @@ def test_usuario_admin_deve_remover_usuario_dos_grupos_solicitados(
         RoleEnum.REVISOR.name,
         RoleEnum.PUBLICADOR.name,
         RoleEnum.ADMIN.name,
+        RoleEnum.COLABORADOR.name,
     ],
 )
 @pytest.mark.django_db
@@ -394,11 +408,12 @@ def test_usuario_anonimos_nao_deve_remover_usuario_dos_grupos_solicitados(
     admin_group,
     revisor_group,
     publicador_group,
+    colaborador_group,
 ):
     new_user = baker.make("core.User", _fill_optional=True)
     user_id = new_user.id
 
-    new_user.groups.add(admin_group, revisor_group, publicador_group)
+    new_user.groups.add(admin_group, revisor_group, publicador_group, colaborador_group)
 
     assert new_user.is_admin is True
     assert new_user.is_revisor is True
@@ -428,6 +443,7 @@ def test_usuario_anonimos_nao_deve_remover_usuario_dos_grupos_solicitados(
         RoleEnum.REVISOR.name,
         RoleEnum.PUBLICADOR.name,
         RoleEnum.ADMIN.name,
+        RoleEnum.COLABORADOR.name,
     ],
 )
 @pytest.mark.django_db
@@ -437,11 +453,12 @@ def test_usuario_não_admin_nao_deve_remover_usuario_dos_grupos_solicitados(
     admin_group,
     revisor_group,
     publicador_group,
+    colaborador_group,
 ):
     new_user = baker.make("core.User", _fill_optional=True)
     user_id = new_user.id
 
-    new_user.groups.add(admin_group, revisor_group, publicador_group)
+    new_user.groups.add(admin_group, revisor_group, publicador_group, colaborador_group)
 
     assert new_user.is_admin is True
     assert new_user.is_revisor is True

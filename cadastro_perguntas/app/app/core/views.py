@@ -36,6 +36,9 @@ class CadastrarUsuarioMutation(graphene.Mutation):
 
         usuario.set_password(novo_usuario.password)
         usuario.save()
+
+        utils.add_user_to_colaborador(usuario=usuario)
+        
         return CadastrarUsuarioMutation(usuario=usuario)
 
 
@@ -148,6 +151,7 @@ class RoleEnum(graphene.Enum):
     ADMIN = "admin"
     PUBLICADOR = "publicador"
     REVISOR = "revisor"
+    COLABORADOR = "colaborador"
 
 
 class ActionEnum(graphene.Enum):
@@ -206,6 +210,12 @@ class AlterarPermissoesMutation(graphene.Mutation):
             utils.add_user_to_admin(
                 usuario=usuario
             ) if action == ActionEnum.ADD else utils.remove_user_from_admin(
+                usuario=usuario
+            )
+        elif role == RoleEnum.COLABORADOR:
+            utils.add_user_to_colaborador(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_colaborador(
                 usuario=usuario
             )
 

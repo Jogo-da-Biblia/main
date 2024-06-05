@@ -5,6 +5,7 @@ from app.core.utils import (
     usuario_superusuario_ou_admin,
     check_if_user_is_admin_or_revisor,
     check_if_user_is_admin_or_publicador,
+    check_if_user_is_admin_or_colaborador,
 )
 from app.perguntas.utils import (
     criar_nova_pergunta_via_mutation,
@@ -34,6 +35,8 @@ class CadastrarPerguntaMutation(graphene.Mutation):
 
     @login_required
     def mutate(self, info, nova_pergunta):
+        assert check_if_user_is_admin_or_colaborador(info)
+
         if nova_pergunta.referencia_biblica is True:
             check_if_referencia_biblica_is_valid(referencia=nova_pergunta.referencia)
 

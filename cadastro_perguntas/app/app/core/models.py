@@ -72,3 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_publicador(self):
         return utils.check_usuario_publicador(usuario=self)
+    
+    @property
+    def is_colaborador(self):
+        return utils.check_usuario_colaborador(usuario=self)

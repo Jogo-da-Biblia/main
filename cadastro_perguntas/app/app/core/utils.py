@@ -23,6 +23,10 @@ def check_usuario_publicador(usuario):
     return usuario.groups.filter(name="publicadores").exists()
 
 
+def check_usuario_colaborador(usuario):
+    return usuario.groups.filter(name="colaboradores").exists()
+
+
 def check_if_user_is_admin_or_himself(info, user_id):
     if (
         any(
@@ -50,6 +54,20 @@ def check_if_user_is_admin_or_revisor(info):
         is False
     ):
         raise Exception("Somente revisores e administradores podem efetuar esta ação")
+    return True
+
+
+def check_if_user_is_admin_or_colaborador(info):
+    if (
+        any(
+            (
+                usuario_superusuario_ou_admin(info.context.user),
+                check_usuario_colaborador(info.context.user),
+            )
+        )
+        is False
+    ):
+        raise Exception("Somente colaboradores e administradores podem efetuar esta ação")
     return True
 
 
@@ -84,6 +102,11 @@ def add_user_to_revisores(usuario):
     usuario.groups.add(revisor_group)
 
 
+def add_user_to_colaborador(usuario):
+    colaborador_group, _ = Group.objects.get_or_create(name="colaboradores")
+    usuario.groups.add(colaborador_group)
+
+
 def remove_user_from_admin(usuario):
     admin_group, _ = Group.objects.get_or_create(name="administradores")
     usuario.groups.remove(admin_group)
@@ -97,6 +120,11 @@ def remove_user_from_publicador(usuario):
 def remove_user_from_revisores(usuario):
     revisor_group, _ = Group.objects.get_or_create(name="revisores")
     usuario.groups.remove(revisor_group)
+
+
+def remove_user_from_colaborador(usuario):
+    colaborador_group, _ = Group.objects.get_or_create(name="colaboradores")
+    usuario.groups.remove(colaborador_group)
 
 
 def get_referencia_biblica_from_web(referencia):
