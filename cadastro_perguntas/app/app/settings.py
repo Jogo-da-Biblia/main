@@ -33,11 +33,18 @@ ALLOWED_HOSTS = [
     'djangoapp',
     'jogodabiblia.com',
     'localhost',
+    '*'
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Opcional: permitir credenciais se necessário
+CORS_ALLOW_CREDENTIALS = True
+
+# Permitir todos os métodos HTTP
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,6 +66,7 @@ INSTALLED_APPS = [
     # graphql
     "graphene_django",
     'django_graphiql',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -70,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'

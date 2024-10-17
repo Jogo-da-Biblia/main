@@ -1,5 +1,6 @@
 import graphene
 import random
+from app.core.utils import usuario_superusuario_ou_admin
 from app.core.models import User
 from app.perguntas.models import Pergunta, Tema
 from . import types as gql_types

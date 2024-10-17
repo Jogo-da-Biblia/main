@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 
+from app.core.utils import usuario_superusuario_ou_admin
 from app.core.models import User
 from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
@@ -38,8 +39,6 @@ class CadastrarUsuarioMutation(graphene.Mutation):
     usuario = graphene.Field(gql_types.UsuarioType)
 
     def mutate(self, info, username, email, password, is_staff=False):
-        if usuario_superusuario_ou_admin(info.context.user) is False:
-            raise Exception('Somente admins podem adicionar novos usuarios')
         usuario = User(username=username, email=email, is_staff=is_staff)
         usuario.set_password(password)
         usuario.save()
