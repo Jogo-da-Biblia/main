@@ -5,8 +5,8 @@ from app.perguntas.models import Pergunta
 
 class Comentario(models.Model):
     id = models.AutoField(primary_key=True)
-    pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
-    email = models.CharField(max_length=126)
+    pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE, related_name="comentarios")
+    email = models.EmailField()
     phone = models.CharField(max_length=11, null=True, blank=True)
     is_whatsapp = models.BooleanField('É Whatsapp?', default=True)
     mensagem = models.TextField()

@@ -48,18 +48,18 @@ class PerguntaAdmin(admin.ModelAdmin):
         'criado_em',
         'publicado_em',
         'status',
-        'revisado_status'
+        'aprovado_status'
     )
     list_filter = ('tema', 'tipo_resposta', 'status')
     search_fields = ('tema', 'descricao')
     fields = [
         'tema', 'enunciado', 'tipo_resposta', 'referencia',
         'referencia_biblica', 'criado_por',
-        ('revisado_status', 'status'),
-        ('revisado_por', 'revisado_em'), ('publicado_por', 'publicado_em')
+        ('aprovado_status', 'status'),
+        ('aprovado_por', 'aprovado_em'), ('publicado_por', 'publicado_em')
     ]
     readonly_fields = (
-        'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em'
+        'aprovado_por', 'aprovado_em', 'publicado_por', 'publicado_em'
     )
 
     inlines = [AlternativaInline, ComentarioInline]
@@ -81,9 +81,9 @@ class PerguntaAdmin(admin.ModelAdmin):
     # Garante que publicadores e revisores alterem apenas seus status
     def change_view(self, request, object_id, extra_context=None):
         initial_readonly_fields = (
-            'revisado_por', 'revisado_em', 'publicado_por', 'publicado_em')
+            'aprovado_por', 'aprovado_em', 'publicado_por', 'publicado_em')
         self.readonly_fields = initial_readonly_fields
-        self.readonly_fields += ('status', 'revisado_status')
+        self.readonly_fields += ('status', 'aprovado_status')
         if self.valida_supergroup(request):
             self.readonly_fields = initial_readonly_fields
 
@@ -91,9 +91,9 @@ class PerguntaAdmin(admin.ModelAdmin):
         if not extra_context:
             extra_context = {}
         extra_context['pergunta'] = {
-            'revisado_em': pergunta.revisado_em,
+            'aprovado_em': pergunta.aprovado_em,
             'publicado_em': pergunta.publicado_em,
-            'revisado_por': pergunta.revisado_por,
+            'aprovado_por': pergunta.aprovado_por,
         }
         return super().change_view(request, object_id, extra_context=extra_context)
 
@@ -101,22 +101,22 @@ class PerguntaAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name='administradores').exists() \
                 or request.user.is_superuser:
             return True
-        if obj.revisado_por == request.user:
+        if obj.aprovado_por == request.user:
             obj.status = False
 
     def save_model(self, request, obj, form, change):
-        # Perguntas não revisadas não podem ser publicadas
-        if not obj.revisado_status:
+        # Perguntas não aprovadas não podem ser publicadas
+        if not obj.aprovado_status:
             obj.status = False
 
         # Altera o nome do revisor se o status for alterado
-        if obj.revisado_status:
-            if obj.revisado_por is None:
-                obj.revisado_por = request.user
-                obj.revisado_em = datetime.now()
+        if obj.aprovado_status:
+            if obj.aprovado_por is None:
+                obj.aprovado_por = request.user
+                obj.aprovado_em = datetime.now()
         else:
-            obj.revisado_por = None
-            obj.revisado_em = None
+            obj.aprovado_por = None
+            obj.aprovado_em = None
 
         self.double_check(request, obj)
 
@@ -133,9 +133,9 @@ class PerguntaAdmin(admin.ModelAdmin):
 
     def response_change(self, request, obj):
         if "revisar" in request.POST:
-            obj.revisado_status = True
-            obj.revisado_por = request.user
-            obj.revisado_em = datetime.now()
+            obj.aprovado_status = True
+            obj.aprovado_por = request.user
+            obj.aprovado_em = datetime.now()
         if "publicar" in request.POST:
             obj.status = True
             obj.publicado_por = request.user

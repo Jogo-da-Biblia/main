@@ -1,79 +1,219 @@
 # Querys and Mutations to test
-query_usuario ='''
+query_usuario = """
         query usuarioQuery($userId: Int!){
             user(id:$userId){
                 id
                 username
                 email
-                pontuacao    
-                perguntasCriadas {
-                id
-                enunciado
+                isActive
+                perguntasEnviadas {
+                    id
+                    enunciado
                 }
-                perguntasRevisadas{
-                id
-                enunciado
+                perguntasAprovadas{
+                    id
+                    enunciado
+                }
+                perguntasRecusadas{
+                    id
+                    enunciado
                 }
                 perguntasPublicadas{
                     id
                     enunciado
                 }
+                pontuacao
+                isAdmin
+                isRevisor
+                isPublicador
             }
         }
-    '''
+    """
 
-usuario_vazio_query = '''
+usuario_vazio_query = """
         query{
             user{
                 id
                 username
                 email
-                pontuacao    
-                perguntasCriadas {
-                id
-                enunciado
+                isActive
+                perguntasEnviadas {
+                    id
+                    enunciado
                 }
-                perguntasRevisadas{
-                id
-                enunciado
+                perguntasAprovadas{
+                    id
+                    enunciado
+                }
+                perguntasRecusadas{
+                    id
+                    enunciado
                 }
                 perguntasPublicadas{
                     id
                     enunciado
                 }
+                pontuacao
+                isAdmin
+                isRevisor
+                isPublicador
             }
         }
-    '''
+    """
 
-query_usuarios = '''
+query_usuarios = """
         query{
             users{
                 id
                 username
-                pontuacao
+                email
             }
         }
-    '''
+    """
 
-pergunta_aleatoria_query = '''
-        query perguntaAleatoriaQuery($temaId: Int){
-            pergunta(temaId:$temaId){
+pergunta_aleatoria_query = """
+        query ($temaId: Int){
+            perguntaAleatoria(temaId: $temaId){
                 id
                 enunciado
             }
         }
-    '''
+    """
 
-todas_perguntas_query = '''
+pergunta_query = """
+        query ($perguntaId: Int){
+            pergunta(id: $perguntaId){
+                id
+                enunciado
+                tema {
+                    id
+                    nome
+                }
+                tipoResposta
+                referencia
+                status
+                criadoPor {
+                    id
+                    email
+                }
+                criadoEm
+                aprovadoPor {
+                    id
+                    email
+                }
+                aprovadoStatus
+                aprovadoEm
+                recusadoPor {
+                    id
+                    email
+                }
+                publicadoPor {
+                    id
+                    email
+                }
+                publicadoEm
+                atualizadoEm
+                alternativas {
+                    id
+                    texto
+                    correta
+                }
+                alternativasCorretas {
+                    id
+                    texto
+                    correta
+                }
+                comentarios {
+                    id
+                    email
+                    phone
+                    isWhatsapp
+                    mensagem
+                    criadoEm
+                }
+            }
+        }
+    """
+
+
+todas_perguntas_query = """
         query{
             perguntas{
                 id
                 enunciado
+                tema {
+                    id
+                    nome
+                }
+                tipoResposta
+                referencia
+                status
+                criadoPor {
+                    id
+                    email
+                }
+                criadoEm
+                aprovadoPor {
+                    id
+                    email
+                }
+                aprovadoStatus
+                aprovadoEm
+                recusadoPor {
+                    id
+                    email
+                }
+                publicadoPor {
+                    id
+                    email
+                }
+                publicadoEm
+                atualizadoEm
+                alternativas {
+                    id
+                    texto
+                    correta
+                }
+                alternativasCorretas {
+                    id
+                    texto
+                    correta
+                }
+                comentarios {
+                    id
+                    email
+                    phone
+                    isWhatsapp
+                    mensagem
+                    criadoEm
+                }
             }
         }
-    '''
+    """
 
-todos_comentarios_query = '''
+todos_temas_query = """
+    query{
+        temas{
+            id
+            nome
+            cor
+        }
+    }
+    """
+
+
+tema_query = """
+    query ($id: Int!){
+        tema (id: $id){
+            id
+            nome
+            cor
+        }
+    }
+    """
+
+
+todos_comentarios_query = """
     query{
         comentarios{
             id
@@ -86,9 +226,9 @@ todos_comentarios_query = '''
             }
         }
     }
-    '''
+    """
 
-texto_biblico_query = '''
+texto_biblico_query = """
     query textoBiblicoQuery($textoBiblicoReferencia: String!){
         textoBiblico(
                 referencia: $textoBiblicoReferencia
@@ -110,15 +250,12 @@ texto_biblico_query = '''
                 texto
             }
         }
-    '''
+    """
 
-novo_usuario_mutation = '''
-        mutation{
+novo_usuario_mutation = """
+        mutation cadastrarUsuario($novoUsuario: UsuarioInput!) {
             cadastrarUsuario(
-                email: "teste1@email.com"
-                username: "ususaroteste1"
-                isStaff: false
-                password: "1938y"
+                novoUsuario: $novoUsuario
             ){
                 usuario{
                     id
@@ -126,15 +263,19 @@ novo_usuario_mutation = '''
                 }
             }	
         }
-    '''
+    """
 
 
-editar_usuario_mutation = '''
-        mutation editarUsuarioMutation($userId: Int!){
+editar_usuario_mutation = """
+        mutation editarUsuario($userId: Int!, $email: String, $username: String, $password: String, $name: String, $phone: String, $isWhatsapp: Boolean){
             editarUsuario(
-                id: $userId
-                newUsername:"newusername"
-                newEmail: "newemai1l@.com"
+                userId: $userId
+                email: $email
+                username: $username
+                password: $password
+                name: $name
+                phone: $phone
+                isWhatsapp: $isWhatsapp
             ){
                 usuario{
                     id
@@ -143,82 +284,81 @@ editar_usuario_mutation = '''
                 }
             }
         }
-    '''
+    """
 
 
-reenviar_senha_mutation = '''
-        mutation reenviarSenhaMutation($userId: Int!){
+alterar_permissoes_mutation = """
+        mutation alterarPermissoes($userId: Int!, $role: RoleEnum! $action: ActionEnum!){
+            alterarPermissoes(
+                userId: $userId
+                role: $role
+                action: $action
+            ){
+                usuario{
+                    id
+                    isAdmin
+                    isRevisor
+                    isPublicador
+                }
+            }
+        }
+    """
+
+
+recuperar_senha_mutation = """
+        mutation recuperarSenha($userId: Int!, $email: String!){
             recuperarSenha(
-                usuarioId: $userId, 
-                email:"user@email.com"
+                userId: $userId, 
+                email: $email,
             ){
                 mensagem
             }
         }
-    '''
+    """
 
 
-adicionar_nova_pergunta_mutation = '''
-        mutation adicionarNovaPerguntaMutation($temaId: Int!, $referenciaId: Int!, $tipoResposta: String!){
-            cadastrarPergunta(
-                enunciado:"Enunciaod da pergunta",
-                outrasReferencias: "outras ref",
-                referenciaRespostaId: $referenciaId,
-                temaId: $temaId,
-                tipoResposta: $tipoResposta,
+cadastrar_pergunta_mutation = """
+    mutation cadastrarPergunta($novaPergunta: PerguntaInput!){
+        cadastrarPergunta(
+            novaPergunta: $novaPergunta
+        ){
+            pergunta{
+                id
+            }
+        }
+    }
+"""
+
+editar_pergunta_mutation = """
+        mutation editarPergunta($perguntaId: Int!, $novoTemaId: Int, $novoEnunciado: String, $novoTipoResposta: TipoRespostaEnum, $novoReferencia: String, $novoReferenciaBiblica: Boolean, $novoAlternativas: [EditarAlternativaInput]){
+            editarPergunta(
+                perguntaId: $perguntaId, 
+                novoTemaId: $novoTemaId,
+                novoEnunciado: $novoEnunciado,
+                novoTipoResposta: $novoTipoResposta,
+                novoReferencia: $novoReferencia,
+                novoReferenciaBiblica: $novoReferenciaBiblica,
+                novoAlternativas: $novoAlternativas,
             ){
                 pergunta{
                     id
-                    tema{
-                        nome
-                    }
                     enunciado
                     tipoResposta
-                    status
-                    revisadoPor {
-                        id
-                        username
-                        email
-                    }
+                    referencia
+                    referenciaBiblica
                 }
             }
         }
-    '''
+    """
 
-editar_pergunta_mutation = '''
-        mutation editarPerguntaMutation($perguntaId: Int!, $temaId: Int!, $referenciaId: Int!){
-            editarPergunta(
-                id:$perguntaId, 
-                enunciado:"Novo enunciado",
-                outrasReferencias: "novaOUtraRefe",
-                referenciaRespostaId: $referenciaId,
-                temaId: $temaId,
-                tipoResposta: "MES",
-                status: true
-            ){
-                pergunta{
-                    id
-                    enunciado
-                    revisadoPor{
-                        id
-                        username
-                    }
-                    status
-                    revisadoPor {
-                        id
-                    }
-                }
-            }
-        }
-    '''
-
-adicionar_comentario_mutation = '''
-    mutation adicionarComentarioMutation($perguntaId: Int!){
+adicionar_comentario_mutation = """
+    mutation adicionarComentario($perguntaId: Int!, $mensagem: String!, $phone: String, $email: String, $isWhatsapp: Boolean){
             adicionarComentario(
-                mensagem: "mensagem",
+                mensagem: $mensagem,
                 perguntaId: $perguntaId,
-                phone: "12345678911",
-                isWhatsapp: true
+                phone: $phone,
+                isWhatsapp: $isWhatsapp,
+                email: $email
                 ){
                 comentario{
                     phone
@@ -232,4 +372,93 @@ adicionar_comentario_mutation = '''
                 }
             }
         }
-    '''
+    """
+
+
+cadastrar_tema_mutation = """
+    mutation cadastrarTema($novoTema: TemaInput!)
+    {
+            cadastrarTema(
+                novoTema: $novoTema
+                ){
+                    tema{
+                        id
+                        nome
+                        cor
+                    }
+                }
+    }
+    """
+
+
+deletar_tema_mutation = """
+    mutation deletarTema($temaId: Int!)
+    {
+        deletarTema(
+            temaId: $temaId
+            ){
+                mensagem
+            }
+    }
+    """
+
+
+aprovar_pergunta_mutation = """
+    mutation aprovarPergunta($perguntaId: Int!)
+    {
+        aprovarPergunta(
+            perguntaId: $perguntaId
+            ){
+                mensagem
+            }
+    }
+    """
+
+
+recusar_pergunta_mutation = """
+    mutation recusarPergunta($perguntaId: Int!)
+    {
+        recusarPergunta(
+            perguntaId: $perguntaId
+            ){
+                mensagem
+            }
+    }
+    """
+
+
+publicar_pergunta_mutation = """
+    mutation publicarPergunta($perguntaId: Int!)
+    {
+        publicarPergunta(
+            perguntaId: $perguntaId
+            ){
+                mensagem
+            }
+    }
+    """
+
+
+query_referencia = """
+        query ($referencia: String!){
+            referencia(referencia: $referencia) {
+                versaoAbrev
+                livroAbrev
+                capitulo
+                versiculo
+                texto
+            }
+        }
+"""
+
+
+deletar_comentario_mutation = """
+    mutation deletarComentario($comentarioId: Int!)
+    {
+        deletarComentario(
+            comentarioId: $comentarioId
+            ){
+                mensagem
+            }
+    }
+    """

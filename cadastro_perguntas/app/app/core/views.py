@@ -1,114 +1,237 @@
+<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 
 from app.core.utils import usuario_superusuario_ou_admin
+=======
+from app.core import utils
+>>>>>>> 0dc75f0c16c0ad414fbf6634b7a63177afddf74c
 from app.core.models import User
 from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
 from app.graphql import types as gql_types
+from app.graphql import inputs as gql_inputs
+from graphql_jwt.decorators import login_required
 
 import smtplib
 import graphene
 
-from .forms import NewUserForm
-
-
-def register_user(request):
-    if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect("main:homepage")
-        messages.error(
-            request, "Unsuccessful registration. Invalid information.")
-    form = NewUserForm()
-    return render(request=request, template_name="main/register.html", context={"register_form": form})
-
 
 class CadastrarUsuarioMutation(graphene.Mutation):
+    """
+    Mutation para cadastrar um novo usuário.
+    """
 
     class Arguments:
-        username = graphene.String(required=True)
-        email = graphene.String(required=True)
-        password = graphene.String(required=True)
-        is_staff = graphene.Boolean()
+        novo_usuario = gql_inputs.UsuarioInput(
+            required=True, description="Dados do novo usuário a ser cadastrado."
+        )
 
-    usuario = graphene.Field(gql_types.UsuarioType)
+    usuario = graphene.Field(gql_types.UsuarioType, description="O usuário cadastrado.")
 
+<<<<<<< HEAD
     def mutate(self, info, username, email, password, is_staff=False):
         usuario = User(username=username, email=email, is_staff=is_staff)
         usuario.set_password(password)
+=======
+    def mutate(self, info, novo_usuario):
+        if len(novo_usuario.password) < 6:
+            raise Exception("A senha deve conter no mínimo 6 caracteres.")
+
+        usuario = User(
+            username=novo_usuario.username,
+            email=novo_usuario.email,
+            name=novo_usuario.name,
+            phone=novo_usuario.phone,
+            is_whatsapp=novo_usuario.is_whatsapp,
+        )
+
+        usuario.set_password(novo_usuario.password)
+>>>>>>> 0dc75f0c16c0ad414fbf6634b7a63177afddf74c
         usuario.save()
+
+        utils.add_user_to_colaborador(usuario=usuario)
+        
         return CadastrarUsuarioMutation(usuario=usuario)
 
 
 class EditarUsuarioMutation(graphene.Mutation):
+    """
+    Mutation para editar informações de um usuário existente.
+    """
+
     class Arguments:
-        id = graphene.Int(required=True)
-        new_username = graphene.String()
-        new_email = graphene.String()
-        new_password = graphene.String()
-        confirm_new_passowrd = graphene.String()
-        new_is_staff = graphene.Boolean()
+        user_id = graphene.Int(
+            required=True, description="ID do usuário a ser editado."
+        )
+        username = graphene.String(description="Novo nome de usuário.")
+        email = graphene.String(description="Novo endereço de email.")
+        password = graphene.String(description="Nova senha.")
+        name = graphene.String(description="Novo nome.")
+        phone = graphene.String(description="Novo número de telefone.")
+        is_whatsapp = graphene.Boolean(
+            description="Indica se o novo número de telefone é do WhatsApp."
+        )
 
-    usuario = graphene.Field(gql_types.UsuarioType)
+    usuario = graphene.Field(gql_types.UsuarioType, description="O usuário editado.")
 
-    def mutate(self, info, id, new_username=None, new_email=None, new_password=None, confirm_new_passowrd=None, new_is_staff=None):
-        if usuario_superusuario_ou_admin(info.context.user) is False and info.context.user.id != id:
-            raise Exception(
-                'Somente o proprio usuario e administradores podem editar dados de usuarios')
-        usuario = User.objects.get(id=id)
+    @login_required
+    def mutate(
+        self,
+        info,
+        user_id,
+        username=None,
+        email=None,
+        phone=None,
+        is_whatsapp=None,
+        name=None,
+        password=None,
+    ):
+        assert utils.check_if_user_is_admin_or_himself(info=info, user_id=user_id)
 
-        if new_username is not None:
-            usuario.username = new_username
-        if new_email is not None:
-            usuario.email = new_email
-        if new_password is not None:
-            if new_password != confirm_new_passowrd:
-                raise Exception('As senhas devem ser iguais')
-            usuario.set_password(new_password)
+        usuario = User.objects.get(id=user_id)
 
-        if info.context.user.is_superuser:
-            if new_is_staff is not None:
-                usuario.is_staff = new_is_staff
+        if password is not None:
+            if len(password) < 6:
+                raise Exception("A senha deve conter no mínimo 6 caracteres.")
+            usuario.set_password(password)
+
+        updates = {
+            "username": username,
+            "email": email,
+            "phone": phone,
+            "is_whatsapp": is_whatsapp,
+            "name": name,
+        }
+
+        for attr, value in updates.items():
+            if value is not None:
+                setattr(usuario, attr, value)
+
         usuario.save()
         return EditarUsuarioMutation(usuario=usuario)
 
 
 class RecuperarSenhaMutation(graphene.Mutation):
+    """
+    Mutation para recuperar a senha de um usuário.
+    """
+
     class Arguments:
-        usuario_id = graphene.Int(required=True)
-        email = graphene.String(required=True)
+        user_id = graphene.Int(
+            required=True, description="ID do usuário que deseja recuperar a senha."
+        )
+        email = graphene.String(
+            required=True, description="Email do usuário para enviar a nova senha."
+        )
 
-    mensagem = graphene.String()
+    mensagem = graphene.String(
+        description="Mensagem indicando o status da operação de recuperação de senha."
+    )
 
-    def mutate(self, info, usuario_id, email):
-        if usuario_superusuario_ou_admin(info.context.user) is False and info.context.user.id != usuario_id:
-            raise Exception(
-                'Somente o proprio usuario e administradores podem solicitar o envio de nova senha')
+    def mutate(self, info, user_id, email):
+        assert utils.check_if_user_is_admin_or_himself(info=info, user_id=user_id)
 
-        usuario = User.objects.get(id=usuario_id)
+        user = User.objects.get(id=user_id)
 
-        if email != usuario.email:
-            raise Exception(
-                'O email informado não corresponde ao email do usuario')
+        if email != user.email:
+            raise Exception("O email informado não corresponde ao email cadastrado.")
 
         new_password = User.objects.make_random_password(length=10)
-        usuario.set_password(new_password)
+        user.set_password(new_password)
+        user.save()
 
         try:
             send_mail(
-                subject='Recuperacao de Senha - Jogo da Biblia',
-                message='Recebemos seu pedido de recuperação de senha, esta é a sua nova senha de acesso: ' + new_password,
+                subject="Recuperação de Senha - Jogo da Bíblia",
+                message="Recebemos seu pedido de recuperação de senha, esta é a sua nova senha de acesso: "
+                + new_password,
                 from_email=DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False,
             )
         except smtplib.SMTPException:
-            raise Exception(
-                'Senha alterada com sucesso\nErro durante o envio do email')
+            return RecuperarSenhaMutation(
+                mensagem="Senha alterada com sucesso\nErro durante o envio do email"
+            )
 
-        return RecuperarSenhaMutation(mensagem='Senha alterada e email enviado com sucesso')
+        return RecuperarSenhaMutation(
+            mensagem="Senha alterada e email enviado com sucesso"
+        )
+
+
+class RoleEnum(graphene.Enum):
+    ADMIN = "admin"
+    PUBLICADOR = "publicador"
+    REVISOR = "revisor"
+    COLABORADOR = "colaborador"
+
+
+class ActionEnum(graphene.Enum):
+    ADD = "Adicionar"
+    REMOVE = "Remover"
+
+
+class AlterarPermissoesMutation(graphene.Mutation):
+    """
+    Mutation para alterar as permissões de um usuário.
+    """
+
+    class Arguments:
+        user_id = graphene.Int(
+            required=True, description="ID do usuário para alterar as permissões."
+        )
+        role = RoleEnum(
+            required=True, description="Permissão que será adicionada ou removida."
+        )
+        action = ActionEnum(
+            required=True, description="Ação para adicionar ou remover permissões."
+        )
+
+    usuario = graphene.Field(
+        gql_types.UsuarioType,
+        description="Usuário cujas permissões foram alteradas.",
+    )
+
+    @login_required
+    def mutate(
+        self,
+        info,
+        user_id,
+        role,
+        action,
+    ):
+        assert utils.usuario_superusuario_ou_admin(
+            usuario=info.context.user, raise_exception=True
+        )
+
+        usuario = User.objects.get(id=user_id)
+
+        if role == RoleEnum.REVISOR:
+            utils.add_user_to_revisores(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_revisores(
+                usuario=usuario
+            )
+        elif role == RoleEnum.PUBLICADOR:
+            utils.add_user_to_publicador(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_publicador(
+                usuario=usuario
+            )
+        elif role == RoleEnum.ADMIN:
+            utils.add_user_to_admin(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_admin(
+                usuario=usuario
+            )
+        elif role == RoleEnum.COLABORADOR:
+            utils.add_user_to_colaborador(
+                usuario=usuario
+            ) if action == ActionEnum.ADD else utils.remove_user_from_colaborador(
+                usuario=usuario
+            )
+
+        usuario.save()
+        return AlterarPermissoesMutation(usuario=usuario)

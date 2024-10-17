@@ -19,13 +19,9 @@ build:
 migrate:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
 makemigrations:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations core"
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations biblia"
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations perguntas"
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations comentarios"
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"		
+	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations"		
 seed:
-	docker compose exec -it app bash -c "cd /usr/src/app/app && python manage.py shell < seed.py"		
+	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py shell < seed.py"		
 	echo "Restaurando banco com sqls da pasta initial_data"
 	docker compose exec -it app bash -c "psql -U postgres -d jogodabiblia -f /initial_data/biblia_psql.sql"
 superuser:
@@ -36,3 +32,5 @@ db_terminal:
 	docker exec -it jogodabiblia_db bash
 sass:
 	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py sass /usr/src/app/app/static/scss/ /usr/src/app/app/static/css/ --watch"
+test:
+	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest -vv ./app/tests/"
