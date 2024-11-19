@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.sites.models import Site
 
-from allauth.socialaccount.models import SocialToken, SocialAccount, SocialApp, EmailAddress
+# from allauth.socialaccount.models import SocialToken, SocialAccount, SocialApp, EmailAddress
 
 from .models import User
 
@@ -30,7 +30,7 @@ class UserAdmin(UserAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Site)
 
-admin.site.unregister(SocialToken)
-admin.site.unregister(SocialAccount)
-admin.site.unregister(SocialApp)
-admin.site.unregister(EmailAddress)
+# admin.site.unregister(SocialToken)
+# admin.site.unregister(SocialAccount)
+# admin.site.unregister(SocialApp)
+# admin.site.unregister(EmailAddress)

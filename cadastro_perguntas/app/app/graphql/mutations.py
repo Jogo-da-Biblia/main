@@ -1,5 +1,6 @@
 import graphene
 import graphql_jwt
+
 from app.perguntas.views import (
     CadastrarPerguntaMutation,
     EditarPerguntaMutation,
@@ -9,6 +10,7 @@ from app.perguntas.views import (
     RecusarPerguntaMutation,
     PublicarPerguntaMutation
 )
+
 from app.core.views import (
     CadastrarUsuarioMutation,
     EditarUsuarioMutation,
@@ -20,7 +22,6 @@ from app.comentarios.views import AdicionarComentarioMutation, DeletarComentario
 """
 ========== Mutations ==========
 """
-
 
 class Mutation(graphene.ObjectType):
     cadastrar_usuario = CadastrarUsuarioMutation.Field()

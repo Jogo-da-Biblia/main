@@ -55,36 +55,31 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    # app terceiros
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "crispy_forms",
-    "widget_tweaks",
     # my apps
-    "app.perguntas",
     "app.core",
+    "app.perguntas",
     "app.comentarios",
+    # app terceiros
+    # "allauth",
+    # "allauth.account",
+    # "allauth.socialaccount",
+    # "crispy_forms",
+    # "widget_tweaks",
     # graphql
     "graphene_django",
-<<<<<<< HEAD
-    'django_graphiql',
-    'corsheaders',
-=======
-    "django_graphiql",
->>>>>>> 0dc75f0c16c0ad414fbf6634b7a63177afddf74c
+    # 'django_graphiql',
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    # "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "corsheaders.middleware.CorsMiddleware",  # Moved to after AuthenticationMiddleware
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -125,32 +120,32 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+#     },
+#     {
+#         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+#     },
+#     {
+#         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+#     },
+#     {
+#         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+#     },
+# ]
 
 # Email configurations
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mail.jogodabiblia.com"
-EMAIL_PORT = 465  # 465 # 25 # 587
-EMAIL_HOST_USER = "contato@jogodabiblia.com"
-DEFAULT_FROM_EMAIL = "contato@jogodabiblia.com"
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_SUBJECT_PREFIX = "[Jogo da Bíblia]"
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "mail.jogodabiblia.com"
+# EMAIL_PORT = 465  # 465 # 25 # 587
+# EMAIL_HOST_USER = "contato@jogodabiblia.com"
+# DEFAULT_FROM_EMAIL = "contato@jogodabiblia.com"
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+# EMAIL_SUBJECT_PREFIX = "[Jogo da Bíblia]"
+# EMAIL_USE_TLS = False
+# EMAIL_USE_SSL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -183,31 +178,29 @@ AUTH_USER_MODEL = "core.User"
 # Logging
 
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
     "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
-SITE_ID = 1
-ACCOUNT_FORMS = {
-    "login": "app.core.forms.MyCustomLoginForm",
-    "signup": "app.core.forms.MyCustomSignupForm",
-}
+# SITE_ID = 1
+# ACCOUNT_FORMS = {
+#     "login": "app.core.forms.MyCustomLoginForm",
+#     "signup": "app.core.forms.MyCustomSignupForm",
+# }
 
-ACCOUNT_ADAPTER = "app.core.forms.CustomAccountAdapter"
+# ACCOUNT_ADAPTER = "app.core.forms.CustomAccountAdapter"
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-LOGIN_REDIRECT_URL = "/"
-ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# LOGIN_REDIRECT_URL = "/"
+# ACCOUNT_SESSION_REMEMBER = True
+# ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+# ACCOUNT_USERNAME_REQUIRED = True
+# ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_UNIQUE_EMAIL = True
 
 # crispy-forms
-
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+# CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # graphql
 GRAPHENE = {
@@ -219,7 +212,6 @@ GRAPHENE = {
 
 # JWT Settings
 GRAPHQL_JWT = {
-    "JWT_AUTH_HEADER_NAME": "Authorization",
     "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 

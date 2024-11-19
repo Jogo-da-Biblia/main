@@ -1,14 +1,11 @@
-<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
 
 from app.core.utils import usuario_superusuario_ou_admin
-=======
 from app.core import utils
->>>>>>> 0dc75f0c16c0ad414fbf6634b7a63177afddf74c
 from app.core.models import User
-from app.settings import DEFAULT_FROM_EMAIL
+# from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
 from app.graphql import types as gql_types
 from app.graphql import inputs as gql_inputs
@@ -30,11 +27,6 @@ class CadastrarUsuarioMutation(graphene.Mutation):
 
     usuario = graphene.Field(gql_types.UsuarioType, description="O usuário cadastrado.")
 
-<<<<<<< HEAD
-    def mutate(self, info, username, email, password, is_staff=False):
-        usuario = User(username=username, email=email, is_staff=is_staff)
-        usuario.set_password(password)
-=======
     def mutate(self, info, novo_usuario):
         if len(novo_usuario.password) < 6:
             raise Exception("A senha deve conter no mínimo 6 caracteres.")
@@ -48,7 +40,6 @@ class CadastrarUsuarioMutation(graphene.Mutation):
         )
 
         usuario.set_password(novo_usuario.password)
->>>>>>> 0dc75f0c16c0ad414fbf6634b7a63177afddf74c
         usuario.save()
 
         utils.add_user_to_colaborador(usuario=usuario)

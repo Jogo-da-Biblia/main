@@ -1,5 +1,6 @@
 import graphene
 import random
+import sys
 from django.shortcuts import get_object_or_404
 
 from app.core.utils import (
@@ -13,7 +14,6 @@ from app.comentarios.models import Comentario
 from . import types as gql_types
 from graphene_django import DjangoListField
 from graphql_jwt.decorators import login_required
-
 
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(
@@ -114,11 +114,13 @@ class Query(graphene.ObjectType):
 
         return User.objects.all()
 
+    @login_required
     def resolve_comentarios(root, info):
         return Comentario.objects.all()
 
     @login_required
     def resolve_temas(root, info):
+        print(info.context.user, file=sys.stderr)
         return Tema.objects.all()
 
     @login_required
