@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+    <form method="post" class="form__login">
+        <header class="all__blue">
+            <img src="../../media/logo.svg" alt="Jogo da Biblia" class="logo__login">
+        </header>
+
+        <article class="pagina__login">
+
+            <h1>Cadastro</h1>
+            <p>Para começar a coleborar cadastre-se com seus dados abaixo e comece a enviar perguntas. </p>
+            
+            {% csrf_token %}
+            {{ form|crispy }}
+
+            <fieldset>                   
+                <label for="radio-aceito" class="termo__uso">
+                    <input type="checkbox" name="aceito" value="aceito" id="radio-aceito" class="termo__aceitar" required>
+                        Li e concordo com o &nbsp<a href="#">Termos de Uso</a>
+                    
+                </label> 
+            </fieldset>
+
+            <div class="botao__entrar">
+                <button class="botao__entrar" type="submit" onclick="check_agreements()">
+                    <a class="link__entrar">Cadastrar</a>
+                </button>
+            </div>
+        </article>
+    </form>
+
+    <script>
+        function check_agreements() {
+          document.getElementById("botao__entrar").required = true;
+        }
+    </script>
+{% endblock %}

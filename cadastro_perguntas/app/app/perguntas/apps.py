@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class PerguntasConfig(AppConfig):
-    name = 'perguntas'
+    name = 'app.perguntas'
+    default_auto_field = 'django.db.models.BigAutoField'

@@ -1,0 +1,11 @@
+<nav class="menu-lateral">
+{% if user.is_authenticated %}
+    <a href="#" class="menu-lateral__link menu-lateral__link--inicio menu-lateral__link--ativo"></a>
+    <a href="{% url 'pages:pergunta_add' %}" class="menu-lateral__link menu-lateral__link">Adicionar Perguntas</a>
+    <a href="{{ '/' }}" class="menu-lateral__link menu-lateral__link">Minhas Perguntas</a>
+    <a href="ranking.html" class="menu-lateral__link menu-lateral__link">Ranking</a>
+    <a href="{% url 'account_change_password' %}" class="menu-lateral__link menu-lateral__link">Redefinir Senha</a>
+    <a href="{% url 'account_logout' %}" class="menu-lateral__link menu-lateral__link">Sair</a>
+{% endif %}
+</nav>
+

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'css/partials/_account.css' %}">
+{% endblock %}
+
+{% block title %}Sair{% endblock %}
+
+{% block content %}
+<div class="refirecionar__sair">
+        {% include 'partials/_header.html' %}
+        <h2 class="pg__sair">Sair</h2>
+        <p class="deseja__sair">Você tem certeza que deseja sair?</p>
+        
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit">Sair</button>
+        </form>
+    </div>
+{% endblock %}

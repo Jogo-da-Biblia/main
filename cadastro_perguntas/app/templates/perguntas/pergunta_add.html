@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block title %} Minhas Perguntas {% endblock %}
+
+{% block content %}
+
+
+<form method="post" class="pergunta__texto">{% csrf_token %}
+    {% include 'partials/_header.html' %}
+
+    <h1>Adicionar Pergunta</h1>
+    <p class="desc__titulo--padrao">Para começar a colaborar cadastre-se com seus dados abaixo e comece a enviar perguntas.</p>
+    {{ form.tema|append_attr:"class:input__padrao select form-control placeholder:Tema"|safe }}
+    {{ form.enunciado|add_class:"input__padrao form-control"|safe  }}
+
+    {% include 'perguntas/partials/_tipo_resposta.html' %}
+
+    {% include 'perguntas/partials/_alternativa.html' %}
+
+    {% include 'perguntas/partials/_referencia.html' %}
+
+    <div class="btn__pg">
+        <div class="botao__adicionar">
+            <button type="submit" class="link__entrar btn__pg--adicionar" id="btn_salvar"><a>Salvar</a></button>
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(function() {
+        $('.inlineform').formset({
+            prefix: '{{ formset.prefix }}',
+            addText: 'Adicionar',
+        });
+    })
+</script>
+{% endblock scripts %}

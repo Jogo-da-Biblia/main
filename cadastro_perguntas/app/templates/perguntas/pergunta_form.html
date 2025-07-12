@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block title %} Atualizar Pergunta {% endblock %}
+
+{% block content %}
+
+    <form method="post" class="form__update">{% csrf_token %}
+        {% include 'partials/_header.html' %}
+        <h1>Atualizar Pergunta</h1>
+
+        {{ form.tema|add_class:"input__padrao select form-control tema"|safe }}
+        
+        {{ form.enunciado|add_class:"input__padrao form-control enunciado_height"|safe  }}
+
+        {% include 'perguntas/partials/_tipo_resposta.html' %}
+
+        {% include 'perguntas/partials/_alternativa.html' %}
+
+        {% include 'perguntas/partials/_referencia.html' %}
+
+        <div class="btn__pg">
+            <div class="botao__adicionar">
+                <button type="submit" class=" btn__pg--adicionar" id="btn_salvar"><a>Update</a></button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(function() {
+        $('.inlineform').formset({
+            prefix: '{{ formset.prefix }}',
+        });
+    })
+</script>
+{% endblock %}

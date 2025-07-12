@@ -1,0 +1,31 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'css/partials/_account.css' %}">
+{% endblock %}
+
+{% block title %}Entrar{% endblock %}
+
+{% block content %}
+
+    <form method="post" class="form__login">
+        <header class="all__blue">    
+            <img src="../../media/logo.svg" alt="Jogo da Biblia" class="logo__login">
+        </header>
+        <article class="pagina__login">
+            <h1>Login</h1>
+            <p>
+                Colabore conosco. Digite abaixo seu usuário e senha para começar a
+                cadastrar suas perguntas.</p>
+
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="botao__entrar">
+                <button class="botao__entrar" type="submit"><a class="link__entrar">Entrar</a></button>
+            </div>
+        </article>
+    </form>
+{% endblock %}
