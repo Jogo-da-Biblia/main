@@ -40,6 +40,8 @@ ALLOWED_HOSTS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^.*$"]
+
 # Opcional: permitir credenciais se necessário
 CORS_ALLOW_CREDENTIALS = True
 
@@ -68,10 +70,11 @@ INSTALLED_APPS = [
     # graphql
     "graphene_django",
     # 'django_graphiql',
-    # 'corsheaders',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -79,7 +82,6 @@ MIDDLEWARE = [
     # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     # "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "corsheaders.middleware.CorsMiddleware",  # Moved to after AuthenticationMiddleware
 ]
 
 ROOT_URLCONF = "app.urls"
