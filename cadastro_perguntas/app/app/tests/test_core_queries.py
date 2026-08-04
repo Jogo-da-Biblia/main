@@ -448,3 +448,149 @@ def test_nao_deve_retornar_referencia_quando_a_requisicao_der_erro(
 
     assert "errors" in json.loads(resultado.content)
     assert mocker_request_get_error.called is True
+
+
+@pytest.mark.django_db
+def test_deve_listar_ranking_sem_exigir_login(client_graphql_without_login, user):
+    criar_perguntas_para_teste(
+        enviadas=1, aprovadas=1, publicadas=1, recusadas=1, user=user
+    )
+
+    resultado = client_graphql_without_login(query=eg.ranking_query)
+
+    assert "errors" not in json.loads(resultado.content)
+    assert {"username": user.username, "pontuacao": 7} in json.loads(
+        resultado.content
+    )["data"]["ranking"]
+
+
+@pytest.mark.django_db
+def test_deve_ordenar_ranking_da_maior_para_a_menor_pontuacao(
+    client_graphql_without_login, colaborador_group
+):
+    primeiro = baker.make("core.User", username="primeiro")
+    segundo = baker.make("core.User", username="segundo")
+    terceiro = baker.make("core.User", username="terceiro")
+
+    criar_perguntas_para_teste(
+        enviadas=2, aprovadas=2, publicadas=2, recusadas=0, user=primeiro
+    )
+    criar_perguntas_para_teste(
+        enviadas=1, aprovadas=1, publicadas=0, recusadas=0, user=segundo
+    )
+    criar_perguntas_para_teste(
+        enviadas=1, aprovadas=0, publicadas=0, recusadas=0, user=terceiro
+    )
+
+    resultado = client_graphql_without_login(query=eg.ranking_query)
+
+    assert "errors" not in json.loads(resultado.content)
+    assert json.loads(resultado.content)["data"]["ranking"] == [
+        {"username": primeiro.username, "pontuacao": 12},
+        {"username": segundo.username, "pontuacao": 3},
+        {"username": terceiro.username, "pontuacao": 1},
+    ]
+
+
+@pytest.mark.django_db
+def test_deve_limitar_a_quantidade_de_posicoes_do_ranking(
+    client_graphql_without_login,
+):
+    primeiro = baker.make("core.User", username="primeiro")
+    segundo = baker.make("core.User", username="segundo")
+    baker.make("core.User", username="terceiro")
+
+    criar_perguntas_para_teste(
+        enviadas=3, aprovadas=0, publicadas=0, recusadas=0, user=primeiro
+    )
+    criar_perguntas_para_teste(
+        enviadas=2, aprovadas=0, publicadas=0, recusadas=0, user=segundo
+    )
+
+    resultado = client_graphql_without_login(
+        query=eg.ranking_com_limite_query, variables={"limite": 2}
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert json.loads(resultado.content)["data"]["ranking"] == [
+        {"username": primeiro.username, "pontuacao": 3},
+        {"username": segundo.username, "pontuacao": 2},
+    ]
+
+
+@pytest.mark.django_db
+def test_nao_deve_aceitar_limite_menor_ou_igual_a_zero_no_ranking(
+    client_graphql_without_login,
+):
+    resultado = client_graphql_without_login(
+        query=eg.ranking_com_limite_query, variables={"limite": 0}
+    )
+
+    assert "errors" in json.loads(resultado.content)
+    assert "positivo" in str(json.loads(resultado.content))
+
+
+@pytest.mark.django_db
+def test_nao_deve_expor_dados_pessoais_no_ranking(client_graphql_without_login, user):
+    resultado = client_graphql_without_login(
+        query="""
+            query{
+                ranking{
+                    username
+                    email
+                }
+            }
+        """
+    )
+
+    assert "errors" in json.loads(resultado.content)
+
+
+@pytest.mark.django_db
+def test_nao_deve_listar_usuarios_inativos_no_ranking(client_graphql_without_login):
+    ativo = baker.make("core.User", username="ativo", is_active=True)
+    inativo = baker.make("core.User", username="inativo", is_active=False)
+
+    criar_perguntas_para_teste(
+        enviadas=1, aprovadas=0, publicadas=0, recusadas=0, user=ativo
+    )
+    criar_perguntas_para_teste(
+        enviadas=1, aprovadas=0, publicadas=0, recusadas=0, user=inativo
+    )
+
+    resultado = client_graphql_without_login(query=eg.ranking_query)
+    ranking = json.loads(resultado.content)["data"]["ranking"]
+    usernames = [colaborador["username"] for colaborador in ranking]
+
+    assert ativo.username in usernames
+    assert inativo.username not in usernames
+
+
+@pytest.mark.parametrize(
+    ("enviadas", "aprovadas", "publicadas", "recusadas"),
+    [
+        (1, 1, 1, 1),
+        (4, 3, 2, 1),
+        (10, 0, 5, 2),
+        (3, 7, 0, 5),
+        (0, 0, 0, 0),
+    ],
+)
+@pytest.mark.django_db
+def test_pontuacao_agregada_do_ranking_deve_concordar_com_a_property_do_usuario(
+    enviadas, aprovadas, publicadas, recusadas
+):
+    # Guarda contra divergencia entre o calculo em SQL (UserManager.ranking)
+    # e a regra em Python (User.pontuacao)
+    user = baker.make("core.User", username="colaborador")
+    criar_perguntas_para_teste(
+        enviadas=enviadas,
+        aprovadas=aprovadas,
+        publicadas=publicadas,
+        recusadas=recusadas,
+        user=user,
+    )
+
+    ranking = {item["username"]: item["pontos"] for item in User.objects.ranking()}
+
+    assert ranking[user.username] == user.pontuacao

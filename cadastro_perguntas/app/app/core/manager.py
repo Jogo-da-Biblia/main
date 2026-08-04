@@ -1,11 +1,34 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
 
 
 class UserManager(BaseUserManager):
     """
-    Custom user model manager 
+    Custom user model manager
     """
+
+    def ranking(self):
+        """
+        Ranking publico de colaboradores, ordenado da maior para a menor
+        pontuacao. Espelha a regra de User.pontuacao, mas agregada no banco
+        para nao gerar uma consulta por usuario.
+        """
+        nao_recusada = Q(perguntas_enviadas__recusado_status=False)
+        aprovada = nao_recusada & Q(perguntas_enviadas__aprovado_status=True)
+        publicada = aprovada & Q(perguntas_enviadas__publicado_por__isnull=False)
+
+        return (
+            self.filter(is_active=True)
+            .values("username")
+            .annotate(
+                # + 1 por pergunta enviada, + 1 se aprovada, + 1 se publicada
+                pontos=Count("perguntas_enviadas")
+                + Count("perguntas_enviadas", filter=aprovada)
+                + Count("perguntas_enviadas", filter=publicada)
+            )
+            .order_by("-pontos", "username")
+        )
 
     def create_user(self, email, username, password=None, **extra_fields):
         """

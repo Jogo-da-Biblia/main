@@ -66,6 +66,12 @@ class Query(graphene.ObjectType):
         description="Consulta para obter uma lista de referências bíblicas com base em uma string de referência fornecida",
     )
 
+    ranking = graphene.List(
+        gql_types.RankingType,
+        limite=graphene.Int(),
+        description="Consulta pública para obter o ranking de colaboradores por pontuação, da maior para a menor. Se um limite for fornecido, retorna apenas as primeiras posições.",
+    )
+
     @login_required
     def resolve_pergunta_aleatoria(root, info, tema_id=None):
         if tema_id is None:
@@ -113,6 +119,23 @@ class Query(graphene.ObjectType):
         assert usuario_superusuario_ou_admin(info.context.user, raise_exception=True)
 
         return User.objects.all()
+
+    def resolve_ranking(root, info, limite=None):
+        # Consulta publica de proposito: nao exige login
+        if limite is not None and limite <= 0:
+            raise Exception("O limite deve ser um numero positivo")
+
+        ranking = User.objects.ranking()
+
+        if limite is not None:
+            ranking = ranking[:limite]
+
+        return [
+            gql_types.RankingType(
+                username=colaborador["username"], pontuacao=colaborador["pontos"]
+            )
+            for colaborador in ranking
+        ]
 
     @login_required
     def resolve_comentarios(root, info):

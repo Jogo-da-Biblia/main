@@ -71,6 +71,24 @@ query_usuarios = """
         }
     """
 
+ranking_query = """
+        query{
+            ranking{
+                username
+                pontuacao
+            }
+        }
+    """
+
+ranking_com_limite_query = """
+        query ($limite: Int){
+            ranking(limite: $limite){
+                username
+                pontuacao
+            }
+        }
+    """
+
 pergunta_aleatoria_query = """
         query ($temaId: Int){
             perguntaAleatoria(temaId: $temaId){

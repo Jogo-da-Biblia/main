@@ -12,6 +12,16 @@ class AlternativaType(DjangoObjectType):
         fields = ("id", "texto", "pergunta", "correta")
 
 
+class RankingType(graphene.ObjectType):
+    """
+    Type reduzido para o ranking publico: expoe apenas o username e a
+    pontuacao, sem os dados pessoais presentes em UsuarioType.
+    """
+
+    username = graphene.String()
+    pontuacao = graphene.Int()
+
+
 class ReferenciaType(graphene.ObjectType):
     versao_abrev = graphene.String()
     livro_abrev = graphene.String()
