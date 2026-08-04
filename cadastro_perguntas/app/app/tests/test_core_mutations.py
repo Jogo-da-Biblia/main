@@ -4,8 +4,47 @@ import pytest
 from app.core.views import RoleEnum, ActionEnum
 from app.core.models import User
 from app.graphql import eg
+from django.contrib.auth import authenticate
 from graphene_django.utils.testing import graphql_query
 from model_bakery import baker
+
+
+@pytest.mark.django_db
+def test_deve_autenticar_usuario_por_email():
+    user = User.objects.create(
+        username="usuarioemail",
+        email="usuarioemail@teste.com",
+        name="Usuario Email",
+        phone="71992540740",
+    )
+    user.set_password("passw@rd")
+    user.save()
+
+    authenticated_user = authenticate(
+        username="usuarioemail@teste.com",
+        password="passw@rd",
+    )
+
+    assert authenticated_user == user
+
+
+@pytest.mark.django_db
+def test_deve_autenticar_usuario_por_username():
+    user = User.objects.create(
+        username="usuariousername",
+        email="usuariousername@teste.com",
+        name="Usuario Username",
+        phone="71992540740",
+    )
+    user.set_password("passw@rd")
+    user.save()
+
+    authenticated_user = authenticate(
+        username="usuariousername",
+        password="passw@rd",
+    )
+
+    assert authenticated_user == user
 
 
 @pytest.mark.django_db

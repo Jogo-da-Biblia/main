@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
+from django.conf import settings
 
 from app.core.utils import usuario_superusuario_ou_admin
 from app.core import utils
 from app.core.models import User
-# from app.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail
 from app.graphql import types as gql_types
 from app.graphql import inputs as gql_inputs
@@ -138,7 +138,7 @@ class RecuperarSenhaMutation(graphene.Mutation):
                 subject="Recuperação de Senha - Jogo da Bíblia",
                 message="Recebemos seu pedido de recuperação de senha, esta é a sua nova senha de acesso: "
                 + new_password,
-                from_email=DEFAULT_FROM_EMAIL,
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False,
             )

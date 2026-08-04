@@ -143,7 +143,7 @@ DATABASES = {
 # EMAIL_HOST = "mail.jogodabiblia.com"
 # EMAIL_PORT = 465  # 465 # 25 # 587
 # EMAIL_HOST_USER = "contato@jogodabiblia.com"
-# DEFAULT_FROM_EMAIL = "contato@jogodabiblia.com"
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="contato@jogodabiblia.com")
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 # EMAIL_SUBJECT_PREFIX = "[Jogo da Bíblia]"
 # EMAIL_USE_TLS = False
@@ -181,6 +181,7 @@ AUTH_USER_MODEL = "core.User"
 
 AUTHENTICATION_BACKENDS = [
     "graphql_jwt.backends.JSONWebTokenBackend",
+    "app.core.backends.UsernameOrEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 

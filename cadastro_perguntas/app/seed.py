@@ -6,74 +6,100 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+def get_or_create_user(username, password, **defaults):
+    user, _ = User.objects.update_or_create(username=username, defaults=defaults)
+    user.set_password(password)
+    user.save()
+    return user
+
+
+def get_permissions(*codenames):
+    return list(Permission.objects.filter(codename__in=codenames))
+
+
+def upsert_tema(nome, cor):
+    tema = Tema.objects.filter(nome=nome).first()
+    if tema is None:
+        Tema.objects.create(nome=nome, cor=cor)
+        return
+
+    tema.cor = cor
+    tema.save(update_fields=["cor"])
+
+
 print("Criando usuários...")
 try:
     print("Adicionado colaborador de teste...")
-    colaborador = User.objects.create(
+    colaborador = get_or_create_user(
         username="colaborador",
-        name="Colaborador de Teste",
-        email="colaborador@jogodabiblia.com.br",
-        phone="71992540736",
-        is_whatsapp=True,
+        password="passw@rd",
+        defaults={
+            "name": "Colaborador de Teste",
+            "email": "colaborador@jogodabiblia.com.br",
+            "phone": "71992540736",
+            "is_whatsapp": True,
+        },
     )
-    colaborador.set_password("passw@rd")
-    colaborador.save()
 except Exception as e:
     print(e)
 
 try:
     print("Adicionado revisor de teste...")
-    revisor = User.objects.create(
+    revisor = get_or_create_user(
         username="revisor",
-        name="Revisor de Teste",
-        email="revisor@teste.com",
-        phone="71992540737",
-        is_whatsapp=True,
+        password="passw@rd",
+        defaults={
+            "name": "Revisor de Teste",
+            "email": "revisor@teste.com",
+            "phone": "71992540737",
+            "is_whatsapp": True,
+        },
     )
-    revisor.set_password('passw@rd')
-    revisor.save()
 except Exception as e:
     print(e)
 
 print("Adicionado publicador de teste...")
 try:
-    publicador = User.objects.create(
+    publicador = get_or_create_user(
         username="publicador",
-        name="Publicador de Teste",
-        email="publicador@teste.com",
-        phone="71992540738",
-        is_whatsapp=True,
+        password="passw@rd",
+        defaults={
+            "name": "Publicador de Teste",
+            "email": "publicador@teste.com",
+            "phone": "71992540738",
+            "is_whatsapp": True,
+        },
     )
-    publicador.set_password("passw@rd")
-    publicador.save()
 except Exception as e:
     print(e)
 
 print("Adicionado supervisor de teste...")
 try:
-    supervisor = User.objects.create(
+    supervisor = get_or_create_user(
         username="supervisor",
-        name="Supervisor de Teste",
-        email="supervisor@teste.com",
-        phone="71992540739",
-        is_whatsapp=True,
+        password="passw@rd",
+        defaults={
+            "name": "Supervisor de Teste",
+            "email": "supervisor@teste.com",
+            "phone": "71992540739",
+            "is_whatsapp": True,
+        },
     )
-    supervisor.set_password("passw@rd")
-    supervisor.save()
 except Exception as e:
     print(e)
 
 print("Adicionado administrador de teste...")
 try:
-    administrador = User.objects.create(
+    administrador = get_or_create_user(
         username="administrador",
-        name="Administrador de Teste",
-        email="administrador@teste.com",
-        phone="71992540740",
-        is_whatsapp=True,
+        password="passw@rd",
+        defaults={
+            "name": "Administrador de Teste",
+            "email": "administrador@teste.com",
+            "phone": "71992540740",
+            "is_whatsapp": True,
+        },
     )
-    administrador.set_password("passw@rd")
-    administrador.save()
 except Exception as e:
     print(e)
 
@@ -89,33 +115,26 @@ except Exception as e:
 
 print("Adicionando permissões...")
 try:
-    perguntas_perms = [
-        Permission.objects.get(codename='add_pergunta'),
-        Permission.objects.get(codename='view_pergunta'),
-        Permission.objects.get(codename='change_pergunta'),
-        Permission.objects.get(codename='delete_pergunta'),
-    ]
+    perguntas_perms = get_permissions(
+        'add_pergunta',
+        'view_pergunta',
+        'change_pergunta',
+        'delete_pergunta',
+    )
 
-    comentarios_perms = [
-        Permission.objects.get(codename='add_comentario'),
-        Permission.objects.get(codename='view_comentario'),
-        Permission.objects.get(codename='change_comentario'),
-        Permission.objects.get(codename='delete_comentario')
-    ]
+    comentarios_perms = get_permissions(
+        'add_comentario',
+        'view_comentario',
+        'change_comentario',
+        'delete_comentario',
+    )
 
-    alternativas_perms = [
-        Permission.objects.get(codename='add_alternativa'),
-        Permission.objects.get(codename='view_alternativa'),
-        Permission.objects.get(codename='change_alternativa'),
-        Permission.objects.get(codename='delete_alternativa')
-    ]
-
-    referencias_perms = [
-        Permission.objects.get(codename='add_referencia'),
-        Permission.objects.get(codename='view_referencia'),
-        Permission.objects.get(codename='change_referencia'),
-        Permission.objects.get(codename='delete_referencia')
-    ]
+    alternativas_perms = get_permissions(
+        'add_alternativa',
+        'view_alternativa',
+        'change_alternativa',
+        'delete_alternativa',
+    )
 
     all_perms = Permission.objects.all()
 except Exception as e:
@@ -127,24 +146,21 @@ try:
     g_colaboradores.permissions.add(
         *comentarios_perms,
         *perguntas_perms,
-        *alternativas_perms,
-        *referencias_perms
+        *alternativas_perms
     )
 
     # Revisores
     g_revisores.permissions.add(
         *comentarios_perms,
         *perguntas_perms,
-        *alternativas_perms,
-        *referencias_perms
+        *alternativas_perms
     )
 
     # Publicadores
     g_publicadores.permissions.add(
         *comentarios_perms,
         *perguntas_perms,
-        *alternativas_perms,
-        *referencias_perms
+        *alternativas_perms
     )
 
     # Supervisores
@@ -164,14 +180,13 @@ except Exception as e:
 
 print("Adicionando temas de perguntas...")
 try:
-    Tema(nome="Doutrina", cor="a163e8").save()
-    Tema(nome="Referencia", cor="f99e00").save()
-    Tema(nome="Personagens do Antigo Testamento", cor="5ade3c").save()
-    Tema(nome="Personagens do Novo Testamento", cor="2cd0de").save()
-    Tema(nome="Conhecimentos Gerais", cor="de5353").save()
-    Tema(nome="Especial", cor="ffffff").save()
-    Tema(nome="Números", cor="9e8e34").save()
-    Tema(nome="Perguntas Ouro", cor="e7d50f").save()
+    upsert_tema(nome="Doutrina", cor="a163e8")
+    upsert_tema(nome="Referencia", cor="f99e00")
+    upsert_tema(nome="Personagens do Antigo Testamento", cor="5ade3c")
+    upsert_tema(nome="Personagens do Novo Testamento", cor="2cd0de")
+    upsert_tema(nome="Conhecimentos Gerais", cor="de5353")
+    upsert_tema(nome="Especial", cor="ffffff")
+    upsert_tema(nome="Números", cor="9e8e34")
+    upsert_tema(nome="Perguntas Ouro", cor="e7d50f")
 except Exception as e:
     print(e)
-
