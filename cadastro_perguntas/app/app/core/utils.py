@@ -57,6 +57,23 @@ def check_if_user_is_admin_or_revisor(info):
     return True
 
 
+def check_if_user_can_moderate_questions(info):
+    if (
+        any(
+            (
+                usuario_superusuario_ou_admin(info.context.user),
+                check_usuario_revisor(info.context.user),
+                check_usuario_publicador(info.context.user),
+            )
+        )
+        is False
+    ):
+        raise Exception(
+            "Somente revisores, publicadores e administradores podem consultar perguntas para moderação"
+        )
+    return True
+
+
 def check_if_user_is_admin_or_colaborador(info):
     if (
         any(

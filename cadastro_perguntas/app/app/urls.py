@@ -22,6 +22,7 @@ from graphql_jwt.middleware import JSONWebTokenMiddleware
 from django.views.decorators.csrf import csrf_exempt
 
 from app.graphql.schema import schema
+from app.health import health
 
 class DebugMiddleware:
     def resolve(self, next, root, info, **kwargs):
@@ -30,6 +31,7 @@ class DebugMiddleware:
         return next(root, info, **kwargs)
         
 urlpatterns = [
+    path('health', health, name='health'),
     path('admin/', admin.site.urls),
     # path('accounts/', include('allauth.urls')),
     path(

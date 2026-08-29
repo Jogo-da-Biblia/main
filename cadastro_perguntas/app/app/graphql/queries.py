@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from app.core.utils import (
     check_if_user_is_admin_or_himself,
+    check_if_user_can_moderate_questions,
     usuario_superusuario_ou_admin,
     get_referencia_biblica_from_web,
 )
@@ -18,7 +19,7 @@ from graphql_jwt.decorators import login_required
 class Query(graphene.ObjectType):
     perguntas = DjangoListField(
         gql_types.PerguntasType,
-        description="Consulta para obter uma lista de todas as perguntas publicadas",
+        description="Consulta restrita à equipe de revisão e publicação para obter as perguntas em moderação",
     )
 
     pergunta = graphene.Field(
@@ -104,6 +105,7 @@ class Query(graphene.ObjectType):
 
     @login_required
     def resolve_perguntas(root, info):
+        assert check_if_user_can_moderate_questions(info)
         return Pergunta.objects.all()
 
     @login_required

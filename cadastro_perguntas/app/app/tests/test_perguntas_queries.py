@@ -9,10 +9,11 @@ from model_bakery import baker
 
 
 @pytest.mark.django_db
-def test_deve_listar_todas_perguntas(client_with_login):
+def test_deve_listar_todas_perguntas(client, revisor_user):
     baker.make("Pergunta", _fill_optional=True, _quantity=12)
+    client.force_login(revisor_user)
 
-    resultado = graphql_query(query=eg.todas_perguntas_query, client=client_with_login)
+    resultado = graphql_query(query=eg.todas_perguntas_query, client=client)
 
     assert "errors" not in json.loads(resultado.content)
 
@@ -29,7 +30,34 @@ def test_nao_deve_listar_todas_perguntas_caso_o_usuario_seja_anonimo(client):
 
 
 @pytest.mark.django_db
-def test_deve_listar_todas_perguntas_e_suas_informações(client_with_login):
+def test_nao_deve_listar_todas_perguntas_caso_o_usuario_seja_colaborador(
+    client_with_login,
+):
+    baker.make("Pergunta", _fill_optional=True)
+
+    resultado = graphql_query(query=eg.todas_perguntas_query, client=client_with_login)
+
+    assert "errors" in json.loads(resultado.content)
+    assert "Somente revisores, publicadores e administradores" in str(
+        json.loads(resultado.content)["errors"]
+    )
+
+
+@pytest.mark.django_db
+def test_deve_listar_todas_perguntas_caso_o_usuario_seja_publicador(
+    client, publicador_user
+):
+    baker.make("Pergunta", _fill_optional=True, _quantity=2)
+    client.force_login(publicador_user)
+
+    resultado = graphql_query(query=eg.todas_perguntas_query, client=client)
+
+    assert "errors" not in json.loads(resultado.content)
+    assert len(json.loads(resultado.content)["data"]["perguntas"]) == 2
+
+
+@pytest.mark.django_db
+def test_deve_listar_todas_perguntas_e_suas_informações(client, revisor_user):
     user = baker.make("core.User")
     tema = baker.make("Tema", _fill_optional=True)
 
@@ -40,7 +68,8 @@ def test_deve_listar_todas_perguntas_e_suas_informações(client_with_login):
 
     comentario = baker.make("Comentario", pergunta=pergunta, _fill_optional=True)
 
-    resultado = graphql_query(query=eg.todas_perguntas_query, client=client_with_login)
+    client.force_login(revisor_user)
+    resultado = graphql_query(query=eg.todas_perguntas_query, client=client)
 
     assert "errors" not in json.loads(resultado.content)
 

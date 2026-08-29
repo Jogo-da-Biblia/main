@@ -4,6 +4,7 @@ django-cors-headers
 django-crispy-forms==1.14.0
 django-graphql-jwt==0.4.0
 django-graphiql==0.4.4
+freezegun
 graphene-django==3.2.1
 gunicorn
 markdown

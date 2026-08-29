@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bookworm
+FROM python:3.10-slim-bookworm
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -17,4 +17,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["gunicorn", "--chdir", "/usr/src/app/app", "--bind", "0.0.0.0:8000", "app.wsgi:application"]

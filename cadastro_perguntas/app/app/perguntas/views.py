@@ -10,6 +10,7 @@ from app.core.utils import (
 from app.perguntas.utils import (
     criar_nova_pergunta_via_mutation,
     check_if_referencia_biblica_is_valid,
+    validate_question_answers,
     update_pergunta_values,
     aprove_pergunta,
     refuse_pergunta,
@@ -37,8 +38,22 @@ class CadastrarPerguntaMutation(graphene.Mutation):
     def mutate(self, info, nova_pergunta):
         assert check_if_user_is_admin_or_colaborador(info)
 
+        tipo_resposta = nova_pergunta.tipo_resposta.name
+        if not (nova_pergunta.referencia or "").strip():
+            raise ValueError("A referência é obrigatória para todas as perguntas.")
+        if tipo_resposta in ("RCO", "RLC") and not nova_pergunta.referencia_biblica:
+            raise ValueError(
+                "Perguntas de referência completa ou livro e capítulo devem ter referência bíblica."
+            )
+        validate_question_answers(
+            tipo_resposta=tipo_resposta,
+            alternativas=nova_pergunta.alternativas,
+        )
         if nova_pergunta.referencia_biblica is True:
-            check_if_referencia_biblica_is_valid(referencia=nova_pergunta.referencia)
+            nova_pergunta.referencia = check_if_referencia_biblica_is_valid(
+                referencia=nova_pergunta.referencia,
+                tipo_resposta=tipo_resposta,
+            )
 
         pergunta = criar_nova_pergunta_via_mutation(
             nova_pergunta=nova_pergunta, user=info.context.user

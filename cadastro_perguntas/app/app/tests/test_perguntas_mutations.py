@@ -58,6 +58,65 @@ def test_deve_criar_nova_pergunta(client_with_login, user):
 
 
 @pytest.mark.django_db
+def test_deve_criar_pergunta_com_mais_de_uma_alternativa_correta(
+    client_with_login,
+):
+    tema = baker.make("Tema", _fill_optional=True)
+    resultado = graphql_query(
+        query=eg.cadastrar_pergunta_mutation,
+        operation_name="cadastrarPergunta",
+        variables={
+            "novaPergunta": {
+                "enunciado": "Com quantos anos Josias começou a reinar?",
+                "temaId": tema.id,
+                "tipoResposta": inputs.TipoRespostaEnum.MES.name,
+                "referencia": "Bíblia de Estudo, página 100",
+                "referenciaBiblica": False,
+                "alternativas": [
+                    {"texto": "Oito anos", "correta": True},
+                    {"texto": "8 anos", "correta": True},
+                    {"texto": "Vinte e cinco anos", "correta": False},
+                ],
+            }
+        },
+        client=client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    assert Pergunta.objects.get().alternativas_corretas.count() == 2
+
+
+@pytest.mark.django_db
+def test_deve_criar_resposta_simples_com_varias_formas_aceitas(client_with_login):
+    tema = baker.make("Tema", _fill_optional=True)
+    resultado = graphql_query(
+        query=eg.cadastrar_pergunta_mutation,
+        operation_name="cadastrarPergunta",
+        variables={
+            "novaPergunta": {
+                "enunciado": "Quem começou a reinar com oito anos?",
+                "temaId": tema.id,
+                "tipoResposta": inputs.TipoRespostaEnum.RES.name,
+                "referencia": "Bíblia de Estudo, página 100",
+                "referenciaBiblica": False,
+                "alternativas": [
+                    {"texto": "Josias", "correta": True},
+                    {"texto": "Rei Josias", "correta": True},
+                ],
+            }
+        },
+        client=client_with_login,
+    )
+
+    assert "errors" not in json.loads(resultado.content)
+    pergunta = Pergunta.objects.get()
+    assert pergunta.tipo_resposta == inputs.TipoRespostaEnum.RES.name
+    assert list(
+        pergunta.alternativas_corretas.order_by("id").values_list("texto", flat=True)
+    ) == ["Josias", "Rei Josias"]
+
+
+@pytest.mark.django_db
 def test_usuario_admin_deve_criar_nova_pergunta(admin_client_with_login, user):
     tema = baker.make("Tema", _fill_optional=True)
 
@@ -277,7 +336,7 @@ def test_deve_criar_nova_pergunta_com_referencia_biblica(
                 "enunciado": "What is the capital of France?",
                 "temaId": tema.id,
                 "tipoResposta": inputs.TipoRespostaEnum.MES.name,
-                "referencia": "Paris",
+                "referencia": "João 3:16; Mateus 5:1",
                 "referenciaBiblica": True,
                 "alternativas": [
                     {"texto": "London", "correta": False},
@@ -295,7 +354,7 @@ def test_deve_criar_nova_pergunta_com_referencia_biblica(
     pergunta_criada = Pergunta.objects.get()
     assert Pergunta.objects.count() == 1
     assert Alternativa.objects.count() == 4
-    assert pergunta_criada.referencia == "Paris"
+    assert pergunta_criada.referencia == "João 3:16; Mateus 5:1"
     assert pergunta_criada.referencia_biblica is True
     assert mocker_request_get.called is True
 
@@ -317,7 +376,7 @@ def test_nao_deve_criar_nova_pergunta_com_referencia_biblica_caso_invalida(
                 "enunciado": "What is the capital of France?",
                 "temaId": tema.id,
                 "tipoResposta": inputs.TipoRespostaEnum.MES.name,
-                "referencia": "Paris",
+                "referencia": "João 3:16",
                 "referenciaBiblica": True,
                 "alternativas": [
                     {"texto": "London", "correta": False},
