@@ -17,19 +17,19 @@ build:
 	docker-compose build --no-cache
 	make run
 migrate:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
+	docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
 makemigrations:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations"		
+	docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations"		
 seed:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py shell < seed.py"		
+	docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py shell < seed.py"		
 	echo "Restaurando banco com sqls da pasta initial_data"
 superuser:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py createsuperuser"
+	docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py createsuperuser"
 logs:
 	docker-compose logs -f
 db_terminal:
-	docker exec -it jogodabiblia_db bash
+	docker exec -it catekel_db bash
 sass:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py sass /usr/src/app/app/static/scss/ /usr/src/app/app/static/css/ --watch"
+	docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py sass /usr/src/app/app/static/scss/ /usr/src/app/app/static/css/ --watch"
 test:
-	docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest -vv ./app/tests/"
+	docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest -vv ./app/tests/"

@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.db import transaction
@@ -7,8 +9,12 @@ from app.perguntas.models import Tema
 
 User = get_user_model()
 
+# Em producao (APP_ENV=production) pula a criacao dos usuarios de teste (senha
+# fixa, emails @teste.com) e cria apenas grupos, permissoes e temas.
+IS_PRODUCTION = os.environ.get("APP_ENV", "development").lower() == "production"
+
 USERS = (
-    ("colaborador", "Colaborador de Teste", "colaborador@jogodabiblia.com.br", "71992540736", "colaboradores"),
+    ("colaborador", "Colaborador de Teste", "colaborador@catekel.com", "71992540736", "colaboradores"),
     ("revisor", "Revisor de Teste", "revisor@teste.com", "71992540737", "revisores"),
     ("publicador", "Publicador de Teste", "publicador@teste.com", "71992540738", "publicadores"),
     ("supervisor", "Supervisor de Teste", "supervisor@teste.com", "71992540739", "supervisores"),
@@ -64,21 +70,25 @@ with transaction.atomic():
     for group_name in ("supervisores", "administradores"):
         groups[group_name].permissions.set(all_permissions)
 
-    for username, name, email, phone, group_name in USERS:
-        user, _ = User.objects.update_or_create(
-            username=username,
-            defaults={
-                "name": name,
-                "email": email,
-                "phone": phone,
-                "is_whatsapp": True,
-            },
-        )
-        user.set_password("passw@rd")
-        user.save(update_fields=["password"])
-        user.groups.set([groups[group_name]])
+    if not IS_PRODUCTION:
+        for username, name, email, phone, group_name in USERS:
+            user, _ = User.objects.update_or_create(
+                username=username,
+                defaults={
+                    "name": name,
+                    "email": email,
+                    "phone": phone,
+                    "is_whatsapp": True,
+                },
+            )
+            user.set_password("passw@rd")
+            user.save(update_fields=["password"])
+            user.groups.set([groups[group_name]])
 
     for nome, cor in TEMAS:
         Tema.objects.update_or_create(nome=nome, defaults={"cor": cor})
 
-print(f"Seed concluído: {len(USERS)} usuários e {len(TEMAS)} temas.")
+if IS_PRODUCTION:
+    print(f"Seed concluído (APP_ENV=production): grupos, permissões e {len(TEMAS)} temas.")
+else:
+    print(f"Seed concluído: {len(USERS)} usuários e {len(TEMAS)} temas.")

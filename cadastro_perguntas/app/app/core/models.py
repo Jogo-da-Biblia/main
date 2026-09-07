@@ -62,6 +62,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return total
 
     @property
+    def is_staff(self):
+        return self.is_superuser or self.groups.filter(name="administradores").exists()
+
+    @property
     def is_admin(self):
         return utils.usuario_superusuario_ou_admin(usuario=self)
 

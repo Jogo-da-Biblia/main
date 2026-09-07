@@ -82,14 +82,14 @@ make run
 ### Inicializando migrações
 
 ```sh
-docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations"
-docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
+docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py makemigrations"
+docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py migrate"
 ```
 
 ### Criando superusuário
 
 ```sh
-docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py createsuperuser"
+docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && python manage.py createsuperuser"
 ```
 
 ### Restaurando tabela postgres
@@ -110,7 +110,7 @@ cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root
 
 ## Run Tests
 ```sh
-docker exec -it jogodabiblia_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest app/graphql/tests.py"
+docker exec -it catekel_cadastro_perguntas bash -c "cd /usr/src/app/app && pytest app/graphql/tests.py"
 ```
 or just
 ```
@@ -135,5 +135,5 @@ Os comando automatizados estão listados em `app/seed.py` e são executados junt
 ## Criando tradução para português do painel administrativo
 
 ```bash
-docker exec -it jogodabiblia_cadastro_perguntas bash -c "django-admin makemessages --locale=pt_BR"
+docker exec -it catekel_cadastro_perguntas bash -c "django-admin makemessages --locale=pt_BR"
 ```

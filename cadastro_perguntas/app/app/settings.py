@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
     '192.168.100.22',
     '127.0.0.1',
     'djangoapp',
-    'jogodabiblia.com',
+    'catekel.com',
     'localhost',
     '*',
 ]
@@ -140,10 +140,10 @@ DATABASES = {
 # Email configurations
 
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = "mail.jogodabiblia.com"
+# EMAIL_HOST = "mail.catekel.com"
 # EMAIL_PORT = 465  # 465 # 25 # 587
-# EMAIL_HOST_USER = "contato@jogodabiblia.com"
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="contato@jogodabiblia.com")
+# EMAIL_HOST_USER = "contato@catekel.com"
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="contato@catekel.com")
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 # EMAIL_SUBJECT_PREFIX = "[Jogo da Bíblia]"
 # EMAIL_USE_TLS = False
